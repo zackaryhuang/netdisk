@@ -21,7 +21,7 @@ class FilePathView: NSView {
         }
     }
     
-    var paths: [String]? = []
+    var paths = [PathItem]()
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -31,6 +31,44 @@ class FilePathView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func getFixedPaths( items: inout [PathItem]) {
+        var totalWidth = 0.0
+        var hasIgnoredItem = false
+        for (index,value) in items.enumerated() {
+            if value.shouldIgnore == true {
+                hasIgnoredItem = true
+                continue
+            }
+            if index != 0 {
+                totalWidth += 24.0
+            }
+            
+            let attributedTitle = NSAttributedString(string: String(value.pathUnit), attributes: [
+                NSAttributedString.Key.foregroundColor : NSColor.gray,
+                NSAttributedString.Key.font : NSFont(PingFang: 16) as Any
+            ])
+            totalWidth += attributedTitle.size().width
+        }
+        
+        if hasIgnoredItem {
+            let attributedTitle = NSAttributedString(string: String("..."), attributes: [
+                NSAttributedString.Key.foregroundColor : NSColor.gray,
+                NSAttributedString.Key.font : NSFont(PingFang: 16) as Any
+            ])
+            totalWidth += 24
+            totalWidth += attributedTitle.size().width
+        }
+        
+        if (totalWidth + 11) > self.frame.size.width {
+            for item in items[1...] {
+                if item.shouldIgnore == false {
+                    item.shouldIgnore = true
+                    break
+                }
+            }
+            getFixedPaths(items: &items)
+        }
+    }
     
     func updateUI() {
         guard let realPath = path else {
@@ -42,9 +80,21 @@ class FilePathView: NSView {
         
         var temp = realPath.split(separator: "/")
         temp.insert("我的网盘", at:  0)
-        paths?.removeAll()
+        var pathItems = [PathItem]()
+        temp.forEach { subString in
+            pathItems.append(PathItem(pathUnit: String(subString), shouldIgnore: false))
+        }
+
+        getFixedPaths(items: &pathItems)
+        
+        paths.removeAll()
         var lastView: NSView? = nil
-        for (index,value) in temp.enumerated() {
+        var ignoredItemSettled = false
+        for (index,value) in pathItems.enumerated() {
+            paths.append(value)
+            if value.shouldIgnore == true && ignoredItemSettled {
+                continue
+            }
             if index != 0 {
                 let imageView = NSImageView(image: NSImage(named: "icon_arrow_right")!)
                 addSubview(imageView)
@@ -55,10 +105,19 @@ class FilePathView: NSView {
                 }
                 lastView = imageView
             }
-            
-            let button = NSButton(title: String(value), target: self, action: #selector(buttonClick(_:)))
+            var stringValue = value.pathUnit
+            if value.shouldIgnore == true
+                && (index + 1 < pathItems.count)
+                && pathItems[index + 1].shouldIgnore == false
+                && !ignoredItemSettled {
+                stringValue = "..."
+                ignoredItemSettled = true
+            }
+            let button = NSButton(title: String(stringValue), target: self, action: #selector(buttonClick(_:)))
+            button.attributedTitle = NSAttributedString(string: String(stringValue), attributes: [
+                NSAttributedString.Key.font : NSFont(PingFang: 16) as Any
+            ])
             button.isBordered = false
-            button.font = NSFont(PingFang: 14)
             self.addSubview(button)
             button.tag = index
             button.snp.makeConstraints { make in
@@ -68,13 +127,20 @@ class FilePathView: NSView {
                     make.leading.equalTo(lastView!.snp.trailing)
                 }
                 make.top.bottom.equalTo(self)
+                make.width.equalTo(button.attributedTitle.size().width)
             }
             lastView = button
-            paths?.append(String(value))
         }
         
         if let lastButton = lastView as? NSButton {
-            lastButton.isHighlighted = true
+            lastButton.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            lastButton.snp.makeConstraints { make in
+                make.trailing.lessThanOrEqualTo(self).offset(-10)
+            }
+            lastButton.attributedTitle = NSAttributedString(string: String(lastButton.attributedTitle.string), attributes: [
+                NSAttributedString.Key.foregroundColor : NSColor.white,
+                NSAttributedString.Key.font : NSFont(PingFang: 16) as Any
+            ])
         }
     }
     
@@ -82,10 +148,25 @@ class FilePathView: NSView {
         if let button = sender as? NSButton {
             if button.tag == 0 {
                 self.delegate?.didClickPath(path: "/")
-            } else if let path = paths?[1..<(button.tag+1)] {
-                debugPrint("/" + path.joined(separator: "/"))
-                self.delegate?.didClickPath(path: "/" + path.joined(separator: "/"))
+            } else {
+                let path = paths[1..<(button.tag+1)]
+                var originPath = [String]()
+                path.forEach { item in
+                    originPath.append(item.pathUnit)
+                }
+                debugPrint("/" + originPath.joined(separator: "/"))
+                self.delegate?.didClickPath(path: "/" + originPath.joined(separator: "/"))
             }
         }
+    }
+}
+
+class PathItem {
+    let pathUnit: String
+    var shouldIgnore: Bool?
+    
+    init(pathUnit: String, shouldIgnore: Bool? = nil) {
+        self.pathUnit = pathUnit
+        self.shouldIgnore = shouldIgnore
     }
 }

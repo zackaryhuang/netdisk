@@ -92,9 +92,11 @@ class CategoryItem {
     var image: String
     var title: String
     var isSelected: Bool
-    init(image: String, title: String, isSelected: Bool) {
+    var type: CategoryType
+    init(image: String, title: String, isSelected: Bool, type: CategoryType) {
         self.image = image
         self.title = title
         self.isSelected = isSelected
+        self.type = type
     }
 }

@@ -10,7 +10,18 @@ import SnapKit
 import Alamofire
 import Kingfisher
 
-class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource, FilePathViewDelegate, TabItemViewDelegate {
+enum CategoryType {
+    case downloading
+    case uploading
+    case finishedTrans
+    case files
+    case photos
+    case videos
+    case audios
+    case docs
+}
+
+class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource, FilePathViewDelegate, TabItemViewDelegate, NSMenuDelegate {
 
     var fileResponse: FileResponse?
     
@@ -21,17 +32,50 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         return imageView
     }()
     
+    var currentCategoryType: CategoryType? {
+        didSet {
+            if currentCategoryType == .downloading ||
+                currentCategoryType == .uploading ||
+                currentCategoryType == .finishedTrans {
+                tableContainerView?.snp.remakeConstraints({ make in
+                    make.leading.equalTo(categoryTableContainerView!.snp.trailing)
+                    make.trailing.equalTo(view)
+                    make.top.equalTo(view)
+                    make.bottom.equalTo(view)
+                })
+                filePathView.isHidden = true
+            } else if currentCategoryType == .files {
+                tableContainerView?.snp.remakeConstraints({ make in
+                    make.leading.equalTo(categoryTableContainerView!.snp.trailing)
+                    make.trailing.equalTo(view)
+                    make.top.equalTo(view).offset(40)
+                    make.bottom.equalTo(view)
+                })
+                filePathView.isHidden = false
+            } else {
+                tableContainerView?.snp.remakeConstraints({ make in
+                    make.leading.equalTo(categoryTableContainerView!.snp.trailing)
+                    make.trailing.equalTo(view)
+                    make.top.equalTo(view)
+                    make.bottom.equalTo(view)
+                })
+                filePathView.isHidden = true
+            }
+            self.tableView.reloadData()
+        }
+    }
+    
     var tabs: [TabItemView] = []
     
-    var categoryItems = [CategoryItem(image: "icon_category_files", title: "我的网盘", isSelected: true),
-                         CategoryItem(image: "icon_category_image", title: "图片", isSelected: false),
-                         CategoryItem(image: "icon_category_video", title: "视频", isSelected: false),
-                         CategoryItem(image: "icon_category_audio", title: "音频", isSelected: false),
-                         CategoryItem(image: "icon_category_doc", title: "文档", isSelected: false)]
+    var categoryItems = [CategoryItem(image: "icon_category_files", title: "我的网盘", isSelected: true, type: .files),
+                         CategoryItem(image: "icon_category_image", title: "图片", isSelected: false, type: .photos),
+                         CategoryItem(image: "icon_category_video", title: "视频", isSelected: false, type: .videos),
+                         CategoryItem(image: "icon_category_audio", title: "音频", isSelected: false, type: .audios),
+                         CategoryItem(image: "icon_category_doc", title: "文档", isSelected: false, type: .docs)]
     
-    var transItems = [CategoryItem(image: "icon_download", title: "正在下载", isSelected: true),
-                      CategoryItem(image: "icon_upload", title: "正在上传", isSelected: false),
-                      CategoryItem(image: "icon_finished", title: "传输完成", isSelected: false)]
+    var transItems = [CategoryItem(image: "icon_download", title: "正在下载", isSelected: true, type: .downloading),
+                      CategoryItem(image: "icon_upload", title: "正在上传", isSelected: false, type: .uploading),
+                      CategoryItem(image: "icon_finished", title: "传输完成", isSelected: false, type: .finishedTrans)]
     
     var currentItems: [CategoryItem] = []
     
@@ -45,6 +89,8 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         return tableView;
     }()
     
+    var tableContainerView: NSScrollView?
+    
     let categoryTableView = {
         let tableView = NSTableView()
         tableView.backgroundColor = .clear
@@ -53,6 +99,8 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         tableView.addTableColumn(column)
         return tableView;
     }()
+    
+    var categoryTableContainerView: NSScrollView?
     
     let filePathView = {
         let view = FilePathView()
@@ -123,14 +171,14 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         categoryTableView.dataSource = self
         categoryTableView.headerView = nil
         categoryTableView.target = self
-        categoryTableView.action = #selector(tableViewClick(_:))
+        categoryTableView.action = #selector(didClickCategoryTableView(_:))
         
-        let categoryContainerView = NSScrollView()
-        view.addSubview(categoryContainerView)
-        categoryContainerView.backgroundColor = NSColor(hex: 0x111113)
-        categoryContainerView.hasVerticalScroller = false
-        categoryContainerView.documentView = categoryTableView
-        categoryContainerView.snp.makeConstraints { make in
+        categoryTableContainerView = NSScrollView()
+        view.addSubview(categoryTableContainerView!)
+        categoryTableContainerView?.backgroundColor = NSColor(hex: 0x111113)
+        categoryTableContainerView?.hasVerticalScroller = false
+        categoryTableContainerView?.documentView = categoryTableView
+        categoryTableContainerView?.snp.makeConstraints { make in
             make.leading.equalTo(avatarImageView.snp.trailing).offset(10)
             make.top.equalTo(view)
             make.width.equalTo(view).multipliedBy(1/5.0)
@@ -142,23 +190,26 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         tableView.headerView = nil
         tableView.target = self
         tableView.doubleAction = #selector(tableViewDoubleClick(_:))
+        let fileMenu = NSMenu()
+        fileMenu.delegate = self
+        tableView.menu = fileMenu
         
         filePathView.delegate = self
         view.addSubview(filePathView)
         filePathView.snp.makeConstraints { make in
-            make.leading.equalTo(categoryContainerView.snp.trailing)
+            make.leading.equalTo(categoryTableContainerView!.snp.trailing)
             make.top.trailing.equalTo(view)
             make.height.equalTo(40)
         }
         
-        let tableContainerView = NSScrollView()
-        view.addSubview(tableContainerView)
-        tableContainerView.drawsBackground = false
-        tableContainerView.hasVerticalScroller = true
-        tableContainerView.autohidesScrollers = true
-        tableContainerView.documentView = tableView
-        tableContainerView.snp.makeConstraints { make in
-            make.leading.equalTo(categoryContainerView.snp.trailing)
+        tableContainerView = NSScrollView()
+        view.addSubview(tableContainerView!)
+        tableContainerView?.drawsBackground = false
+        tableContainerView?.hasVerticalScroller = true
+        tableContainerView?.autohidesScrollers = true
+        tableContainerView?.documentView = tableView
+        tableContainerView?.snp.makeConstraints { make in
+            make.leading.equalTo(categoryTableContainerView!.snp.trailing)
             make.trailing.equalTo(view)
             make.top.equalTo(view).offset(40)
             make.bottom.equalTo(view)
@@ -166,9 +217,9 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         
         view.addSubview(usageView)
         usageView.snp.makeConstraints { make in
-            make.leading.equalTo(categoryContainerView)
-            make.trailing.equalTo(categoryContainerView)
-            make.top.equalTo(categoryContainerView.snp.bottom)
+            make.leading.equalTo(categoryTableContainerView!)
+            make.trailing.equalTo(categoryTableContainerView!)
+            make.top.equalTo(categoryTableContainerView!.snp.bottom)
             make.bottom.equalTo(view)
             make.height.equalTo(60)
             
@@ -180,6 +231,10 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     func numberOfRows(in tableView: NSTableView) -> Int {
         if tableView == categoryTableView {
             return currentItems.count
+        }
+        if currentCategoryType == .downloading {
+            let downloadList = DownloadManager.shared.downloadingList + DownloadManager.shared.pendingList + DownloadManager.shared.failedList
+            return downloadList.count
         }
         return fileResponse?.list?.count ?? 0
     }
@@ -194,6 +249,15 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             let categoryItem = currentItems[row]
             (rowView as? CategoryRowView)?.updateCategoryRowView(with: categoryItem)
             return rowView as? CategoryRowView
+        } else if currentCategoryType == .downloading {
+            var rowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DownloadRowView"), owner: self)
+            if rowView == nil {
+                rowView = DownloadRowView()
+            }
+            
+            let downloadList = DownloadManager.shared.downloadingList + DownloadManager.shared.pendingList + DownloadManager.shared.failedList
+            (rowView as? DownloadRowView)?.updateRowView(with: downloadList[row])
+            return rowView as? DownloadRowView
         }
         
         var rowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("FileRowView"), owner: self)
@@ -208,12 +272,15 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         if tableView == categoryTableView {
             return 60
+        } else if currentCategoryType == .downloading {
+            return 60
         }
         return 50
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let columnView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "FileColumn"), owner: nil)
+        columnView?.focusRingType = .none
         return columnView
         
     }
@@ -226,11 +293,14 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         requestFileList(with: fileInfo.path)
     }
     
-    @objc func tableViewClick(_ sender: AnyObject) {
+    @objc func didClickCategoryTableView(_ sender: AnyObject) {
         if let categoryTableView = sender as? NSTableView {
             let index = categoryTableView.selectedRow
             for (idx, value) in currentItems.enumerated() {
                 value.isSelected = idx == index
+                if value.isSelected {
+                    currentCategoryType = value.type
+                }
             }
             categoryTableView.reloadData()
         }
@@ -238,22 +308,73 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     }
     
     
-    func requestUerData() {
+    func didClickPath(path: String) {
+        requestFileList(with: path)
+    }
+    
+    func didClickTabView(tabView: TabItemView) {
+        tabs.forEach { tab in
+            if tab == tabView {
+                tab.isSelected = true
+                switch tabView.type {
+                case .trans:
+                    currentItems = transItems
+                default:
+                    currentItems = categoryItems
+                }
+            } else {
+                tab.isSelected = false
+            }
+        }
+        
+        if let categoryItem = currentItems.first {
+            currentCategoryType = categoryItem.type
+        }
+        
+        categoryTableView.reloadData()
+    }
+    
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.removeAllItems()
+        menu.addItem(NSMenuItem(title: "删除", action: #selector(deleteFile(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "重命名", action: #selector(renameFile(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "下载", action: #selector(downloadFile(_:)), keyEquivalent: ""))
+    }
+    
+    @objc func deleteFile(_ sender: AnyObject) {
+        
+    }
+    
+    @objc func downloadFile(_ sender: AnyObject) {
+        let row = tableView.clickedRow
+        if let fileInfo = self.fileResponse?.list?[row] {
+            downloadFile(with: fileInfo)
+        }
+    }
+    
+    @objc func renameFile(_ sender: AnyObject) {
+        
+    }
+}
+
+extension MainViewController {
+    func requestUsage() {
         if let accessToken = UserDefaults.standard.object(forKey: "UserAccessToken") as? String {
-            AF.request("https://pan.baidu.com/rest/2.0/xpan/nas", method: .get, parameters: ["method" : "uinfo", "access_token" : accessToken]).responseDecodable(of: BaiduUserData.self) { response in
-                
-                if let url_string = response.value?.avatarUrl {
-                    self.avatarImageView.kf.setImage(with: URL(string: url_string)) { result in
-                        switch result {
-                        case .success:
-                            print(response.value?.netdiskName ?? "")
-                        case .failure(let error):
-                            print("Job failed: \(error.localizedDescription)")
-                        }
-                    }
+            AF.request("https://pan.baidu.com/api/quota", method: .get, parameters: [
+                "access_token" : accessToken
+            ]).responseDecodable(of: UsageInfo.self) { response in
+                if let usageInfo = response.value {
+                    self.usageView.updateView(with: usageInfo)
                 }
             }
         }
+    }
+    func downloadFile(with fileInfo: FileInfo) {
+        DownloadManager.shared.download(with: fileInfo)
+    }
+    
+    func requestCategoryData(category: CategoryItem) {
+        
     }
     
     func requestFileList(with folderName: String?) {
@@ -280,50 +401,33 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
                 }
             }
         }
-        
     }
     
-    func requestUsage() {
+    func requestUerData() {
         if let accessToken = UserDefaults.standard.object(forKey: "UserAccessToken") as? String {
-            AF.request("https://pan.baidu.com/api/quota", method: .get, parameters: [
-                "access_token" : accessToken
-            ]).responseDecodable(of: UsageInfo.self) { response in
-                if let usageInfo = response.value {
-                    self.usageView.updateView(with: usageInfo)
+            AF.request("https://pan.baidu.com/rest/2.0/xpan/nas", method: .get, parameters: ["method" : "uinfo", "access_token" : accessToken]).responseDecodable(of: BaiduUserData.self) { response in
+                
+                if let url_string = response.value?.avatarUrl {
+                    self.avatarImageView.kf.setImage(with: URL(string: url_string)) { result in
+                        switch result {
+                        case .success:
+                            print(response.value?.netdiskName ?? "")
+                        case .failure(let error):
+                            print("Job failed: \(error.localizedDescription)")
+                        }
+                    }
                 }
             }
         }
-    }
-    
-    func didClickPath(path: String) {
-        requestFileList(with: path)
-    }
-    
-    func didClickTabView(tabView: TabItemView) {
-        tabs.forEach { tab in
-            if tab == tabView {
-                tab.isSelected = true
-                switch tabView.type {
-                case .trans:
-                    currentItems = transItems
-                default:
-                    currentItems = categoryItems
-                }
-            } else {
-                tab.isSelected = false
-            }
-            
-        }
-        categoryTableView.reloadData()
     }
 }
 
 class BaiduUserData: Codable {
-    let baiduName: String?
-    let netdiskName: String?
-    let avatarUrl: String?
-    let vipType: Int?
-    let uk: Int?
+    var baiduName: String?
+    var netdiskName: String?
+    var avatarUrl: String?
+    var vipType: Int?
+    var uk: Int?
     
     enum CodingKeys: String, CodingKey {
         case baiduName = "baidu_name"
@@ -335,13 +439,14 @@ class BaiduUserData: Codable {
 }
 
 class FileInfo: Codable {
-    let fsID: UInt64?
-    let path: String?
-    let serverFileName: String?
-    let size: UInt?
-    let isDir: UInt?
-    let category: UInt?
-    let thumbs: [String : String]?
+    var fsID: UInt64?
+    var path: String?
+    var serverFileName: String?
+    var size: Int?
+    var isDir: Int?
+    var category: Int?
+    var thumbs: [String : String]?
+    var md5: String?
     
     enum CodingKeys: String, CodingKey {
         case fsID = "fs_id"
@@ -351,6 +456,40 @@ class FileInfo: Codable {
         case isDir = "isdir"
         case category = "category"
         case thumbs = "thumbs"
+        case md5 = "md5"
+    }
+}
+
+class FileDetailInfoResponse: Codable {
+    let list: [FileDetailInfo]?
+}
+
+class FileDetailInfo: Codable {
+    var category: Int?
+    var dlink: String?
+    var filename: String?
+    var isdir: Int?
+    var serverCtime: Int?
+    var serverMtime: Int?
+    var size: Int?
+    var md5: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case category = "category"
+        case dlink = "dlink"
+        case filename = "filename"
+        case isdir = "isdir"
+        case size = "size"
+        case serverCtime = "server_ctime"
+        case serverMtime = "server_mtime"
+    }
+    
+    init(fileInfo: FileInfo) {
+        category = fileInfo.category
+        filename = fileInfo.serverFileName
+        isdir = fileInfo.isDir
+        size = fileInfo.size
+        md5 = fileInfo.md5
     }
 }
 

@@ -9,11 +9,14 @@
 /* Begin PBXBuildFile section */
 		300108EE2A9E58F5002FBB52 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300108EC2A9E58F5002FBB52 /* MainViewController.swift */; };
 		300108EF2A9E58F5002FBB52 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 300108ED2A9E58F5002FBB52 /* MainViewController.xib */; };
+		3024970B2AA77E2600E2AD24 /* DownloadRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3024970A2AA77E2600E2AD24 /* DownloadRowView.swift */; };
+		3024970D2AA7889F00E2AD24 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3024970C2AA7889F00E2AD24 /* Utils.swift */; };
 		306EE5AF2AA0E3EB00428E82 /* FileRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EE5AE2AA0E3EB00428E82 /* FileRowView.swift */; };
 		306EE5B12AA0FF2900428E82 /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EE5B02AA0FF2900428E82 /* UsageView.swift */; };
 		309AFD212AA4273B005F50C9 /* FilePathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD202AA4273B005F50C9 /* FilePathView.swift */; };
 		309AFD252AA49B6C005F50C9 /* TabItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD242AA49B6C005F50C9 /* TabItemView.swift */; };
 		309AFD272AA4DD88005F50C9 /* CategoryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */; };
+		30B352CB2AA761BA00087EB1 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B352CA2AA761BA00087EB1 /* DownloadManager.swift */; };
 		30BB71782A9E414B00ADBF01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BB71772A9E414B00ADBF01 /* AppDelegate.swift */; };
 		30BB717C2A9E414C00ADBF01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30BB717B2A9E414C00ADBF01 /* Assets.xcassets */; };
 		30BB71872A9E418600ADBF01 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BB71862A9E418600ADBF01 /* main.swift */; };
@@ -27,11 +30,15 @@
 		0603C54326530B2086EA8E61 /* Pods-netdisk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-netdisk.release.xcconfig"; path = "Target Support Files/Pods-netdisk/Pods-netdisk.release.xcconfig"; sourceTree = "<group>"; };
 		300108EC2A9E58F5002FBB52 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		300108ED2A9E58F5002FBB52 /* MainViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
+		300489392AA6398D0099450D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3024970A2AA77E2600E2AD24 /* DownloadRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRowView.swift; sourceTree = "<group>"; };
+		3024970C2AA7889F00E2AD24 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		306EE5AE2AA0E3EB00428E82 /* FileRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRowView.swift; sourceTree = "<group>"; };
 		306EE5B02AA0FF2900428E82 /* UsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageView.swift; sourceTree = "<group>"; };
 		309AFD202AA4273B005F50C9 /* FilePathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePathView.swift; sourceTree = "<group>"; };
 		309AFD242AA49B6C005F50C9 /* TabItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabItemView.swift; sourceTree = "<group>"; };
 		309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRowView.swift; sourceTree = "<group>"; };
+		30B352CA2AA761BA00087EB1 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		30BB71742A9E414B00ADBF01 /* netdisk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = netdisk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BB71772A9E414B00ADBF01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		30BB717B2A9E414C00ADBF01 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -86,6 +93,7 @@
 		30BB71762A9E414B00ADBF01 /* netdisk */ = {
 			isa = PBXGroup;
 			children = (
+				300489392AA6398D0099450D /* Info.plist */,
 				30BB71862A9E418600ADBF01 /* main.swift */,
 				30BB71772A9E414B00ADBF01 /* AppDelegate.swift */,
 				30BB717B2A9E414C00ADBF01 /* Assets.xcassets */,
@@ -100,6 +108,9 @@
 				309AFD202AA4273B005F50C9 /* FilePathView.swift */,
 				309AFD242AA49B6C005F50C9 /* TabItemView.swift */,
 				309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */,
+				30B352CA2AA761BA00087EB1 /* DownloadManager.swift */,
+				3024970A2AA77E2600E2AD24 /* DownloadRowView.swift */,
+				3024970C2AA7889F00E2AD24 /* Utils.swift */,
 			);
 			path = netdisk;
 			sourceTree = "<group>";
@@ -229,13 +240,16 @@
 				309AFD252AA49B6C005F50C9 /* TabItemView.swift in Sources */,
 				30BB718E2A9E444200ADBF01 /* LoginViewController.swift in Sources */,
 				30BB71782A9E414B00ADBF01 /* AppDelegate.swift in Sources */,
+				3024970D2AA7889F00E2AD24 /* Utils.swift in Sources */,
 				309AFD212AA4273B005F50C9 /* FilePathView.swift in Sources */,
 				306EE5B12AA0FF2900428E82 /* UsageView.swift in Sources */,
 				30BB71892A9E41C100ADBF01 /* MainWindowController.swift in Sources */,
 				300108EE2A9E58F5002FBB52 /* MainViewController.swift in Sources */,
+				30B352CB2AA761BA00087EB1 /* DownloadManager.swift in Sources */,
 				30BB71912A9E45D300ADBF01 /* CommonDefine.swift in Sources */,
 				30BB71872A9E418600ADBF01 /* main.swift in Sources */,
 				309AFD272AA4DD88005F50C9 /* CategoryRowView.swift in Sources */,
+				3024970B2AA77E2600E2AD24 /* DownloadRowView.swift in Sources */,
 				306EE5AF2AA0E3EB00428E82 /* FileRowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -369,6 +383,7 @@
 				DEVELOPMENT_TEAM = CKCK9S26WL;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = netdisk/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -396,6 +411,7 @@
 				DEVELOPMENT_TEAM = CKCK9S26WL;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = netdisk/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
