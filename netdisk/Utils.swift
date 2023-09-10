@@ -10,7 +10,7 @@ import Cocoa
 
 class Utils {
     static func thumbForFile(info: FileDetailInfo) -> NSImage? {
-        if info.isdir == 1 {
+        if info.isDir == 1 {
             return NSImage(named: "icon_folder")
         } else {
             if info.category == 1 {

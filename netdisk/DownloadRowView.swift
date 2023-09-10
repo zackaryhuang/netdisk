@@ -27,7 +27,7 @@ class DownloadRowView: NSTableRowView, DownloadItemDelegate {
         label.isBordered = false
         label.isEditable = false
         label.drawsBackground = false
-        label.font = NSFont(PingFang: 10)
+        label.font = NSFont(Menlo: 10)
         label.textColor = .white
         return label
     }()
@@ -37,7 +37,7 @@ class DownloadRowView: NSTableRowView, DownloadItemDelegate {
         label.isBordered = false
         label.isEditable = false
         label.drawsBackground = false
-        label.font = NSFont(PingFang: 10)
+        label.font = NSFont(Menlo: 12)
         label.textColor = .white
         return label
     }()
@@ -105,7 +105,7 @@ class DownloadRowView: NSTableRowView, DownloadItemDelegate {
         imageView.image = Utils.thumbForFile(info: downloadItem.fileDetail)
         fileNameLabel.stringValue = downloadItem.fileDetail.filename ?? ""
         let downloadedSize = (Double(downloadItem.fileDetail.size ?? 0) * downloadItem.progress).binarySizeString
-        fileSizeLabel.stringValue = "\(downloadedSize)/\(Double(downloadItem.fileDetail.size ?? 0).binarySizeString)"
+        fileSizeLabel.stringValue = "\(downloadedSize) / \(Double(downloadItem.fileDetail.size ?? 0).binarySizeString)"
         progressView.doubleValue = downloadItem.progress
         
         switch downloadItem.state {
@@ -131,17 +131,19 @@ class DownloadRowView: NSTableRowView, DownloadItemDelegate {
         case .pending:
             downloadStatueLabel.stringValue = ""
         case .downloading:
-            downloadStatueLabel.stringValue = "\((item.speed).binarySizeString)/s"
+            downloadStatueLabel.stringValue = "\((item.speed).binarySizeString) / s"
         case .downloaded:
             downloadStatueLabel.stringValue = "已完成"
         }
     }
     
     func progressDidUpdate(item: DownloadItem) {
-        progressView.doubleValue = item.progress
-        let downloadedSize = (Double(item.fileDetail.size ?? 0) * item.progress).binarySizeString
-        fileSizeLabel.stringValue = "\(downloadedSize)/\(Double(item.fileDetail.size ?? 0).binarySizeString)"
-        downloadStatueLabel.stringValue = "\(item.speed.binarySizeString) / s"
+        if item.state == .downloading {
+            progressView.doubleValue = item.progress
+            let downloadedSize = (Double(item.fileDetail.size ?? 0) * item.progress).binarySizeString
+            fileSizeLabel.stringValue = "\(downloadedSize) / \(Double(item.fileDetail.size ?? 0).binarySizeString)"
+            downloadStatueLabel.stringValue = "\(item.speed.binarySizeString) / s"
+        }
     }
     
 }
@@ -162,14 +164,12 @@ protocol DownloadItemDelegate: NSObjectProtocol {
 class DownloadItem {
     weak var delegate: DownloadItemDelegate?
     var fileDetail: FileDetailInfo
-    var progress: Double
+    var progress: Double = 0.0
     var lastTime: TimeInterval = 0.0
     var lastProgress: Double = 0.0
-    var state: DownloadState
+    var state: DownloadState = .pending
     var speed: Double = 0.0
-    init(fileDetail: FileDetailInfo, progress: Double, state: DownloadState) {
+    init(fileDetail: FileDetailInfo) {
         self.fileDetail = fileDetail
-        self.progress = progress
-        self.state = state
     }
 }

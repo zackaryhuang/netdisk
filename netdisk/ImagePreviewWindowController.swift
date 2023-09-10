@@ -6,12 +6,14 @@
 //
 
 import Cocoa
+import Kingfisher
+import Alamofire
 
-class MainWindowController: NSWindowController, NSWindowDelegate {
-
-    var loginVC = LoginViewController()
+class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
     
-    var mainVC = MainViewController()
+    var detailInfo: FileDetailInfo?
+    
+    let imagePreviewController = ImagePreviewController()
     
     convenience init() {
         self.init(windowNibName: "")
@@ -19,27 +21,22 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     
     override func windowDidLoad() {
         super.windowDidLoad()
-    
-        // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+        
     }
     
     override func loadWindow() {
         let frame: CGRect = CGRect(x: 0, y: 0, width: 280, height: 400)
-        let style: NSWindow.StyleMask = [.titled, .closable, .fullSizeContentView]
+        let style: NSWindow.StyleMask = [.titled, .closable, .resizable, .fullSizeContentView]
         let back: NSWindow.BackingStoreType = .buffered
         let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
         window.titlebarAppearsTransparent = true
+        window.maxSize = NSMakeSize(1920, 1080)
         window.center()
         window.delegate = self
-        if isLogin() {
-            window.contentView = mainVC.view;
-            window.contentViewController = mainVC
-            window.setFrame(NSMakeRect(0, 0, 830, 556), display: true, animate: true)
-            
-        } else {
-            window.contentView = loginVC.view;
-            window.contentViewController = loginVC
-        }
+        imagePreviewController.detailInfo = detailInfo
+        imagePreviewController.window = window
+        window.contentViewController = imagePreviewController
+        window.contentView = imagePreviewController.view
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
         window.standardWindowButton(.zoomButton)?.isHidden = true
         self.window = window
@@ -47,9 +44,5 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         exit(0)
-    }
-    
-    func isLogin() -> Bool {
-        return UserDefaults.standard.object(forKey: "UserAccessToken") != nil
     }
 }

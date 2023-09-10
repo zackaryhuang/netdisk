@@ -27,7 +27,7 @@ class FileRowView: NSTableRowView {
         return titleLabel
     }()
     
-    
+    var isFocused = false
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         configUI()
@@ -76,7 +76,7 @@ class FileRowView: NSTableRowView {
                         thumbImageView.kf.setImage(with: URL(string: imageUrl), placeholder: NSImage(named: "icon_photo"))
                     } else if let imageUrl = fileInfo?.thumbs?["url2"] as? String {
                         thumbImageView.kf.setImage(with: URL(string: imageUrl), placeholder: NSImage(named: "icon_photo"))
-                    } else if let imageUrl = fileInfo?.thumbs?["url3"] as? String {
+                    } else if let imageUrl = fileInfo?.thumbs?["url1"] as? String {
                         thumbImageView.kf.setImage(with: URL(string: imageUrl), placeholder: NSImage(named: "icon_photo"))
                     } else {
                         debugPrint(info.serverFileName ?? "")
@@ -131,17 +131,30 @@ class FileRowView: NSTableRowView {
         }
     }
     
-//    override func updateTrackingAreas() {
-//        let trackingArea = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited], owner: self)
-//        addTrackingArea(trackingArea)
-//    }
+    
+    override func updateTrackingAreas() {
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow], owner: self)
+        addTrackingArea(trackingArea)
+    }
     
     override func mouseEntered(with event: NSEvent) {
-        backgroundColor = .gray
+        isFocused = true
+        display()
     }
     
     override func mouseExited(with event: NSEvent) {
-        backgroundColor = .clear
+        isFocused = false
+        display()
     }
     
+    override func drawBackground(in dirtyRect: NSRect) {
+        super.drawBackground(in: dirtyRect)
+        if !isFocused {
+            return
+        }
+        
+        NSColor(hex: 0x2C2C2C).setFill()
+        let hoverPath = NSBezierPath(roundedRect: dirtyRect, xRadius: 10, yRadius: 10)
+        hoverPath.fill()
+    }
 }

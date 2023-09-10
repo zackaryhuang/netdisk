@@ -29,4 +29,8 @@ extension NSFont {
     convenience init?(PingFang: Float) {
         self.init(name: "PingFangSC-Regular", size: CGFloat(PingFang))
     }
+    
+    convenience init?(Menlo: Float) {
+        self.init(name: "Menlo-Regular", size: CGFloat(Menlo))
+    }
 }
