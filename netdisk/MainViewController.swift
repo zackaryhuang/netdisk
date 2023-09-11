@@ -27,6 +27,8 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     
     var fileResponse: FileResponse?
     
+    var categoryFilesResponse = [CategoryType : CategoryFilesResponse]()
+    
     let avatarImageView = {
         let imageView = NSImageView()
         imageView.wantsLayer = true
@@ -48,66 +50,37 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     
     var currentCategoryType: CategoryType? {
         didSet {
-           
             if currentCategoryType == .downloading ||
                 currentCategoryType == .uploading ||
                 currentCategoryType == .finishedTrans {
-                
-                NSAnimationContext.runAnimationGroup({context in
-                  context.duration = 0.25
-                  context.allowsImplicitAnimation = true
-                  
-                    tableContainerView?.snp.remakeConstraints({ make in
-                        make.leading.equalTo(categoryTableContainerView!.snp.trailing)
-                        make.trailing.equalTo(view)
-                        make.top.equalTo(view)
-                        make.bottom.equalTo(view)
-                    })
-                    filePathView.alphaValue = 0.0
-                    
-                  self.view.layoutSubtreeIfNeeded()
-                  
-                }, completionHandler:nil)
+                self.fileResponse = nil
+                hideFilePathView(true)
             } else if currentCategoryType == .files {
-                
-                tableContainerView?.snp.remakeConstraints({ make in
-                    make.leading.equalTo(categoryTableContainerView!.snp.trailing)
-                    make.trailing.equalTo(view)
-                    make.top.equalTo(view).offset(40)
-                    make.bottom.equalTo(view)
-                })
-                NSAnimationContext.runAnimationGroup({context in
-                  context.duration = 0.25
-                  context.allowsImplicitAnimation = true
-                  
-                    tableContainerView?.snp.remakeConstraints({ make in
-                        make.leading.equalTo(categoryTableContainerView!.snp.trailing)
-                        make.trailing.equalTo(view)
-                        make.top.equalTo(view).offset(40)
-                        make.bottom.equalTo(view)
-                    })
-                    filePathView.alphaValue = 1.0
-                    
-                  self.view.layoutSubtreeIfNeeded()
-                  
-                }, completionHandler:nil)
+                loadFiles(with: "/") { success in
+                    if success {
+                        debugPrint("load files success")
+                        self.currentFolderPath = "/"
+                    } else {
+                        debugPrint("load files failed")
+                    }
+                }
+                hasMoreData = true
+                hideFilePathView(false)
+            } else if currentCategoryType == .photos || currentCategoryType == .videos || currentCategoryType == .audios || currentCategoryType == .docs {
+                loadCategoryFiles { success in
+                    if success {
+                        debugPrint("load category files success")
+                        debugPrint("load category files success")
+                    } else {
+                        debugPrint("load category files failed")
+                    }
+                }
+                hasMoreData = true
+                hideFilePathView(true)
             } else {
-                NSAnimationContext.runAnimationGroup({context in
-                  context.duration = 0.25
-                  context.allowsImplicitAnimation = true
-                  
-                    tableContainerView?.snp.remakeConstraints({ make in
-                        make.leading.equalTo(categoryTableContainerView!.snp.trailing)
-                        make.trailing.equalTo(view)
-                        make.top.equalTo(view)
-                        make.bottom.equalTo(view)
-                    })
-                    filePathView.alphaValue = 0.0
-                    
-                  self.view.layoutSubtreeIfNeeded()
-                  
-                }, completionHandler:nil)
+                hideFilePathView(true)
             }
+            self.tableContainerView?.documentView?.scrollToBeginningOfDocument(nil)
             self.tableView.reloadData()
         }
     }
@@ -174,12 +147,8 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(endScroll(_:)), name: NSScrollView.didEndLiveScrollNotification, object: nil)
         configUI()
+        currentCategoryType = .files
         requestUerData()
-        loadFiles(with: "/") { success in
-            if success {
-                self.currentFolderPath = "/"
-            }
-        }
         requestUsage()
     }
     
@@ -243,7 +212,7 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         categoryTableContainerView?.documentView = categoryTableView
         categoryTableContainerView?.snp.makeConstraints { make in
             make.leading.equalTo(avatarImageView.snp.trailing).offset(10)
-            make.top.bottom.equalTo(view)
+            make.top.equalTo(view)
             make.width.equalTo(view).multipliedBy(1/5.0)
         }
         
@@ -299,6 +268,23 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         
     }
     
+    func hideFilePathView(_ hidden: Bool) {
+        NSAnimationContext.runAnimationGroup({context in
+          context.duration = 0.25
+          context.allowsImplicitAnimation = true
+          
+            tableContainerView?.snp.remakeConstraints({ make in
+                make.leading.equalTo(categoryTableContainerView!.snp.trailing)
+                make.trailing.equalTo(view)
+                make.top.equalTo(view).offset(hidden ? 0 : 40)
+                make.bottom.equalTo(view)
+            })
+            filePathView.alphaValue = hidden ? 0.0 : 1.0
+            
+          self.view.layoutSubtreeIfNeeded()
+          
+        }, completionHandler:nil)
+    }
     
     func numberOfRows(in tableView: NSTableView) -> Int {
         if tableView == categoryTableView {
@@ -307,6 +293,9 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         if currentCategoryType == .downloading {
             let downloadList = DownloadManager.shared.downloadingList + DownloadManager.shared.pendingList + DownloadManager.shared.failedList
             return downloadList.count
+        }
+        if currentCategoryType == .photos || currentCategoryType == .videos || currentCategoryType == .docs || currentCategoryType == .audios {
+            return self.categoryFilesResponse[currentCategoryType!]?.list?.count ?? 0
         }
         return fileResponse?.list?.count ?? 0
     }
@@ -341,6 +330,12 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         if rowView == nil {
             rowView = FileRowView()
         }
+        if currentCategoryType == .photos || currentCategoryType == .videos || currentCategoryType == .docs || currentCategoryType == .audios {
+            let fileInfo = categoryFilesResponse[currentCategoryType!]?.list![row]
+            (rowView as? FileRowView)?.updateRowView(with: fileInfo)
+            return (rowView as? FileRowView)
+        }
+        
         let fileInfo = fileResponse?.list![row]
         (rowView as? FileRowView)?.updateRowView(with: fileInfo)
         return (rowView as? FileRowView)
@@ -358,15 +353,18 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let columnView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "FileColumn"), owner: nil)
         columnView?.focusRingType = .none
-        if let cnt = self.fileResponse?.list?.count, row == cnt - 1, currentCategoryType == .files {
-//            loadMoreData()
-        }
         return columnView
         
     }
     
     @objc func tableViewDoubleClick(_ sender: AnyObject) {
-        guard let fileInfo = fileResponse?.list?[tableView.selectedRow] else {
+        var temp: FileInfo? = nil
+        if currentCategoryType == .files {
+            temp = fileResponse?.list?[tableView.selectedRow]
+        } else if currentCategoryType == .photos {
+            temp = categoryFilesResponse[currentCategoryType!]?.list?[tableView.selectedRow]
+        }
+        guard let fileInfo = temp else {
             return
         }
         if fileInfo.isDir == 1, let folderPath = fileInfo.path {
@@ -378,7 +376,6 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             }
         } else if fileInfo.category == 3 {
             requestFileDetail(with: fileInfo) { detail in
-                //                debugPrint("\(detail!)")
                 if let detailInfo = detail {
                     let previewWindow = ImagePreviewWindowController()
                     previewWindow.detailInfo = detailInfo
@@ -394,7 +391,7 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             let index = categoryTableView.selectedRow
             for (idx, value) in currentItems.enumerated() {
                 value.isSelected = idx == index
-                if value.isSelected {
+                if value.isSelected && currentCategoryType != value.type {
                     currentCategoryType = value.type
                 }
             }
@@ -411,6 +408,121 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             if success {
                 self.currentFolderPath = path
             }
+        }
+    }
+    
+    func didClickTabView(tabView: TabItemView) {
+        tabs.forEach { tab in
+            if tab == tabView {
+                tab.isSelected = true
+                switch tabView.type {
+                case .trans:
+                    currentItems = transItems
+                default:
+                    currentItems = categoryItems
+                }
+                currentItems.forEach { item in
+                    item.isSelected = false
+                }
+            } else {
+                tab.isSelected = false
+            }
+        }
+        
+        if let categoryItem = currentItems.first, currentCategoryType != categoryItem.type {
+            categoryItem.isSelected = true
+            currentCategoryType = categoryItem.type
+        }
+        categoryTableView.reloadData()
+    }
+    
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.removeAllItems()
+        menu.addItem(NSMenuItem(title: "删除", action: #selector(deleteFile(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "重命名", action: #selector(renameFile(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "下载", action: #selector(downloadFile(_:)), keyEquivalent: ""))
+    }
+    
+    @objc func deleteFile(_ sender: AnyObject) {
+        
+    }
+    
+    @objc func downloadFile(_ sender: AnyObject) {
+        let row = tableView.clickedRow
+        if let fileInfo = self.fileResponse?.list?[row] {
+            downloadFile(with: fileInfo)
+        }
+    }
+    
+    @objc func renameFile(_ sender: AnyObject) {
+        
+    }
+}
+
+extension MainViewController {
+    func requestUsage() {
+        if let accessToken = UserDefaults.standard.object(forKey: "UserAccessToken") as? String {
+            AF.request("https://pan.baidu.com/api/quota", method: .get, parameters: [
+                "access_token" : accessToken
+            ]).responseDecodable(of: UsageInfo.self) { response in
+                if let usageInfo = response.value {
+                    self.usageView.updateView(with: usageInfo)
+                }
+            }
+        }
+    }
+    func downloadFile(with fileInfo: FileInfo) {
+        DownloadManager.shared.download(with: fileInfo)
+    }
+    
+    func loadCategoryFiles(completionHandler completion: @escaping ((_ success: Bool) -> Void)) {
+        if let accessToken = UserDefaults.standard.object(forKey: "UserAccessToken") as? String,
+            let deviceID = UserDefaults.standard.object(forKey: "UserDeviceCode") {
+            debugPrint("请求数据 0 - \(Self.pageSize)")
+            var category = "3"
+            if currentCategoryType == .videos {
+                category = "1"
+            } else if (currentCategoryType == .audios) {
+                category = "2"
+            } else if (currentCategoryType == .docs) {
+                category = "4"
+            }
+            
+            AF.request("https://pan.baidu.com/rest/2.0/xpan/multimedia", method: .get, parameters: [
+                "method" : "categorylist",
+                "access_token" : accessToken,
+                "start" : 0,
+                "category" : category,
+                "limit" : Self.pageSize,
+                "recursion" : 1,
+                "device_id" : deviceID
+            ], encoding: NOURLEncoding()).responseDecodable(of: CategoryFilesResponse.self) { response in
+                switch response.result {
+                case .success:
+                    if let categoryFilesResponse = response.value {
+                        if categoryFilesResponse.errno == 0 {
+                            self.categoryFilesResponse[self.currentCategoryType!] = categoryFilesResponse
+                            if let cnt = categoryFilesResponse.list?.count, cnt < Self.pageSize {
+                                debugPrint("已无更多数据 - \(categoryFilesResponse.list?.count ?? 0)")
+                                self.hasMoreData = false
+                            }
+                            self.tableView.reloadData()
+                            completion(true)
+                        } else {
+                            debugPrint("error - \(categoryFilesResponse.errno!)")
+                            completion(false)
+                        }
+                    } else {
+                        completion(false)
+                    }
+                case let .failure(err):
+                    debugPrint("请求数据失败 - \(err.localizedDescription)")
+                    completion(false)
+                }
+                
+            }
+        } else {
+            completion(false)
         }
     }
     
@@ -454,150 +566,94 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         }
     }
     
-    func didClickTabView(tabView: TabItemView) {
-        tabs.forEach { tab in
-            if tab == tabView {
-                tab.isSelected = true
-                switch tabView.type {
-                case .trans:
-                    currentItems = transItems
-                default:
-                    currentItems = categoryItems
-                }
-            } else {
-                tab.isSelected = false
-            }
-        }
-        
-        if let categoryItem = currentItems.first {
-            currentCategoryType = categoryItem.type
-        }
-        
-        categoryTableView.reloadData()
-    }
-    
-    func menuNeedsUpdate(_ menu: NSMenu) {
-        menu.removeAllItems()
-        menu.addItem(NSMenuItem(title: "删除", action: #selector(deleteFile(_:)), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: "重命名", action: #selector(renameFile(_:)), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: "下载", action: #selector(downloadFile(_:)), keyEquivalent: ""))
-    }
-    
-    @objc func deleteFile(_ sender: AnyObject) {
-        
-    }
-    
-    @objc func downloadFile(_ sender: AnyObject) {
-        let row = tableView.clickedRow
-        if let fileInfo = self.fileResponse?.list?[row] {
-            downloadFile(with: fileInfo)
-        }
-    }
-    
-    @objc func renameFile(_ sender: AnyObject) {
-        
-    }
-}
-
-extension MainViewController {
-    func requestUsage() {
-        if let accessToken = UserDefaults.standard.object(forKey: "UserAccessToken") as? String {
-            AF.request("https://pan.baidu.com/api/quota", method: .get, parameters: [
-                "access_token" : accessToken
-            ]).responseDecodable(of: UsageInfo.self) { response in
-                if let usageInfo = response.value {
-                    self.usageView.updateView(with: usageInfo)
-                }
-            }
-        }
-    }
-    func downloadFile(with fileInfo: FileInfo) {
-        DownloadManager.shared.download(with: fileInfo)
-    }
-    
-    func requestCategoryData(category: CategoryItem) {
-        
-    }
-    
-//    func requestFileList() {
-//        if let accessToken = UserDefaults.standard.object(forKey: "UserAccessToken") as? String {
-//            debugPrint("请求数据 0 - \(Self.pageSize)")
-//            AF.request("https://pan.baidu.com/rest/2.0/xpan/file", method: .get, parameters: [
-//                "method" : "list",
-//                "access_token" : accessToken,
-//                "start" : 0,
-//                "limit" : Self.pageSize,
-//                "dir" : currentFolderPath,
-//                "web" : 1
-//            ], encoding: NOURLEncoding()).responseDecodable(of: FileResponse.self) { response in
-//                switch response.result {
-//                case .success:
-//                    if let fileResponse = response.value {
-//                        if fileResponse.errno == 0 {
-//                            self.fileResponse = fileResponse
-//                            if let cnt = fileResponse.list?.count, cnt < Self.pageSize {
-//                                debugPrint("已无更多数据")
-//                                self.hasMoreData = false
-//                            }
-//                            self.tableView.reloadData()
-//                            if let path = self.fileResponse?.list?.first?.path {
-//                                self.filePathView.path = (path as NSString).deletingLastPathComponent
-//                            }
-//                            
-//                        } else {
-//                            debugPrint("error - \(fileResponse.errno!)")
-//                            self.currentFolderPath = URL(string: self.currentFolderPath)?.deletingLastPathComponent().absoluteString ?? "/"
-//                        }
-//                    } else {
-//                        self.currentFolderPath = URL(string: self.currentFolderPath)?.deletingLastPathComponent().absoluteString ?? "/"
-//                    }
-//                case let .failure(err):
-//                    self.currentFolderPath = (self.currentFolderPath as NSString).deletingLastPathComponent
-//                    debugPrint("请求数据失败 - \(err.localizedDescription)")
-//                }
-//                
-//            }
-//        }
-//    }
-    
     func loadMoreData() {
         if isLoadingMore || !hasMoreData {
             return
         }
-        
-        if let accessToken = UserDefaults.standard.object(forKey: "UserAccessToken") as? String {
-            debugPrint("请求更多数据 \(self.fileResponse?.list?.count ?? 0) - \(Self.pageSize)")
-            isLoadingMore = true
-            AF.request("https://pan.baidu.com/rest/2.0/xpan/file", method: .get, parameters: [
-                "method" : "list",
-                "access_token" : accessToken,
-                "start" : self.fileResponse?.list?.count ?? 0,
-                "limit" : Self.pageSize,
-                "dir" : currentFolderPath,
-                "web" : 1
-            ], encoding: NOURLEncoding()).responseDecodable(of: FileResponse.self) { response in
-                switch response.result {
-                case .success:
-                    if let fileResponse = response.value {
-                        if fileResponse.errno == 0 {
-                            if let cnt = fileResponse.list?.count, cnt < Self.pageSize {
-                                debugPrint("已无更多数据")
-                                self.hasMoreData = false
+        if currentCategoryType == .files {
+            if let accessToken = UserDefaults.standard.object(forKey: "UserAccessToken") as? String {
+                debugPrint("请求更多数据 \(self.fileResponse?.list?.count ?? 0) - \(Self.pageSize)")
+                isLoadingMore = true
+                AF.request("https://pan.baidu.com/rest/2.0/xpan/file", method: .get, parameters: [
+                    "method" : "list",
+                    "access_token" : accessToken,
+                    "start" : self.fileResponse?.list?.count ?? 0,
+                    "limit" : Self.pageSize,
+                    "dir" : currentFolderPath,
+                    "web" : 1
+                ], encoding: NOURLEncoding()).responseDecodable(of: FileResponse.self) { response in
+                    switch response.result {
+                    case .success:
+                        if let fileResponse = response.value {
+                            if fileResponse.errno == 0 {
+                                if let cnt = fileResponse.list?.count, cnt < Self.pageSize {
+                                    debugPrint("已无更多数据")
+                                    self.hasMoreData = false
+                                }
+                                fileResponse.list?.forEach({ fileInfo in
+                                    self.fileResponse?.list?.append(fileInfo)
+                                })
+                                self.tableView.reloadData()
+                            } else {
+                                debugPrint("error - \(fileResponse.errno!)")
                             }
-                            fileResponse.list?.forEach({ fileInfo in
-                                self.fileResponse?.list?.append(fileInfo)
-                            })
-                            self.tableView.reloadData()
-                        } else {
-                            debugPrint("error - \(fileResponse.errno!)")
                         }
+                    case let .failure(err):
+                        debugPrint("加载更多数据错误\(err.localizedDescription)")
                     }
-                case let .failure(err):
-                    debugPrint("加载更多数据错误\(err.localizedDescription)")
+                    self.isLoadingMore = false
                 }
-                self.isLoadingMore = false
             }
+            return
         }
+        
+        if currentCategoryType == .photos || currentCategoryType == .videos || currentCategoryType == .docs || currentCategoryType == .audios {
+            if let accessToken = UserDefaults.standard.object(forKey: "UserAccessToken") as? String,
+                let deviceID = UserDefaults.standard.object(forKey: "UserDeviceCode") {
+                debugPrint("请求更多数据 \(self.fileResponse?.list?.count ?? 0) - \(Self.pageSize)")
+                isLoadingMore = true
+                var category = "3"
+                if currentCategoryType == .videos {
+                    category = "1"
+                } else if (currentCategoryType == .audios) {
+                    category = "2"
+                } else if (currentCategoryType == .docs) {
+                    category = "4"
+                }
+                AF.request("https://pan.baidu.com/rest/2.0/xpan/multimedia", method: .get, parameters: [
+                    "method" : "categorylist",
+                    "access_token" : accessToken,
+                    "start" : self.categoryFilesResponse[self.currentCategoryType!]?.list?.count ?? 0,
+                    "limit" : Self.pageSize,
+                    "category" : category,
+                    "recursion" : 1,
+                    "device_id" : deviceID
+                ], encoding: NOURLEncoding()).responseDecodable(of: CategoryFilesResponse.self) { response in
+                    switch response.result {
+                    case .success:
+                        if let categoryFilesResponse = response.value {
+                            if categoryFilesResponse.errno == 0 {
+                                if let cnt = categoryFilesResponse.list?.count, cnt < Self.pageSize {
+                                    debugPrint("已无更多数据")
+                                    self.hasMoreData = false
+                                }
+                                categoryFilesResponse.list?.forEach({ fileInfo in
+                                    self.categoryFilesResponse[self.currentCategoryType!]?.list?.append(fileInfo)
+                                })
+                                self.tableView.reloadData()
+                            } else {
+                                debugPrint("error - \(categoryFilesResponse.errno!)")
+                            }
+                        }
+                    case let .failure(err):
+                        debugPrint("加载更多数据错误\(err.localizedDescription)")
+                    }
+                    self.isLoadingMore = false
+                }
+            }
+            return
+        }
+        
     }
     
     func requestFileDetail(with fileInfo: FileInfo, completion: @escaping (_ detail: FileDetailInfo?) -> ()) {
@@ -733,6 +789,17 @@ class FileResponse: Codable {
     enum CodingKeys: String, CodingKey {
         case errno = "errno"
         case guideInfo = "guide_info"
+        case list = "list"
+    }
+}
+
+class CategoryFilesResponse: Codable {
+    let errno: Int?
+    let hasMore: Int?
+    var list: [FileInfo]?
+    enum CodingKeys: String, CodingKey {
+        case hasMore = "has_more"
+        case errno = "errno"
         case list = "list"
     }
 }

@@ -14,6 +14,7 @@ class LoginViewController: NSViewController {
 
     let imageView = NSImageView()
     var deviceCodeData: DeviceCodeData?
+    weak var windowController: MainWindowController?
     
     let scanTipsLabel = {
         let textField = NSTextField(labelWithString: "扫码登录百度网盘")
@@ -74,12 +75,14 @@ class LoginViewController: NSViewController {
     
     func queryAccessToken() {
         if let deviceCode = self.deviceCodeData?.deviceCode {
+            UserDefaults.standard.set(deviceCode, forKey: "UserDeviceCode")
             AF.request("https://openapi.baidu.com/oauth/2.0/token", method: .post, parameters: ["grant_type" : "device_token", "code" : deviceCode, "client_id" : "8xVGfuF1lIpiyqO1KSSTs8fC0H3VIRHd", "client_secret" : "OsQkHVyNecu5U3rHyquwdegQGy9HPItD"]).responseDecodable(of: AccessTokenData.self) { response in
                 if let accessToken = response.value?.accessToken,
                     let refreshToken = response.value?.refreshToken {
                     print("AccessToken: \(accessToken), RefreshToken: \(refreshToken)")
                     UserDefaults.standard.set(accessToken, forKey: "UserAccessToken")
                     UserDefaults.standard.set(refreshToken, forKey: "UserRefreshToken")
+                    self.windowController?.loginSuccess()
                 } else {
                     if let interval = self.deviceCodeData?.interval  {
                         DispatchQueue.global().asyncAfter(deadline:  DispatchTime.now() + DispatchTimeInterval.seconds(interval)) {

@@ -38,19 +38,26 @@ class ImagePreviewController: NSViewController {
             AF.download(url, parameters: ["access_token" : UserDefaults.standard.object(forKey: "UserAccessToken") as! String], headers: ["User-Agent" : "pan.baidu.com"] ,to: DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory, options: .removePreviousFile)).response { response in
                 switch response.result {
                 case .success:
-                    if let path = response.value as? URL,
-                       let image = NSImage(contentsOf: path) {
-                        let ratio = image.size.height / image.size.width
-                        let height = 576.0
-                        let width = height / ratio
-                        self.imageView.snp.remakeConstraints { make in
-                            make.edges.equalTo(self.view)
-                            make.width.equalTo(width)
-                            make.height.equalTo(height)
+                    DispatchQueue.global().async {
+                        if let path = response.value as? URL,
+                           let image = NSImage(contentsOf: path) {
+                            let ratio = image.size.height / image.size.width
+                            let height = 576.0
+                            let width = height / ratio
+                            DispatchQueue.main.async {
+                                self.imageView.snp.remakeConstraints { make in
+                                    make.edges.equalTo(self.view)
+                                    make.width.equalTo(width)
+                                    make.height.equalTo(height)
+                                }
+                                self.imageView.image = image
+                                
+                                let originX = (self.window?.frame.origin.x ?? 0.0) - ((width - (self.window?.frame.size.width ?? 0.0)) / 2.0)
+                                let originY = (self.window?.frame.origin.y ?? 0.0) - ((height - (self.window?.frame.size.height ?? 0.0)) / 2.0)
+                                self.window?.setFrame(NSMakeRect(originX, originY, width, height), display: true, animate: false)
+                            }
                         }
-                        self.imageView.image = image
                     }
-                    self.window?.center()
                     debugPrint("success")
                 case let .failure(err):
                     debugPrint("下载图片失败\(err.localizedDescription)")

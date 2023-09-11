@@ -20,11 +20,23 @@ class FileRowView: NSTableRowView {
     let titleLabel = {
        let titleLabel = NSTextField()
         titleLabel.isEditable = false
+        titleLabel.lineBreakMode = .byTruncatingMiddle
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         titleLabel.drawsBackground = false
         titleLabel.isSelectable = false
         titleLabel.font = NSFont(PingFang: 16)
         titleLabel.isBordered = false
         return titleLabel
+    }()
+    
+    let fileSizeLabel = {
+        let titleLabel = NSTextField()
+         titleLabel.isEditable = false
+         titleLabel.drawsBackground = false
+         titleLabel.isSelectable = false
+         titleLabel.font = NSFont(PingFang: 12)
+         titleLabel.isBordered = false
+         return titleLabel
     }()
     
     var isFocused = false
@@ -47,11 +59,18 @@ class FileRowView: NSTableRowView {
             make.width.height.equalTo(28)
         }
         
+        addSubview(fileSizeLabel)
+        fileSizeLabel.snp.makeConstraints { make in
+            make.trailing.equalTo(self).offset(-20)
+            make.centerY.equalTo(self)
+            
+        }
+        
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(thumbImageView.snp.trailing).offset(20)
             make.centerY.equalTo(self)
-            make.trailing.lessThanOrEqualTo(self).offset(-100)
+            make.trailing.lessThanOrEqualTo(fileSizeLabel.snp.leading).offset(-30)
         }
     }
 
@@ -64,6 +83,11 @@ class FileRowView: NSTableRowView {
     func updateRowView(with fileInfo: FileInfo?) {
         if let info = fileInfo {
             titleLabel.stringValue = info.serverFileName ?? ""
+            if let intSize = info.size, intSize > 0 {
+                fileSizeLabel.stringValue = Double(intSize).binarySizeString
+            } else {
+                fileSizeLabel.stringValue = ""
+            }
             if info.isDir == 1 {
                 thumbImageView.image = NSImage(named: "icon_folder")
             } else {

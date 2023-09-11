@@ -29,24 +29,31 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
         let back: NSWindow.BackingStoreType = .buffered
         let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
         window.titlebarAppearsTransparent = true
-        window.center()
         window.delegate = self
         if isLogin() {
             window.contentView = mainVC.view;
             window.contentViewController = mainVC
             window.setFrame(NSMakeRect(0, 0, 830, 556), display: true, animate: true)
-            
         } else {
+            loginVC.windowController = self
             window.contentView = loginVC.view;
             window.contentViewController = loginVC
         }
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
         window.standardWindowButton(.zoomButton)?.isHidden = true
+        window.center()
         self.window = window
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         exit(0)
+    }
+    
+    func loginSuccess() {
+        window?.contentView = mainVC.view;
+        window?.contentViewController = mainVC
+        window?.setFrame(NSMakeRect(0, 0, 830, 556), display: true, animate: false)
+        window?.center()
     }
     
     func isLogin() -> Bool {
