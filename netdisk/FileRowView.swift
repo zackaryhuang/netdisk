@@ -70,7 +70,8 @@ class FileRowView: NSTableRowView {
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(thumbImageView.snp.trailing).offset(20)
             make.centerY.equalTo(self)
-            make.trailing.lessThanOrEqualTo(fileSizeLabel.snp.leading).offset(-30)
+//            make.trailing.lessThanOrEqualTo(fileSizeLabel.snp.leading).offset(-30)
+            make.width.lessThanOrEqualTo(350)
         }
     }
 

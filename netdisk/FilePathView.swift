@@ -59,7 +59,7 @@ class FilePathView: NSView {
             totalWidth += attributedTitle.size().width
         }
         
-        if (totalWidth + 11) > self.frame.size.width {
+        if (totalWidth + 21) > self.frame.size.width {
             for item in items[1...] {
                 if item.shouldIgnore == false {
                     item.shouldIgnore = true
@@ -89,10 +89,9 @@ class FilePathView: NSView {
         
         paths.removeAll()
         var lastView: NSView? = nil
-        var ignoredItemSettled = false
         for (index,value) in pathItems.enumerated() {
             paths.append(value)
-            if value.shouldIgnore == true && ignoredItemSettled {
+            if value.shouldIgnore == true && pathItems.count > (index + 1) && pathItems[index + 1].shouldIgnore == true {
                 continue
             }
             if index != 0 {
@@ -106,12 +105,8 @@ class FilePathView: NSView {
                 lastView = imageView
             }
             var stringValue = value.pathUnit
-            if value.shouldIgnore == true
-                && (index + 1 < pathItems.count)
-                && pathItems[index + 1].shouldIgnore == false
-                && !ignoredItemSettled {
+            if value.shouldIgnore == true {
                 stringValue = "..."
-                ignoredItemSettled = true
             }
             let button = NSButton(title: String(stringValue), target: self, action: #selector(buttonClick(_:)))
             button.attributedTitle = NSAttributedString(string: String(stringValue), attributes: [

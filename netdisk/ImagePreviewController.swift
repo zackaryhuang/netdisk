@@ -25,7 +25,7 @@ class ImagePreviewController: NSViewController {
         // Do view setup here.
         view.addSubview(imageView)
         imageView.snp.makeConstraints { make in
-            make.edges.equalTo(view)
+            make.edges.equalTo(view).inset(NSEdgeInsets(top: 50, left: 50, bottom: 50, right: 50))
             make.width.equalTo(720)
             make.height.equalTo(576)
         }
@@ -45,16 +45,35 @@ class ImagePreviewController: NSViewController {
                             let height = 576.0
                             let width = height / ratio
                             DispatchQueue.main.async {
-                                self.imageView.snp.remakeConstraints { make in
-                                    make.edges.equalTo(self.view)
-                                    make.width.equalTo(width)
-                                    make.height.equalTo(height)
-                                }
                                 self.imageView.image = image
                                 
-                                let originX = (self.window?.frame.origin.x ?? 0.0) - ((width - (self.window?.frame.size.width ?? 0.0)) / 2.0)
-                                let originY = (self.window?.frame.origin.y ?? 0.0) - ((height - (self.window?.frame.size.height ?? 0.0)) / 2.0)
-                                self.window?.setFrame(NSMakeRect(originX, originY, width, height), display: true, animate: false)
+                                let oldX = self.window?.frame.origin.x ?? 0.0
+                                let oldY = self.window?.frame.origin.y ?? 0.0
+                                let oldW = self.window?.frame.size.width ?? 0.0
+                                let oldH = self.window?.frame.size.height ?? 0.0
+                                
+                                let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
+                                
+                                let newW = width
+                                let newH = height
+                                let newX = oldCenter.x - newW / 2.0
+                                
+                                let newY = oldCenter.y - newH / 2.0
+                                
+                                NSAnimationContext.runAnimationGroup({context in
+                                  context.duration = 0.25
+                                  context.allowsImplicitAnimation = true
+                                  
+                                    self.imageView.snp.remakeConstraints { make in
+                                        make.edges.equalTo(self.view).inset(NSEdgeInsets(top: 50, left: 50, bottom: 50, right: 50))
+                                        make.width.equalTo(width)
+                                        make.height.equalTo(height)
+                                    }
+                                    self.view.layoutSubtreeIfNeeded()
+//                                    self.window?.setFrameOrigin(CGPoint(x: newX, y: newY))
+                                    self.window?.setFrame(NSMakeRect(newX - 50, newY - 50, newW + 100, newH + 100), display: true)
+                                  
+                                }, completionHandler:nil)
                             }
                         }
                     }

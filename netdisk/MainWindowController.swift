@@ -52,8 +52,25 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     func loginSuccess() {
         window?.contentView = mainVC.view;
         window?.contentViewController = mainVC
-        window?.setFrame(NSMakeRect(0, 0, 830, 556), display: true, animate: false)
-        window?.center()
+        
+        let oldX = window?.frame.origin.x ?? 0.0
+        let oldY = window?.frame.origin.y ?? 0.0
+        let oldW = window?.frame.size.width ?? 0.0
+        let oldH = window?.frame.size.height ?? 0.0
+        
+        let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
+        
+        let newW = 830.0
+        let newH = 556.0
+        let newX = oldCenter.x - newW / 2.0
+        
+        let newY = oldCenter.y - newH / 2.0
+        
+        NSAnimationContext.runAnimationGroup({context in
+          context.duration = 0.25
+          context.allowsImplicitAnimation = true
+            self.window?.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
+        }, completionHandler:nil)
     }
     
     func isLogin() -> Bool {

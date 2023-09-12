@@ -30,7 +30,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         let back: NSWindow.BackingStoreType = .buffered
         let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
         window.titlebarAppearsTransparent = true
-        window.maxSize = NSMakeSize(1920, 1080)
+        window.maxSize = NSMakeSize(720, 576)
         window.center()
         window.delegate = self
         imagePreviewController.detailInfo = detailInfo
