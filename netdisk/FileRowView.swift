@@ -85,8 +85,10 @@ class FileRowView: NSTableRowView {
         if let info = fileInfo {
             titleLabel.stringValue = info.serverFileName ?? ""
             if let intSize = info.size, intSize > 0 {
+                fileSizeLabel.isHidden = false
                 fileSizeLabel.stringValue = Double(intSize).binarySizeString
             } else {
+                fileSizeLabel.isHidden = true
                 fileSizeLabel.stringValue = ""
             }
             if info.isDir == 1 {

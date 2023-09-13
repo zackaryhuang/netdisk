@@ -61,27 +61,29 @@ class DownloadOperation: Operation {
             debugPrint("DLink 获取失败")
             downloadItem.state = .failed
             downloadItem.delegate?.stateDidUpdate(item: downloadItem)
+            self.downloadItem.stateObserver?.downloadItemStateDidUpdate(downloadItem: self.downloadItem, fromState: .pending, toState: .failed)
             zh_isExecuting = false
             zh_isFinished = true
             return
         }
         
         AF.download(downloadLink, parameters: ["access_token" : UserDefaults.standard.object(forKey: "UserAccessToken") as! String], headers: ["User-Agent" : "pan.baidu.com"] ,to: DownloadRequest.suggestedDownloadDestination(for: .downloadsDirectory)).downloadProgress { progress in
-            if self.downloadItem.state != .downloaded {
+            if self.downloadItem.state != .downloading {
                 self.downloadItem.state = .downloading
                 self.downloadItem.delegate?.stateDidUpdate(item: self.downloadItem)
+                self.downloadItem.stateObserver?.downloadItemStateDidUpdate(downloadItem: self.downloadItem, fromState: .pending, toState: .downloading)
             }
             let nowInterval = Date.now.timeIntervalSince1970
             let lastInterval = self.downloadItem.lastTime
             if self.downloadItem.lastTime == 0 || nowInterval - lastInterval >= 0.25 {
-                let speed = Double(self.downloadItem.fileDetail.size ?? 0) * (progress.fractionCompleted - self.downloadItem.lastProgress) / (self.downloadItem.lastTime > 0 ? (Date.now.timeIntervalSince1970 - self.downloadItem.lastTime) : 1)
+                let speed = Double(self.downloadItem.fileDetail.size ?? 0) * (progress.fractionCompleted - self.downloadItem.lastProgress) / (self.downloadItem.lastTime > 0 ? (nowInterval - lastInterval) : 0.25)
+                debugPrint("文件大小: \(self.downloadItem.fileDetail.size ?? 0),  当前进度: \(progress.fractionCompleted) - \(self.downloadItem.lastProgress), 时间: \(nowInterval) - \(lastInterval), 下载速率: \(speed.binarySizeString)")
                 self.downloadItem.lastProgress = progress.fractionCompleted
                 self.downloadItem.speed = speed
                 self.downloadItem.progress = progress.fractionCompleted
                 self.downloadItem.lastTime = nowInterval
                 self.downloadItem.delegate?.progressDidUpdate(item: self.downloadItem)
             }
-            debugPrint("下载中 \((Double(self.downloadItem.fileDetail.size!) * progress.fractionCompleted).binarySizeString) / \(Double(self.downloadItem.fileDetail.size!).binarySizeString)")
         }.response { response in
             switch response.result {
             case .success:
@@ -97,6 +99,9 @@ class DownloadOperation: Operation {
             
             self.downloadItem.delegate?.stateDidUpdate(item: self.downloadItem)
             self.downloadItem.delegate?.progressDidUpdate(item: self.downloadItem)
+            self.downloadItem.stateObserver?.downloadItemStateDidUpdate(downloadItem: self.downloadItem, 
+                                                                        fromState: .downloading,
+                                                                        toState: self.downloadItem.state)
             
             self.zh_isExecuting = false
             self.zh_isFinished = true

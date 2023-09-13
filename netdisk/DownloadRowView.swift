@@ -17,6 +17,9 @@ class DownloadRowView: NSTableRowView, DownloadItemDelegate {
         label.isBordered = false
         label.isEditable = false
         label.drawsBackground = false
+        label.maximumNumberOfLines = 1
+        label.lineBreakMode = .byTruncatingMiddle
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         label.font = NSFont(PingFang: 14)
         label.textColor = .white
         return label
@@ -39,6 +42,7 @@ class DownloadRowView: NSTableRowView, DownloadItemDelegate {
         label.drawsBackground = false
         label.font = NSFont(Menlo: 12)
         label.textColor = .white
+        label.alignment = .right
         return label
     }()
     
@@ -90,7 +94,7 @@ class DownloadRowView: NSTableRowView, DownloadItemDelegate {
         fileNameLabel.snp.makeConstraints { make in
             make.leading.equalTo(imageView.snp.trailing).offset(12)
             make.top.equalTo(imageView)
-            make.trailing.equalTo(downloadStatueLabel.snp.leading).offset(-20)
+            make.trailing.lessThanOrEqualTo(downloadStatueLabel.snp.leading).offset(-20)
         }
         
         addSubview(fileSizeLabel)
@@ -161,8 +165,13 @@ protocol DownloadItemDelegate: NSObjectProtocol {
     func progressDidUpdate(item: DownloadItem)
 }
 
+protocol DownloadItemStateObserver: NSObjectProtocol {
+    func downloadItemStateDidUpdate(downloadItem: DownloadItem, fromState: DownloadState, toState: DownloadState)
+}
+
 class DownloadItem {
     weak var delegate: DownloadItemDelegate?
+    weak var stateObserver: DownloadItemStateObserver?
     var fileDetail: FileDetailInfo
     var progress: Double = 0.0
     var lastTime: TimeInterval = 0.0

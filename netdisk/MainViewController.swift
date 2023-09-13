@@ -21,7 +21,7 @@ enum CategoryType {
     case docs
 }
 
-class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource, FilePathViewDelegate, TabItemViewDelegate, NSMenuDelegate {
+class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource, FilePathViewDelegate, TabItemViewDelegate, NSMenuDelegate, DownloadManagerDelegate {
     
     static let pageSize = 50
     
@@ -150,6 +150,7 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
         currentCategoryType = .files
         requestUerData()
         requestUsage()
+        DownloadManager.shared.delegate = self
     }
     
     @objc func endScroll(_ notification: Notification) {
@@ -291,9 +292,15 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             return currentItems.count
         }
         if currentCategoryType == .downloading {
-            let downloadList = DownloadManager.shared.downloadingList + DownloadManager.shared.pendingList + DownloadManager.shared.failedList
+            let downloadList = DownloadManager.shared.downloadingList + DownloadManager.shared.pendingList + DownloadManager.shared.failedList + DownloadManager.shared.pausedList
             return downloadList.count
         }
+        
+        if currentCategoryType == .finishedTrans {
+            let downloadedList = DownloadManager.shared.downloadedList
+            return downloadedList.count
+        }
+        
         if currentCategoryType == .photos || currentCategoryType == .videos || currentCategoryType == .docs || currentCategoryType == .audios {
             return self.categoryFilesResponse[currentCategoryType!]?.list?.count ?? 0
         }
@@ -311,8 +318,21 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             (rowView as? CategoryRowView)?.updateCategoryRowView(with: categoryItem)
             return rowView as? CategoryRowView
         } else if currentCategoryType == .downloading {
-            let downloadList = DownloadManager.shared.downloadingList + DownloadManager.shared.pendingList + DownloadManager.shared.failedList
-            if downloadList.count <= 0 {
+            let downloadList = DownloadManager.shared.downloadingList + DownloadManager.shared.pendingList + DownloadManager.shared.failedList + DownloadManager.shared.pausedList
+            if downloadList.count <= 0 || row >= downloadList.count {
+                return nil
+            }
+            
+            var rowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DownloadRowView"), owner: self)
+            if rowView == nil {
+                rowView = DownloadRowView()
+            }
+            
+            (rowView as? DownloadRowView)?.updateRowView(with: downloadList[row])
+            return rowView as? DownloadRowView
+        } else if currentCategoryType == .finishedTrans {
+            let downloadedList = DownloadManager.shared.downloadedList
+            if downloadedList.count <= 0 {
                 return nil
             }
             
@@ -322,7 +342,7 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
             }
             
             
-            (rowView as? DownloadRowView)?.updateRowView(with: downloadList[row])
+            (rowView as? DownloadRowView)?.updateRowView(with: downloadedList[row])
             return rowView as? DownloadRowView
         }
         
@@ -344,9 +364,12 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
         if tableView == categoryTableView {
             return 60
-        } else if currentCategoryType == .downloading {
+        } 
+        
+        if currentCategoryType == .downloading || currentCategoryType == .uploading || currentCategoryType == .finishedTrans {
             return 60
         }
+        
         return 50
     }
     
@@ -437,9 +460,25 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     }
     
     func menuNeedsUpdate(_ menu: NSMenu) {
+        let row = tableView.clickedRow
+        if row < 0 {
+            return
+        }
+        
         menu.removeAllItems()
         menu.addItem(NSMenuItem(title: "删除", action: #selector(deleteFile(_:)), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: "重命名", action: #selector(renameFile(_:)), keyEquivalent: ""))
+        
+        if currentCategoryType == .files,
+           let fileInfo = self.fileResponse?.list?[row], fileInfo.isDir == 1 {
+            return
+        }
+        
+        if (currentCategoryType == .videos || currentCategoryType == .photos || currentCategoryType == .audios || currentCategoryType == .docs),
+           let fileInfo = self.categoryFilesResponse[currentCategoryType!]?.list?[row], fileInfo.isDir == 1 {
+            return
+        }
+        
         menu.addItem(NSMenuItem(title: "下载", action: #selector(downloadFile(_:)), keyEquivalent: ""))
     }
     
@@ -449,13 +488,27 @@ class MainViewController: NSViewController, NSTableViewDelegate, NSTableViewData
     
     @objc func downloadFile(_ sender: AnyObject) {
         let row = tableView.clickedRow
-        if let fileInfo = self.fileResponse?.list?[row] {
+        if currentCategoryType == .files,
+           let fileInfo = self.fileResponse?.list?[row] {
             downloadFile(with: fileInfo)
+            return
+        }
+        
+        if (currentCategoryType == .videos || currentCategoryType == .photos || currentCategoryType == .audios || currentCategoryType == .docs),
+           let fileInfo = self.categoryFilesResponse[currentCategoryType!]?.list?[row]{
+            downloadFile(with: fileInfo)
+            return
         }
     }
     
     @objc func renameFile(_ sender: AnyObject) {
         
+    }
+    
+    func downloadManager(fileDownloaded: DownloadItem) {
+        if currentCategoryType == .downloading || currentCategoryType == .finishedTrans {
+            self.tableView.reloadData()
+        }
     }
 }
 
@@ -747,6 +800,7 @@ class FileDetailInfoResponse: Codable {
 }
 
 class FileDetailInfo: Codable {
+    var fsID: UInt64?
     var category: Int?
     var downloadLink: String?
     var filename: String?
@@ -779,6 +833,7 @@ class FileDetailInfo: Codable {
         size = fileInfo.size
         md5 = fileInfo.md5
         thumbs = fileInfo.thumbs
+        fsID = fileInfo.fsID
     }
 }
 

@@ -33,7 +33,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
         if isLogin() {
             window.contentView = mainVC.view;
             window.contentViewController = mainVC
-            window.setFrame(NSMakeRect(0, 0, 830, 556), display: true, animate: true)
+            window.setFrame(NSMakeRect(0, 0, 830, 556), display: true, animate: false)
         } else {
             loginVC.windowController = self
             window.contentView = loginVC.view;

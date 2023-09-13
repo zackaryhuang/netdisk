@@ -8,11 +8,18 @@
 import Cocoa
 import Alamofire
 
-class DownloadManager: NSObject {
+protocol DownloadManagerDelegate: NSObjectProtocol {
+    func downloadManager(fileDownloaded: DownloadItem);
+}
+
+class DownloadManager: NSObject, DownloadItemStateObserver {
     var downloadingList = [DownloadItem]()
     var downloadedList = [DownloadItem]()
     var failedList = [DownloadItem]()
     var pendingList = [DownloadItem]()
+    var pausedList = [DownloadItem]()
+    var lock = NSLock()
+    weak var delegate: DownloadManagerDelegate?
     let downloadQueue = {
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 3
@@ -33,6 +40,7 @@ class DownloadManager: NSObject {
                 if let fileDetailResponse = result.value,
                     let fileDetail = fileDetailResponse.list?.first {
                     let downloadItem = DownloadItem(fileDetail: fileDetail)
+                    downloadItem.stateObserver = self
                     self.pendingList.append(downloadItem)
                     let downloadOperation = DownloadOperation(downloadItem: downloadItem)
                     self.downloadQueue.addOperation(downloadOperation)
@@ -41,6 +49,48 @@ class DownloadManager: NSObject {
                 }
             }
         }
+    }
+    
+    func downloadItemStateDidUpdate(downloadItem: DownloadItem, fromState: DownloadState, toState: DownloadState) {
+        self.lock.lock()
+        switch fromState {
+        case .pending:
+            self.pendingList.removeAll { obj in
+                obj.fileDetail.fsID == downloadItem.fileDetail.fsID
+            }
+        case .downloading:
+            self.downloadingList.removeAll { obj in
+                obj.fileDetail.fsID == downloadItem.fileDetail.fsID
+            }
+        case .downloaded:
+            self.downloadedList.removeAll { obj in
+                obj.fileDetail.fsID == downloadItem.fileDetail.fsID
+            }
+        case .failed:
+            self.failedList.removeAll { obj in
+                obj.fileDetail.fsID == downloadItem.fileDetail.fsID
+            }
+        case .paused:
+            self.pausedList.removeAll { obj in
+                obj.fileDetail.fsID == downloadItem.fileDetail.fsID
+            }
+        }
+        
+        switch toState {
+        case .pending:
+            self.pendingList.append(downloadItem)
+        case .downloading:
+            self.downloadingList.append(downloadItem)
+        case .downloaded:
+            self.downloadedList.append(downloadItem)
+            self.delegate?.downloadManager(fileDownloaded: downloadItem)
+        case .failed:
+            self.failedList.append(downloadItem)
+        case .paused:
+            self.pausedList.append(downloadItem)
+        }
+        
+        self.lock.unlock()
     }
 }
 
