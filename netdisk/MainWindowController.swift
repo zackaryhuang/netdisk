@@ -8,10 +8,10 @@
 import Cocoa
 
 class MainWindowController: NSWindowController, NSWindowDelegate {
-
-    var loginVC = LoginViewController()
     
-    var mainVC = MainViewController()
+    var loginVC: LoginViewController!
+    
+    var mainVC: MainViewController!
     
     convenience init() {
         self.init(windowNibName: "")
@@ -24,25 +24,36 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     }
     
     override func loadWindow() {
+        ZHUserManager.sharedInstance.delegate = self
         let frame: CGRect = CGRect(x: 0, y: 0, width: 280, height: 400)
         let style: NSWindow.StyleMask = [.titled, .closable, .fullSizeContentView]
         let back: NSWindow.BackingStoreType = .buffered
         let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
         window.titlebarAppearsTransparent = true
         window.delegate = self
-        if isLogin() {
-            window.contentView = mainVC.view;
-            window.contentViewController = mainVC
-            window.setFrame(NSMakeRect(0, 0, 830, 556), display: true, animate: false)
-        } else {
-            loginVC.windowController = self
-            window.contentView = loginVC.view;
-            window.contentViewController = loginVC
-        }
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
         window.standardWindowButton(.zoomButton)?.isHidden = true
         window.center()
         self.window = window
+        ZHUserManager.sharedInstance.requestUserData { success in
+            DispatchQueue.main.async {
+                if success {
+                    // 已登录
+                    self.mainVC = MainViewController()
+                    window.contentView = self.mainVC.view;
+                    window.contentViewController = self.mainVC
+                    window.setFrame(NSMakeRect(0, 0, 830, 556), display: true, animate: false)
+                    NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
+                } else {
+                    // 未登录
+                    self.loginVC = LoginViewController()
+                    self.loginVC.windowController = self
+                    window.contentView = self.loginVC.view;
+                    window.contentViewController = self.loginVC
+                }
+                window.center()
+            }
+        }
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
@@ -50,6 +61,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     }
     
     func loginSuccess() {
+        self.mainVC = MainViewController()
         window?.contentView = mainVC.view;
         window?.contentViewController = mainVC
         
@@ -72,8 +84,31 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
             self.window?.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
         }, completionHandler:nil)
     }
-    
-    func isLogin() -> Bool {
-        return UserDefaults.standard.object(forKey: "UserAccessToken") != nil
+}
+
+extension MainWindowController: ZHUserManagerDelegate {
+    func loginDataExpired() {
+        window?.contentView = loginVC.view;
+        window?.contentViewController = loginVC
+        loginVC.windowController = self
+        
+        let oldX = window?.frame.origin.x ?? 0.0
+        let oldY = window?.frame.origin.y ?? 0.0
+        let oldW = window?.frame.size.width ?? 0.0
+        let oldH = window?.frame.size.height ?? 0.0
+        
+        let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
+        
+        let newW = 292.0
+        let newH = 412.0
+        let newX = oldCenter.x - newW / 2.0
+        
+        let newY = oldCenter.y - newH / 2.0
+        
+        NSAnimationContext.runAnimationGroup({context in
+          context.duration = 0.25
+          context.allowsImplicitAnimation = true
+            self.window?.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
+        }, completionHandler:nil)
     }
 }

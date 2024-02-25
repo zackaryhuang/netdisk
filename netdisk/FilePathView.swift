@@ -8,14 +8,14 @@
 import Cocoa
 
 protocol FilePathViewDelegate: NSObjectProtocol {
-    func didClickPath(path: String)
+    func filePathViewPathDidChange(path: String, folderID: String?)
 }
 
 class FilePathView: NSView {
     
     weak var delegate: FilePathViewDelegate?
     
-    var path: String? {
+    var filePaths:[(String, String?)] = [("我的网盘", "root")] {
         didSet {
             updateUI()
         }
@@ -71,18 +71,13 @@ class FilePathView: NSView {
     }
     
     func updateUI() {
-        guard let realPath = path else {
-            return
-        }
         subviews.forEach { view in
             view.removeFromSuperview()
         }
         
-        var temp = realPath.split(separator: "/")
-        temp.insert("我的网盘", at:  0)
         var pathItems = [PathItem]()
-        temp.forEach { subString in
-            pathItems.append(PathItem(pathUnit: String(subString), shouldIgnore: false))
+        filePaths.forEach { (path: String, folderID: String?) in
+            pathItems.append(PathItem(pathUnit: path, shouldIgnore: false, folderID: folderID))
         }
 
         getFixedPaths(items: &pathItems)
@@ -142,15 +137,21 @@ class FilePathView: NSView {
     @objc func buttonClick(_ sender: AnyObject) {
         if let button = sender as? NSButton {
             if button.tag == 0 {
-                self.delegate?.didClickPath(path: "/")
+                self.delegate?.filePathViewPathDidChange(path: "/", folderID: "root")
+                filePaths = [("我的网盘", "root")]
             } else {
                 let path = paths[1..<(button.tag+1)]
                 var originPath = [String]()
+                var newFilePaths = [(String, String?)]()
                 path.forEach { item in
                     originPath.append(item.pathUnit)
+                    newFilePaths.append((item.pathUnit, item.folderID))
                 }
+                newFilePaths.insert(("我的网盘", "root"), at: 0)
                 debugPrint("/" + originPath.joined(separator: "/"))
-                self.delegate?.didClickPath(path: "/" + originPath.joined(separator: "/"))
+                let fullPath = "/" + originPath.joined(separator: "/")
+                self.delegate?.filePathViewPathDidChange(path: fullPath, folderID: path.last?.folderID)
+                filePaths = newFilePaths
             }
         }
     }
@@ -158,10 +159,12 @@ class FilePathView: NSView {
 
 class PathItem {
     let pathUnit: String
+    let folderID: String?
     var shouldIgnore: Bool?
     
-    init(pathUnit: String, shouldIgnore: Bool? = nil) {
+    init(pathUnit: String, shouldIgnore: Bool? = nil, folderID: String? = nil) {
         self.pathUnit = pathUnit
         self.shouldIgnore = shouldIgnore
+        self.folderID = folderID
     }
 }

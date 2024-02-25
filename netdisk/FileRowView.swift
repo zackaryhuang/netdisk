@@ -75,88 +75,93 @@ class FileRowView: NSTableRowView {
         }
     }
 
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-
-        // Drawing code here.
+    @objc func downloadFile() {
+        debugPrint("Download file:")
     }
     
-    func updateRowView(with fileInfo: FileInfo?) {
-        if let info = fileInfo {
-            titleLabel.stringValue = info.serverFileName ?? ""
-            if let intSize = info.size, intSize > 0 {
-                fileSizeLabel.isHidden = false
-                fileSizeLabel.stringValue = Double(intSize).binarySizeString
-            } else {
-                fileSizeLabel.isHidden = true
-                fileSizeLabel.stringValue = ""
-            }
-            if info.isDir == 1 {
-                thumbImageView.image = NSImage(named: "icon_folder")
-            } else {
-                if info.category == 1 {
-                    thumbImageView.image = NSImage(named: "icon_video")
-                } else if info.category == 2 {
-                    thumbImageView.image = NSImage(named: "icon_audio")
-                } else if info.category == 3 {
-                    if let imageUrl = fileInfo?.thumbs?["url3"] as? String {
-                        thumbImageView.kf.setImage(with: URL(string: imageUrl), placeholder: NSImage(named: "icon_photo"))
-                    } else if let imageUrl = fileInfo?.thumbs?["url2"] as? String {
-                        thumbImageView.kf.setImage(with: URL(string: imageUrl), placeholder: NSImage(named: "icon_photo"))
-                    } else if let imageUrl = fileInfo?.thumbs?["url1"] as? String {
-                        thumbImageView.kf.setImage(with: URL(string: imageUrl), placeholder: NSImage(named: "icon_photo"))
-                    } else {
-                        debugPrint(info.serverFileName ?? "")
-                        thumbImageView.image = NSImage(named: "icon_unknown")
-                    }
-                } else if info.category == 4 {
-                    if info.serverFileName?.hasSuffix(".docx") == true ||
-                        info.serverFileName?.hasSuffix(".doc") == true {
-                        thumbImageView.image = NSImage(named: "icon_word")
-                    } else if info.serverFileName?.hasSuffix(".xlsx") == true ||
-                                info.serverFileName?.hasSuffix(".xls") == true {
-                        thumbImageView.image = NSImage(named: "icon_excel")
-                    } else if info.serverFileName?.hasSuffix(".pptx") == true ||
-                                info.serverFileName?.hasSuffix(".ppt") == true {
-                        thumbImageView.image = NSImage(named: "icon_ppt")
-                    } else if info.serverFileName?.hasSuffix(".pdf") == true {
-                        thumbImageView.image = NSImage(named: "icon_pdf")
-                    } else if info.serverFileName?.hasSuffix(".txt") == true {
-                        thumbImageView.image = NSImage(named: "icon_txt")
-                    } else {
-                        debugPrint(info.serverFileName ?? "")
-                        thumbImageView.image = NSImage(named: "icon_unknown")
-                    }
-                } else if info.category == 5 {
-                    if info.serverFileName?.hasSuffix(".exe") == true {
-                        thumbImageView.image = NSImage(named: "icon_windows")
-                    } else {
-                        debugPrint(info.serverFileName ?? "")
-                        thumbImageView.image = NSImage(named: "icon_unknown")
-                    }
-                } else if info.category == 7 {
-                    if info.serverFileName?.hasSuffix(".torrent") == true {
-                        thumbImageView.image = NSImage(named: "icon_bt")
-                    } else {
-                        debugPrint(info.serverFileName ?? "")
-                        thumbImageView.image = NSImage(named: "icon_unknown")
-                    }
+    func updateRowView(with fileData: any FileData) {
+        titleLabel.stringValue = fileData.fileName
+        if let size = fileData.size, size > 0 {
+            fileSizeLabel.isHidden = false
+            fileSizeLabel.stringValue = Double(size).binarySizeString
+        } else {
+            fileSizeLabel.isHidden = true
+            fileSizeLabel.stringValue = ""
+        }
+        if fileData.isDir {
+            thumbImageView.image = NSImage(named: "icon_folder")
+        } else {
+            if fileData.category == .Video {
+                thumbImageView.image = NSImage(named: "icon_video")
+            } else if fileData.category == .Audio {
+                thumbImageView.image = NSImage(named: "icon_audio")
+            } else if fileData.category == .Picture {
+                if let imageUrl = fileData.thumbnail {
+                    thumbImageView.kf.setImage(with: imageUrl, placeholder: NSImage(named: "icon_photo"))
+                } else if let imageUrl = fileData.thumbnail {
+                    thumbImageView.kf.setImage(with: imageUrl, placeholder: NSImage(named: "icon_photo"))
+                } else if let imageUrl = fileData.thumbnail {
+                    thumbImageView.kf.setImage(with: imageUrl, placeholder: NSImage(named: "icon_photo"))
                 } else {
-                    if info.serverFileName?.hasSuffix(".zip") == true ||
-                        info.serverFileName?.hasSuffix(".rar") == true {
-                        thumbImageView.image = NSImage(named: "icon_zip")
-                    } else if info.serverFileName?.hasSuffix(".psd") == true {
-                        thumbImageView.image = NSImage(named: "icon_psd")
-                    } else if info.serverFileName?.hasSuffix(".dmg") == true {
-                        thumbImageView.image = NSImage(named: "icon_apple")
-                    } else {
-                        debugPrint(info.serverFileName ?? "")
-                        thumbImageView.image = NSImage(named: "icon_unknown")
-                    }
+                    debugPrint(fileData.fileName)
+                    thumbImageView.image = NSImage(named: "icon_unknown")
+                }
+            } else if fileData.category == .Document {
+                if fileData.fileName.hasSuffix(".docx") == true ||
+                    fileData.fileName.hasSuffix(".doc") == true {
+                    thumbImageView.image = NSImage(named: "icon_word")
+                } else if fileData.fileName.hasSuffix(".xlsx") == true ||
+                            fileData.fileName.hasSuffix(".xls") == true {
+                    thumbImageView.image = NSImage(named: "icon_excel")
+                } else if fileData.fileName.hasSuffix(".pptx") == true ||
+                            fileData.fileName.hasSuffix(".ppt") == true {
+                    thumbImageView.image = NSImage(named: "icon_ppt")
+                } else if fileData.fileName.hasSuffix(".pdf") == true {
+                    thumbImageView.image = NSImage(named: "icon_pdf")
+                } else if fileData.fileName.hasSuffix(".txt") == true {
+                    thumbImageView.image = NSImage(named: "icon_txt")
+                } else {
+                    debugPrint(fileData.fileName)
+                    thumbImageView.image = NSImage(named: "icon_unknown")
+                }
+            } else if fileData.category == .Application {
+                if fileData.fileName.hasSuffix(".exe") == true {
+                    thumbImageView.image = NSImage(named: "icon_windows")
+                } else {
+                    debugPrint(fileData.fileName)
+                    thumbImageView.image = NSImage(named: "icon_unknown")
+                }
+            } else if fileData.category == .Torrent {
+                if fileData.fileName.hasSuffix(".torrent") == true {
+                    thumbImageView.image = NSImage(named: "icon_bt")
+                } else {
+                    debugPrint(fileData.fileName)
+                    thumbImageView.image = NSImage(named: "icon_unknown")
+                }
+            } else {
+                if fileData.fileName.hasSuffix(".zip") == true ||
+                    fileData.fileName.hasSuffix(".rar") == true {
+                    thumbImageView.image = NSImage(named: "icon_zip")
+                } else if fileData.fileName.hasSuffix(".psd") == true {
+                    thumbImageView.image = NSImage(named: "icon_psd")
+                } else if fileData.fileName.hasSuffix(".dmg") == true {
+                    thumbImageView.image = NSImage(named: "icon_apple")
+                } else {
+                    debugPrint(fileData.fileName)
+                    thumbImageView.image = NSImage(named: "icon_unknown")
                 }
             }
         }
+        
+        if fileData.isDir {
+            self.menu = nil
+        } else {
+            let menu = NSMenu()
+            menu.addItem(NSMenuItem(title: "下载", action: #selector(downloadFile), keyEquivalent: ""))
+            self.menu = menu
+        }
     }
+    
     
     
     override func updateTrackingAreas() {

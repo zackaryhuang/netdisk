@@ -1,24 +1,60 @@
 PODS:
-  - Alamofire (5.6.4)
-  - Kingfisher (7.9.1)
+  - Alamofire (5.8.1)
+  - Aria2Core (1.0.2)
+  - Aria2RPC (1.0.3):
+    - Starscream (~> 3.1)
+    - SwiftyJSON (~> 4.0)
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
+  - Kingfisher (7.10.0)
   - SnapKit (5.6.0)
+  - Starscream (3.1.1)
+  - SwiftyJSON (4.3.0)
 
 DEPENDENCIES:
   - Alamofire
+  - Aria2Core (from `https://github.com/zackaryhuang/Aria2Core`)
+  - Aria2RPC (from `https://github.com/zackaryhuang/Aria2RPC`)
+  - FMDB
   - Kingfisher
   - SnapKit
+  - Starscream
+  - SwiftyJSON (~> 4.0)
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - FMDB
     - Kingfisher
     - SnapKit
+    - Starscream
+    - SwiftyJSON
+
+EXTERNAL SOURCES:
+  Aria2Core:
+    :git: https://github.com/zackaryhuang/Aria2Core
+  Aria2RPC:
+    :git: https://github.com/zackaryhuang/Aria2RPC
+
+CHECKOUT OPTIONS:
+  Aria2Core:
+    :commit: 3a689190fc776f1252d3e1f6af47e6887fc12479
+    :git: https://github.com/zackaryhuang/Aria2Core
+  Aria2RPC:
+    :commit: 2d864c4dded81fc15d219a794604ca2a0f069cc1
+    :git: https://github.com/zackaryhuang/Aria2RPC
 
 SPEC CHECKSUMS:
-  Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
-  Kingfisher: 1d14e9f59cbe19389f591c929000332bf70efd32
+  Alamofire: 3ca42e259043ee0dc5c0cdd76c4bc568b8e42af7
+  Aria2Core: f4288f7d3454c8b157498c54a0f29f31a2778523
+  Aria2RPC: 6bf14829705e40418887207ee061632ca9fdb85e
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  Kingfisher: a18f05d3b6d37d8650ee4a3e61d57a28fc6207f6
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
+  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
+  SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
 
-PODFILE CHECKSUM: 19a0b6b9f390a7b753a1854d8d3496b93e723a3d
+PODFILE CHECKSUM: 951eb71b13e3b9e067766d947bd24d08ccee6cd5
 
 COCOAPODS: 1.11.3

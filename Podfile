@@ -26,6 +26,11 @@ target 'netdisk' do
   # Pods for netdisk
   pod 'SnapKit'
   pod 'Alamofire'
+  pod 'SwiftyJSON', '~> 4.0'
   pod 'Kingfisher'
+  pod 'FMDB'
+  pod 'Starscream'
+  pod 'Aria2Core', :git => 'https://github.com/zackaryhuang/Aria2Core'
+  pod 'Aria2RPC', :git => 'https://github.com/zackaryhuang/Aria2RPC'
 
 end

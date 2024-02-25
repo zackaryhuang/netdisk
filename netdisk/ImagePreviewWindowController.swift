@@ -11,7 +11,7 @@ import Alamofire
 
 class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
     
-    var detailInfo: FileDetailInfo?
+    var detailInfo: (any FileDetail)?
     
     let imagePreviewController = ImagePreviewController()
     

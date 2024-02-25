@@ -24,7 +24,7 @@ class TabItemView: NSView {
     
     weak var delegate: TabItemViewDelegate?
     
-    var type: TabType?
+    var type: MainCategoryType!
     
     let backgroundView = {
         let view = NSView()
@@ -57,10 +57,11 @@ class TabItemView: NSView {
         configUI()
     }
     
-    convenience init(image: String, title: String, delegate: TabItemViewDelegate?, type: TabType?) {
+    convenience init(image: String, type: MainCategoryType, delegate: TabItemViewDelegate?) {
         self.init(frame: .zero)
         imageView.image = NSImage(named: image)
-        titleLabel.stringValue = title
+        titleLabel.stringValue = type.rawValue
+        self.type = type
         self.delegate = delegate
         self.type = type
     }
