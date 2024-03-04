@@ -170,6 +170,7 @@ class FileListViewController: NSViewController, CategoryVC {
             previewImageWith(fileID: fileData.fileID)
         case .Video:
             debugPrint("预览视频")
+            previewVideoWith(fileID: fileData.fileID)
         case .Audio:
             debugPrint("预览音频")
         case .Document:
@@ -204,6 +205,17 @@ class FileListViewController: NSViewController, CategoryVC {
             }
         }
 
+    }
+    
+    private func previewVideoWith(fileID: String) {
+        Task {
+            let playInfo = try? await WebRequest.requestVideoPlayInfo(fileID: fileID)
+            if let info = playInfo,
+               let url = info.playURL?.absoluteString.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed),
+               let playURL = URL(string: "iina://weblink?url=\(url)"){
+                NSWorkspace.shared.open(playURL)
+            }
+        }
     }
 }
 

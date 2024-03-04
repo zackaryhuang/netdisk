@@ -48,10 +48,41 @@ protocol FileDetail: Codable {
     var previewURL: URL? { get }
 }
 
+protocol VideoPlayInfo: Codable {
+    var playURL: URL? { get }
+}
+
 protocol DownloadInfo: Codable {
     var downloadURL: URL? { get }
     var expiration: String? { get }
     var method: String? { get }
+}
+
+struct AliVideoPlayInfo: VideoPlayInfo {
+    var videoList: [AliVideoPlayItem?]
+    var playURL: URL? {
+        if let url = videoList.last,
+        let u = url {
+            return URL(string: u.url)
+        }
+        return nil
+    }
+    
+    enum CodingKeys : String, CodingKey {
+        case videoList = "live_transcoding_task_list"
+    }
+}
+
+struct AliVideoPlayItem: Codable {
+    let url: String
+    let width: Int
+    let height: Int
+    
+    enum CodingKeys : String, CodingKey {
+        case url
+        case width = "template_width"
+        case height = "template_height"
+    }
 }
 
 struct AliDownloadInfo: DownloadInfo {
@@ -343,11 +374,29 @@ class WebRequest {
         static let AliFileList = AliyunDomain + "/adrive/v1.0/openFile/list"
         static let AliDownloadInfo = AliyunDomain + "/adrive/v1.0/openFile/getDownloadUrl"
         static let AliFileDetail = AliyunDomain + "/adrive/v1.0/openFile/get"
+        static let AliVideoPlayInfo = AliyunDomain + "/adrive/v1.0/openFile/getVideoPreviewPlayInfo"
         static let BaiduGenerateQRCode = BaiduDomain + "/oauth/2.0/device/code"
         static let BaiduGetAccessToken = BaiduDomain + "/oauth/2.0/token"
         static let BaiduUserInfo = BaiduDomain2 + "/rest/2.0/xpan/nas?method=uinfo"
         static let BaiduFileList = BaiduDomain2 + "/rest/2.0/xpan/file"
         static let BaiduFileDetail = BaiduDomain2 + "/rest/2.0/xpan/multimedia"
+    }
+    
+    static func requestVideoPlayInfo(fileID: String) async throws -> VideoPlayInfo? {
+        if ClientManager.shared.currentClient() == .Aliyun {
+            guard let driveID = ClientManager.shared.aliUserData?.defaultDriveID else {
+                return nil
+            }
+            let params = [
+                "drive_id" : driveID,
+                "file_id" : fileID,
+                "category" : "live_transcoding"
+            ] as [String:Any]
+            
+            let res: AliVideoPlayInfo? = try? await request(method: .post, url: EndPoint.AliVideoPlayInfo, parameters: params, dataObj: "video_preview_play_info")
+            return res
+        }
+        return nil
     }
     
     static func requestFileDetail(fileID: String) async throws -> (any FileDetail)? {
@@ -382,7 +431,7 @@ class WebRequest {
             return nil
         }
         
-        var params = [
+        let params = [
             "drive_id" : id,
             "file_id" : fileID
         ] as [String:Any]

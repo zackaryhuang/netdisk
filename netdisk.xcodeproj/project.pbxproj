@@ -120,13 +120,6 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		30008DBF2B863B7800F2BE37 /* Downloader */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Downloader;
-			sourceTree = "<group>";
-		};
 		306954E12ABB3AA90059901F /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,7 +149,6 @@
 		30BB71762A9E414B00ADBF01 /* netdisk */ = {
 			isa = PBXGroup;
 			children = (
-				30008DBF2B863B7800F2BE37 /* Downloader */,
 				306954E12ABB3AA90059901F /* UIKit */,
 				300489392AA6398D0099450D /* Info.plist */,
 				30BB71862A9E418600ADBF01 /* main.swift */,

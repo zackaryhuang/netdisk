@@ -49,6 +49,7 @@ class MainViewController: NSViewController {
         }
         
         let fileListVC = FileListViewController()
+        addChild(fileListVC)
         view.addSubview(fileListVC.view)
         VCs.append(fileListVC)
         fileListVC.view.snp.makeConstraints { make in
