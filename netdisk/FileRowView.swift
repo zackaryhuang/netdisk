@@ -17,6 +17,8 @@ class FileRowView: NSTableRowView {
         return imageView
     }()
     
+    var data: FileData?
+    
     let titleLabel = {
        let titleLabel = NSTextField()
         titleLabel.isEditable = false
@@ -76,7 +78,13 @@ class FileRowView: NSTableRowView {
     }
 
     @objc func downloadFile() {
-        debugPrint("Download file:")
+        if let fileID = data?.fileID {
+            Task {
+                if let downloadInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID) {
+                    debugPrint(downloadInfo.downloadURL ?? "未知链接")
+                }
+            }
+        }
     }
     
     func updateRowView(with fileData: any FileData) {

@@ -48,6 +48,31 @@ protocol FileDetail: Codable {
     var previewURL: URL? { get }
 }
 
+protocol DownloadInfo: Codable {
+    var downloadURL: URL? { get }
+    var expiration: String? { get }
+    var method: String? { get }
+}
+
+struct AliDownloadInfo: DownloadInfo {
+    var downloadURL: URL? {
+        if let urlString = url {
+            return URL(string: urlString)
+        }
+        return nil
+    }
+    let url: String?
+    let method: String?
+    let expiration: String?
+}
+
+struct BaiduDownloadInfo: DownloadInfo {
+    var downloadURL: URL? { URL(string: url) }
+    let url: String
+    let method: String?
+    let expiration: String?
+}
+
 struct AliFileDetail: FileDetail {
     let url: String?
     var previewURL: URL? {
@@ -148,7 +173,7 @@ struct BaiduAccessTokenData: AccessTokenData {
     }
 }
 
-protocol FileData: Hashable, Codable {
+protocol FileData: Codable {
     var fileName: String { get }
     var fileID: String { get }
     var category: FileCategory { get }
@@ -315,12 +340,13 @@ class WebRequest {
         static let AliGenerateQRCode = AliyunDomain + "/oauth/authorize/qrcode"
         static let AliGetAccessToken = AliyunDomain + "/oauth/access_token"
         static let AliUserInfo = AliyunDomain + "/adrive/v1.0/user/getDriveInfo"
+        static let AliFileList = AliyunDomain + "/adrive/v1.0/openFile/list"
+        static let AliDownloadInfo = AliyunDomain + "/adrive/v1.0/openFile/getDownloadUrl"
+        static let AliFileDetail = AliyunDomain + "/adrive/v1.0/openFile/get"
         static let BaiduGenerateQRCode = BaiduDomain + "/oauth/2.0/device/code"
         static let BaiduGetAccessToken = BaiduDomain + "/oauth/2.0/token"
         static let BaiduUserInfo = BaiduDomain2 + "/rest/2.0/xpan/nas?method=uinfo"
-        static let AliFileList = AliyunDomain + "/adrive/v1.0/openFile/list"
         static let BaiduFileList = BaiduDomain2 + "/rest/2.0/xpan/file"
-        static let AliFileDetail = AliyunDomain + "/adrive/v1.0/openFile/get"
         static let BaiduFileDetail = BaiduDomain2 + "/rest/2.0/xpan/multimedia"
     }
     
@@ -348,6 +374,20 @@ class WebRequest {
             "fsids": [fileID]
         ] as [String : Any]
         let res: BaiduFileDetail? = try? await request(method: .get, url: EndPoint.BaiduFileDetail, parameters: params)
+        return res
+    }
+    
+    static func requestDownloadUrl(driveID: String? = ClientManager.shared.aliUserData?.defaultDriveID, fileID: String) async throws -> DownloadInfo?  {
+        guard let id = driveID, !fileID.isEmpty else {
+            return nil
+        }
+        
+        var params = [
+            "drive_id" : id,
+            "file_id" : fileID
+        ] as [String:Any]
+        
+        let res: AliDownloadInfo? = try? await request(method: .post, url: EndPoint.AliDownloadInfo, parameters: params)
         return res
     }
     

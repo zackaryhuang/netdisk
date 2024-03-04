@@ -42,6 +42,11 @@
 		30BB718E2A9E444200ADBF01 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BB718C2A9E444200ADBF01 /* LoginViewController.swift */; };
 		30BB71912A9E45D300ADBF01 /* CommonDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BB71902A9E45D300ADBF01 /* CommonDefine.swift */; };
 		30C508132AAB55D60076E842 /* ImagePreviewWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C508122AAB55D60076E842 /* ImagePreviewWindowController.swift */; };
+		30D588792B96043200DCE9CB /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 30D588782B96043200DCE9CB /* SwiftyJSON */; };
+		30D5887C2B96044500DCE9CB /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 30D5887B2B96044500DCE9CB /* Kingfisher */; };
+		30D5887F2B96045500DCE9CB /* FMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 30D5887E2B96045500DCE9CB /* FMDB */; };
+		30D588822B96067A00DCE9CB /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 30D588812B96067A00DCE9CB /* Alamofire */; };
+		30D588852B96069600DCE9CB /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 30D588842B96069600DCE9CB /* SnapKit */; };
 		EBF5B4F6899315C3B7892869 /* Pods_netdisk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3E178B222D859635EFB06D4 /* Pods_netdisk.framework */; };
 /* End PBXBuildFile section */
 
@@ -94,7 +99,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30D588792B96043200DCE9CB /* SwiftyJSON in Frameworks */,
+				30D588822B96067A00DCE9CB /* Alamofire in Frameworks */,
 				EBF5B4F6899315C3B7892869 /* Pods_netdisk.framework in Frameworks */,
+				30D588852B96069600DCE9CB /* SnapKit in Frameworks */,
+				30D5887C2B96044500DCE9CB /* Kingfisher in Frameworks */,
+				30D5887F2B96045500DCE9CB /* FMDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,7 +217,6 @@
 				30BB71702A9E414B00ADBF01 /* Sources */,
 				30BB71712A9E414B00ADBF01 /* Frameworks */,
 				30BB71722A9E414B00ADBF01 /* Resources */,
-				013D41909F737C2DAA66B6F7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -215,6 +224,11 @@
 			);
 			name = netdisk;
 			packageProductDependencies = (
+				30D588782B96043200DCE9CB /* SwiftyJSON */,
+				30D5887B2B96044500DCE9CB /* Kingfisher */,
+				30D5887E2B96045500DCE9CB /* FMDB */,
+				30D588812B96067A00DCE9CB /* Alamofire */,
+				30D588842B96069600DCE9CB /* SnapKit */,
 			);
 			productName = netdisk;
 			productReference = 30BB71742A9E414B00ADBF01 /* netdisk.app */;
@@ -245,6 +259,11 @@
 			);
 			mainGroup = 30BB716B2A9E414B00ADBF01;
 			packageReferences = (
+				30D588772B96043200DCE9CB /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
+				30D5887A2B96044500DCE9CB /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				30D5887D2B96045500DCE9CB /* XCRemoteSwiftPackageReference "fmdb" */,
+				30D588802B96067A00DCE9CB /* XCRemoteSwiftPackageReference "Alamofire" */,
+				30D588832B96069600DCE9CB /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			productRefGroup = 30BB71752A9E414B00ADBF01 /* Products */;
 			projectDirPath = "";
@@ -268,23 +287,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		013D41909F737C2DAA66B6F7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-netdisk/Pods-netdisk-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-netdisk/Pods-netdisk-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-netdisk/Pods-netdisk-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		1C2EEF077E3231A797D2F48B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -546,6 +548,77 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		30D588772B96043200DCE9CB /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
+		30D5887A2B96044500DCE9CB /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.11.0;
+			};
+		};
+		30D5887D2B96045500DCE9CB /* XCRemoteSwiftPackageReference "fmdb" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ccgus/fmdb";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.9;
+			};
+		};
+		30D588802B96067A00DCE9CB /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.9.0;
+			};
+		};
+		30D588832B96069600DCE9CB /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		30D588782B96043200DCE9CB /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30D588772B96043200DCE9CB /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
+		};
+		30D5887B2B96044500DCE9CB /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30D5887A2B96044500DCE9CB /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		30D5887E2B96045500DCE9CB /* FMDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30D5887D2B96045500DCE9CB /* XCRemoteSwiftPackageReference "fmdb" */;
+			productName = FMDB;
+		};
+		30D588812B96067A00DCE9CB /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30D588802B96067A00DCE9CB /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		30D588842B96069600DCE9CB /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30D588832B96069600DCE9CB /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 30BB716C2A9E414B00ADBF01 /* Project object */;
 }
