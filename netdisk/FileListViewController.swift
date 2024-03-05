@@ -209,10 +209,15 @@ class FileListViewController: NSViewController, CategoryVC {
     
     private func previewVideoWith(fileID: String) {
         Task {
-            let playInfo = try? await WebRequest.requestVideoPlayInfo(fileID: fileID)
-            if let info = playInfo,
-               let url = info.playURL?.absoluteString.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed),
+            if let fileInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID),
+               let url = fileInfo.downloadURL?.absoluteString.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed),
                let playURL = URL(string: "iina://weblink?url=\(url)"){
+                // DownloadUrl 获取的链接为原画画质
+                NSWorkspace.shared.open(playURL)
+            } else if let playInfo = try? await WebRequest.requestVideoPlayInfo(fileID: fileID),
+                      let url = playInfo.playURL?.absoluteString.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed),
+                      let playURL = URL(string: "iina://weblink?url=\(url)"){
+                // 通过 PlayInfo 获取的为转码后的画质中的最好的一档画质
                 NSWorkspace.shared.open(playURL)
             }
         }

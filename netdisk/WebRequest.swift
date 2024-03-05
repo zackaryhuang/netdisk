@@ -372,9 +372,9 @@ class WebRequest {
         static let AliGetAccessToken = AliyunDomain + "/oauth/access_token"
         static let AliUserInfo = AliyunDomain + "/adrive/v1.0/user/getDriveInfo"
         static let AliFileList = AliyunDomain + "/adrive/v1.0/openFile/list"
-        static let AliDownloadInfo = AliyunDomain + "/adrive/v1.0/openFile/getDownloadUrl"
         static let AliFileDetail = AliyunDomain + "/adrive/v1.0/openFile/get"
         static let AliVideoPlayInfo = AliyunDomain + "/adrive/v1.0/openFile/getVideoPreviewPlayInfo"
+        static let AliGetDownloadUrl = AliyunDomain + "/adrive/v1.0/openFile/getDownloadUrl"
         static let BaiduGenerateQRCode = BaiduDomain + "/oauth/2.0/device/code"
         static let BaiduGetAccessToken = BaiduDomain + "/oauth/2.0/token"
         static let BaiduUserInfo = BaiduDomain2 + "/rest/2.0/xpan/nas?method=uinfo"
@@ -436,7 +436,7 @@ class WebRequest {
             "file_id" : fileID
         ] as [String:Any]
         
-        let res: AliDownloadInfo? = try? await request(method: .post, url: EndPoint.AliDownloadInfo, parameters: params)
+        let res: AliDownloadInfo? = try? await request(method: .post, url: EndPoint.AliGetDownloadUrl, parameters: params)
         return res
     }
     
