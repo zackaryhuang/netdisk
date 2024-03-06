@@ -19,8 +19,6 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     
     override func windowDidLoad() {
         super.windowDidLoad()
-    
-        // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     }
     
     override func loadWindow() {
@@ -36,7 +34,8 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
         window.center()
         self.window = window
         ZHUserManager.sharedInstance.requestUserData { success in
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
                 if success {
                     // 已登录
                     self.mainVC = MainViewController()
@@ -63,10 +62,12 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     func loginSuccess() {
         ZHUserManager.sharedInstance.requestUserData { success in
             if success {
-                DispatchQueue.main.async { [self] in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
                     self.mainVC = MainViewController()
                     self.window?.contentView = self.mainVC.view;
                     self.window?.contentViewController = self.mainVC
+                    NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
                     
                     let oldX = self.window?.frame.origin.x ?? 0.0
                     let oldY = self.window?.frame.origin.y ?? 0.0
