@@ -61,28 +61,34 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     }
     
     func loginSuccess() {
-        self.mainVC = MainViewController()
-        window?.contentView = mainVC.view;
-        window?.contentViewController = mainVC
-        
-        let oldX = window?.frame.origin.x ?? 0.0
-        let oldY = window?.frame.origin.y ?? 0.0
-        let oldW = window?.frame.size.width ?? 0.0
-        let oldH = window?.frame.size.height ?? 0.0
-        
-        let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
-        
-        let newW = 830.0
-        let newH = 556.0
-        let newX = oldCenter.x - newW / 2.0
-        
-        let newY = oldCenter.y - newH / 2.0
-        
-        NSAnimationContext.runAnimationGroup({context in
-          context.duration = 0.25
-          context.allowsImplicitAnimation = true
-            self.window?.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
-        }, completionHandler:nil)
+        ZHUserManager.sharedInstance.requestUserData { success in
+            if success {
+                DispatchQueue.main.async { [self] in
+                    self.mainVC = MainViewController()
+                    self.window?.contentView = self.mainVC.view;
+                    self.window?.contentViewController = self.mainVC
+                    
+                    let oldX = self.window?.frame.origin.x ?? 0.0
+                    let oldY = self.window?.frame.origin.y ?? 0.0
+                    let oldW = self.window?.frame.size.width ?? 0.0
+                    let oldH = self.window?.frame.size.height ?? 0.0
+                    
+                    let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
+                    
+                    let newW = 830.0
+                    let newH = 556.0
+                    let newX = oldCenter.x - newW / 2.0
+                    
+                    let newY = oldCenter.y - newH / 2.0
+                    
+                    NSAnimationContext.runAnimationGroup({context in
+                      context.duration = 0.25
+                      context.allowsImplicitAnimation = true
+                        self.window?.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
+                    }, completionHandler:nil)
+                }
+            }
+        }
     }
 }
 
