@@ -58,6 +58,28 @@ protocol DownloadInfo: Codable {
     var method: String? { get }
 }
 
+protocol SpaceInfo: Codable {
+    var usedSize: Int { get }
+    var totalSize: Int { get }
+}
+
+struct AliSpaceInfo: SpaceInfo {
+    let used: Int
+    let total: Int
+    var usedSize: Int {
+        return used
+    }
+    
+    var totalSize: Int {
+        return total
+    }
+    
+    enum CodingKeys : String, CodingKey {
+        case used = "used_size"
+        case total = "total_size"
+    }
+}
+
 struct AliVideoPlayInfo: VideoPlayInfo {
     var videoList: [AliVideoPlayItem?]
     var playURL: URL? {
@@ -375,11 +397,20 @@ class WebRequest {
         static let AliFileDetail = AliyunDomain + "/adrive/v1.0/openFile/get"
         static let AliVideoPlayInfo = AliyunDomain + "/adrive/v1.0/openFile/getVideoPreviewPlayInfo"
         static let AliGetDownloadUrl = AliyunDomain + "/adrive/v1.0/openFile/getDownloadUrl"
+        static let AliGetSpaceInfo = AliyunDomain + "/adrive/v1.0/user/getSpaceInfo"
         static let BaiduGenerateQRCode = BaiduDomain + "/oauth/2.0/device/code"
         static let BaiduGetAccessToken = BaiduDomain + "/oauth/2.0/token"
         static let BaiduUserInfo = BaiduDomain2 + "/rest/2.0/xpan/nas?method=uinfo"
         static let BaiduFileList = BaiduDomain2 + "/rest/2.0/xpan/file"
         static let BaiduFileDetail = BaiduDomain2 + "/rest/2.0/xpan/multimedia"
+    }
+    
+    static func requestSpaceInfo() async throws -> SpaceInfo? {
+        if ClientManager.shared.currentClient() == .Aliyun {
+            let res: AliSpaceInfo? = try? await request(method: .post, url: EndPoint.AliGetSpaceInfo, dataObj: "personal_space_info")
+            return res
+        }
+        return nil
     }
     
     static func requestVideoPlayInfo(fileID: String) async throws -> VideoPlayInfo? {
