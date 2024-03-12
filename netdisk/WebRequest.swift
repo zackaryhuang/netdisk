@@ -63,6 +63,10 @@ protocol SpaceInfo: Codable {
     var totalSize: Int { get }
 }
 
+struct AliFileSearchResp: Codable {
+    var items: [AliFileData]
+}
+
 struct AliSpaceInfo: SpaceInfo {
     let used: Int
     let total: Int
@@ -398,11 +402,25 @@ class WebRequest {
         static let AliVideoPlayInfo = AliyunDomain + "/adrive/v1.0/openFile/getVideoPreviewPlayInfo"
         static let AliGetDownloadUrl = AliyunDomain + "/adrive/v1.0/openFile/getDownloadUrl"
         static let AliGetSpaceInfo = AliyunDomain + "/adrive/v1.0/user/getSpaceInfo"
+        static let AliFileSearch = AliyunDomain + "/adrive/v1.0/openFile/search"
         static let BaiduGenerateQRCode = BaiduDomain + "/oauth/2.0/device/code"
         static let BaiduGetAccessToken = BaiduDomain + "/oauth/2.0/token"
         static let BaiduUserInfo = BaiduDomain2 + "/rest/2.0/xpan/nas?method=uinfo"
         static let BaiduFileList = BaiduDomain2 + "/rest/2.0/xpan/file"
         static let BaiduFileDetail = BaiduDomain2 + "/rest/2.0/xpan/multimedia"
+    }
+    
+    static func requestFileSearch(keywords: String) async throws -> AliFileSearchResp? {
+        if ClientManager.shared.currentClient() == .Aliyun {
+            guard let driveID = ClientManager.shared.aliUserData?.defaultDriveID else { return nil }
+            let params = [
+                "drive_id" : driveID,
+                "query" : "name match \"\(keywords)\"",
+            ] as [String:Any]
+            let res: AliFileSearchResp? = try? await request(method: .post, url: EndPoint.AliFileSearch, parameters: params)
+            return res
+        }
+        return nil;
     }
     
     static func requestSpaceInfo() async throws -> SpaceInfo? {
