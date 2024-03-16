@@ -33,22 +33,40 @@ class LoginViewController: NSViewController {
         textField.isEditable = false
         textField.drawsBackground = false
         textField.font = NSFont(PingFang: 16)
-        textField.textColor = NSColor(hex: 0x459D53)
+        textField.textColor = NSColor(hex: 0x637DFF)
         return textField
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(imageView)
+        
+        let containerView = NSView()
+        containerView.wantsLayer = true
+        containerView.layer?.backgroundColor = NSColor(hex: 0xFFFFFF).cgColor
+        containerView.layer?.cornerRadius = 20
+        view.addSubview(containerView)
+        containerView.snp.makeConstraints { make in
+            make.leading.equalTo(view).offset(40)
+            make.trailing.equalTo(view).offset(-40)
+            make.top.equalTo(view).offset(60)
+            make.bottom.equalTo(view).offset(-40)
+        }
+
+        containerView.addSubview(imageView)
+        imageView.wantsLayer = true
+        imageView.layer?.cornerRadius = 10
+        imageView.layer?.shadowOffset = CGSize(width: 2, height: 2)
+        imageView.layer?.shadowColor = NSColor(hex: 0x000000, alpha: 0.1).cgColor
+        imageView.layer?.shadowRadius = 5
         imageView.snp.makeConstraints { make in
             make.width.height.equalTo(170)
-            make.centerX.equalTo(view)
-            make.top.equalTo(view).offset(79)
+            make.centerX.equalTo(containerView)
+            make.top.equalTo(containerView).offset(30)
         }
         
-        view.addSubview(scanTipsLabel)
+        containerView.addSubview(scanTipsLabel)
         scanTipsLabel.snp.makeConstraints { make in
-            make.centerX.equalTo(view)
+            make.centerX.equalTo(containerView)
             make.top.equalTo(imageView.snp.bottom).offset(24)
         }
         
@@ -58,7 +76,7 @@ class LoginViewController: NSViewController {
     override func loadView() {
         let view = NSView()
         view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor(hex: 0x272727).cgColor
+        view.layer?.backgroundColor = NSColor(hex: 0xEDEFFF).cgColor
         self.view = view
     }
     

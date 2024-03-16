@@ -9,9 +9,16 @@ import Cocoa
 
 protocol FilePathViewDelegate: NSObjectProtocol {
     func filePathViewPathDidChange(path: String, folderID: String?)
+    func searchViewStartSearch(keywords: String)
 }
 
 class FilePathView: NSView {
+    static let SearchViewHeight = 30.0
+    static let SearchViewWidth = 120.0
+    var searchView: SearchView!
+    
+    var inSearchMode = false
+    var isSearchViewAnimating = false
     
     weak var delegate: FilePathViewDelegate?
     
@@ -25,10 +32,30 @@ class FilePathView: NSView {
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
+        setupUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupUI() {
+        searchView = SearchView()
+        searchView.delegate = self
+        searchView.wantsLayer = true
+        searchView.layer?.name = "Search"
+        searchView.layer?.backgroundColor = NSColor(hex: 0x19191C).cgColor
+        searchView.layer?.cornerRadius = 5
+        
+        let click = NSClickGestureRecognizer(target: self, action: #selector(searchClick))
+        searchView.addGestureRecognizer(click)
+        addSubview(searchView)
+        searchView.snp.makeConstraints { make in
+            make.trailing.equalTo(self).offset(-20)
+            make.centerY.equalTo(self)
+            make.height.equalTo(FilePathView.SearchViewHeight)
+            make.width.equalTo(FilePathView.SearchViewWidth)
+        }
     }
     
     func getFixedPaths( items: inout [PathItem]) {
@@ -59,7 +86,7 @@ class FilePathView: NSView {
             totalWidth += attributedTitle.size().width
         }
         
-        if (totalWidth + 21) > self.frame.size.width {
+        if (totalWidth + 21 + FilePathView.SearchViewWidth + 20) > self.frame.size.width {
             for item in items[1...] {
                 if item.shouldIgnore == false {
                     item.shouldIgnore = true
@@ -72,7 +99,9 @@ class FilePathView: NSView {
     
     func updateUI() {
         subviews.forEach { view in
-            view.removeFromSuperview()
+            if view.layer?.name != "Search" {
+                view.removeFromSuperview()
+            }
         }
         
         var pathItems = [PathItem]()
@@ -154,6 +183,63 @@ class FilePathView: NSView {
                 filePaths = newFilePaths
             }
         }
+    }
+    
+    @objc func searchClick() {
+        if isSearchViewAnimating || inSearchMode {
+            return
+        }
+        inSearchMode = !inSearchMode
+        startSearchAnimation()
+    }
+    
+    func startSearchAnimation() {
+        isSearchViewAnimating = true
+        searchView.searchTextField.isEditable = inSearchMode
+        NSAnimationContext.runAnimationGroup({[weak self] context in
+            guard let self = self else { return }
+            context.duration = 0.25
+            context.allowsImplicitAnimation = true
+            self.searchView.snp.remakeConstraints { make in
+                if self.inSearchMode {
+                    make.leading.equalTo(self).offset(20)
+                } else {
+                    make.width.equalTo(FilePathView.SearchViewWidth)
+                }
+                make.trailing.equalTo(self).offset(-20)
+                make.centerY.equalTo(self)
+                make.height.equalTo(FilePathView.SearchViewHeight)
+            }
+            
+            subviews.forEach { view in
+                if view.layer?.name != "Search" {
+                    view.alphaValue = self.inSearchMode ? 0.0 : 1.0
+                    if let button = view as? NSButton {
+                        button.isEnabled = !self.inSearchMode
+                    }
+                }
+            }
+            
+            self.searchView.needsLayout = true
+            self.searchView.layoutSubtreeIfNeeded()
+        }) { [weak self] in
+            guard let self = self else { return }
+            self.isSearchViewAnimating = false
+            if (self.inSearchMode) {
+                self.searchView.searchTextField.becomeFirstResponder()
+            }
+        }
+    }
+}
+extension FilePathView: SearchViewDelegate {
+    func searchViewDidEndEditing() {
+        inSearchMode = false
+        searchView.searchTextField.stringValue = ""
+        startSearchAnimation()
+    }
+    
+    func searchViewStartSearch(keywords: String) {
+        self.delegate?.searchViewStartSearch(keywords: keywords)
     }
 }
 

@@ -64,7 +64,7 @@ class FileListViewController: NSViewController, CategoryVC {
         view.addSubview(filePathView)
         filePathView.snp.makeConstraints { make in
             make.leading.top.trailing.equalTo(view)
-            make.height.equalTo(40)
+            make.height.equalTo(60)
         }
         
         tableContainerView = NSScrollView()
@@ -257,6 +257,16 @@ extension FileListViewController: NSTableViewDelegate, NSTableViewDataSource, Fi
             fileList?.removeAll()
             tableView.reloadData()
             requestFiles()
+        }
+    }
+    
+    func searchViewStartSearch(keywords: String) {
+        Task { [weak self] in
+            let res = try? await WebRequest.requestFileSearch(keywords: keywords)
+            if let fileList = res?.items {
+                self?.fileList = fileList
+                self?.tableView.reloadData()
+            }
         }
     }
     

@@ -23,6 +23,7 @@
 		3048EAC12AC4797B0080BFE1 /* ZHFileDownloadOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3048EAC02AC4797B0080BFE1 /* ZHFileDownloadOperation.swift */; };
 		3048EAC32AC47BA20080BFE1 /* ZHFileDownloadCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3048EAC22AC47BA20080BFE1 /* ZHFileDownloadCache.swift */; };
 		306139202BA01CCA004F97BF /* SearchFileListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3061391F2BA01CCA004F97BF /* SearchFileListViewController.swift */; };
+		3065E2D52BA5D1B300A3114F /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3065E2D42BA5D1B300A3114F /* SearchView.swift */; };
 		306954E02ABB39910059901F /* AlertWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306954DF2ABB39910059901F /* AlertWindow.swift */; };
 		306954E32ABB3AC70059901F /* ZHLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306954E22ABB3AC70059901F /* ZHLabel.swift */; };
 		306EE5AF2AA0E3EB00428E82 /* FileRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EE5AE2AA0E3EB00428E82 /* FileRowView.swift */; };
@@ -70,6 +71,7 @@
 		3048EAC02AC4797B0080BFE1 /* ZHFileDownloadOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHFileDownloadOperation.swift; sourceTree = "<group>"; };
 		3048EAC22AC47BA20080BFE1 /* ZHFileDownloadCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHFileDownloadCache.swift; sourceTree = "<group>"; };
 		3061391F2BA01CCA004F97BF /* SearchFileListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchFileListViewController.swift; sourceTree = "<group>"; };
+		3065E2D42BA5D1B300A3114F /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		306954DF2ABB39910059901F /* AlertWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertWindow.swift; sourceTree = "<group>"; };
 		306954E22ABB3AC70059901F /* ZHLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHLabel.swift; sourceTree = "<group>"; };
 		306EE5AE2AA0E3EB00428E82 /* FileRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRowView.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				30BB717B2A9E414C00ADBF01 /* Assets.xcassets */,
 				30BB71802A9E414C00ADBF01 /* netdisk.entitlements */,
 				30B883382B3DDE5B00794B57 /* Const.swift */,
+				3065E2D42BA5D1B300A3114F /* SearchView.swift */,
 				30BB71882A9E41C100ADBF01 /* MainWindowController.swift */,
 				3036F4532B3B1C6900F365E4 /* SidePanelView.swift */,
 				30BB718C2A9E444200ADBF01 /* LoginViewController.swift */,
@@ -321,6 +324,7 @@
 				30BB71782A9E414B00ADBF01 /* AppDelegate.swift in Sources */,
 				3024970D2AA7889F00E2AD24 /* Utils.swift in Sources */,
 				306954E02ABB39910059901F /* AlertWindow.swift in Sources */,
+				3065E2D52BA5D1B300A3114F /* SearchView.swift in Sources */,
 				309AFD212AA4273B005F50C9 /* FilePathView.swift in Sources */,
 				306954E32ABB3AC70059901F /* ZHLabel.swift in Sources */,
 				3048EABF2AC476440080BFE1 /* ZHDownloadThreads.swift in Sources */,

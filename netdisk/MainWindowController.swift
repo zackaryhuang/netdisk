@@ -91,6 +91,12 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
             }
         }
     }
+    
+    override func mouseDown(with event: NSEvent) {
+        if let delegate = NSApp.delegate as? AppDelegate {
+            delegate.windowController.window?.makeFirstResponder(nil)
+        }
+    }
 }
 
 extension MainWindowController: ZHUserManagerDelegate {
