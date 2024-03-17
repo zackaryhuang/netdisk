@@ -9,6 +9,7 @@ import Cocoa
 import SnapKit
 import SwiftUI
 import Kingfisher
+import Tiercel
 
 class FileRowView: NSTableRowView {
     
@@ -78,16 +79,45 @@ class FileRowView: NSTableRowView {
     }
 
     @objc func downloadFile() {
+        if !ZigBookmark.bookmarkStartAccessing(filePath: ZigDownloadManager.downloadPath) {
+            let openPanel = NSOpenPanel()
+            openPanel.canChooseFiles = false
+            openPanel.canChooseDirectories = true
+            openPanel.allowsMultipleSelection = false
+            openPanel.begin { [weak self] result in
+                if result == .OK,
+                   let downloadPath = openPanel.urls.first {
+                    if !(ZigBookmark.saveBookmark(filePath: downloadPath.absoluteString)) || !ZigBookmark.bookmarkStartAccessing(filePath: downloadPath.absoluteString) { return }
+                    ZigDownloadManager.downloadPath = downloadPath.absoluteString
+                    self?.startDownload()
+                }
+            }
+        } else {
+            startDownload()
+        }
+    }
+    
+    func startDownload() {
         if let fileID = data?.fileID {
             Task {
                 if let downloadInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID) {
                     debugPrint(downloadInfo.downloadURL ?? "未知链接")
+                    let manager = ZigDownloadManager.shared.downloadSessionManager
+                    let task = manager.download(downloadInfo.downloadURL!, fileName: data?.fileName)
+                    task?.progress { (task) in
+                        debugPrint("progress:\(task.progress.fractionCompleted)")
+                    }.success { (task) in
+                        debugPrint("下载完成")
+                    }.failure { (task) in
+                        debugPrint("下载失败")
+                    }
                 }
             }
         }
     }
     
     func updateRowView(with fileData: any FileData) {
+        data = fileData
         titleLabel.stringValue = fileData.fileName
         if let size = fileData.size, size > 0 {
             fileSizeLabel.isHidden = false
