@@ -49,11 +49,9 @@
 		30D5887F2B96045500DCE9CB /* FMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 30D5887E2B96045500DCE9CB /* FMDB */; };
 		30D588822B96067A00DCE9CB /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 30D588812B96067A00DCE9CB /* Alamofire */; };
 		30D588852B96069600DCE9CB /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 30D588842B96069600DCE9CB /* SnapKit */; };
-		EBF5B4F6899315C3B7892869 /* Pods_netdisk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3E178B222D859635EFB06D4 /* Pods_netdisk.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0603C54326530B2086EA8E61 /* Pods-netdisk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-netdisk.release.xcconfig"; path = "Target Support Files/Pods-netdisk/Pods-netdisk.release.xcconfig"; sourceTree = "<group>"; };
 		30008DFA2B86458800F2BE37 /* DownloadListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListViewController.swift; sourceTree = "<group>"; };
 		300108EC2A9E58F5002FBB52 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		300108ED2A9E58F5002FBB52 /* MainViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
@@ -94,8 +92,6 @@
 		30BB718C2A9E444200ADBF01 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		30BB71902A9E45D300ADBF01 /* CommonDefine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonDefine.swift; sourceTree = "<group>"; };
 		30C508122AAB55D60076E842 /* ImagePreviewWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewWindowController.swift; sourceTree = "<group>"; };
-		C6755CED1B76D8C9282268CA /* Pods-netdisk.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-netdisk.debug.xcconfig"; path = "Target Support Files/Pods-netdisk/Pods-netdisk.debug.xcconfig"; sourceTree = "<group>"; };
-		D3E178B222D859635EFB06D4 /* Pods_netdisk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_netdisk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,7 +101,6 @@
 			files = (
 				30D588792B96043200DCE9CB /* SwiftyJSON in Frameworks */,
 				30D588822B96067A00DCE9CB /* Alamofire in Frameworks */,
-				EBF5B4F6899315C3B7892869 /* Pods_netdisk.framework in Frameworks */,
 				30D588852B96069600DCE9CB /* SnapKit in Frameworks */,
 				30D5887C2B96044500DCE9CB /* Kingfisher in Frameworks */,
 				30D5887F2B96045500DCE9CB /* FMDB in Frameworks */,
@@ -115,15 +110,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1C3E55CEB3E88DC003F5822C /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				C6755CED1B76D8C9282268CA /* Pods-netdisk.debug.xcconfig */,
-				0603C54326530B2086EA8E61 /* Pods-netdisk.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		306954E12ABB3AA90059901F /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -137,8 +123,6 @@
 			children = (
 				30BB71762A9E414B00ADBF01 /* netdisk */,
 				30BB71752A9E414B00ADBF01 /* Products */,
-				1C3E55CEB3E88DC003F5822C /* Pods */,
-				DB1DC00A655AF453B72377F9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -196,14 +180,6 @@
 			path = netdisk;
 			sourceTree = "<group>";
 		};
-		DB1DC00A655AF453B72377F9 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				D3E178B222D859635EFB06D4 /* Pods_netdisk.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -211,7 +187,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 30BB71832A9E414C00ADBF01 /* Build configuration list for PBXNativeTarget "netdisk" */;
 			buildPhases = (
-				1C2EEF077E3231A797D2F48B /* [CP] Check Pods Manifest.lock */,
 				30BB71702A9E414B00ADBF01 /* Sources */,
 				30BB71712A9E414B00ADBF01 /* Frameworks */,
 				30BB71722A9E414B00ADBF01 /* Resources */,
@@ -283,31 +258,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		1C2EEF077E3231A797D2F48B /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-netdisk-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		30BB71702A9E414B00ADBF01 /* Sources */ = {
@@ -470,7 +420,6 @@
 		};
 		30BB71842A9E414C00ADBF01 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C6755CED1B76D8C9282268CA /* Pods-netdisk.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -499,7 +448,6 @@
 		};
 		30BB71852A9E414C00ADBF01 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0603C54326530B2086EA8E61 /* Pods-netdisk.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
