@@ -66,6 +66,16 @@ class MainViewController: NSViewController {
             make.leading.equalTo(sidePanel.snp.trailing)
             make.top.bottom.trailing.equalTo(view)
         }
+        
+        let downloadListVC = DownloadListViewController()
+        downloadListVC.view.isHidden = true
+        addChild(downloadListVC)
+        view.addSubview(downloadListVC.view)
+        VCs.append(downloadListVC)
+        downloadListVC.view.snp.makeConstraints { make in
+            make.leading.equalTo(sidePanel.snp.trailing)
+            make.top.bottom.trailing.equalTo(view)
+        }
     }
     
     @objc func didLogin() {
