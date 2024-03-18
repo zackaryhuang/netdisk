@@ -22,6 +22,12 @@ class DownloadListViewController: NSViewController {
     
     var tableContainerView: NSScrollView!
     
+    var downloadTasks = ZigDownloadManager.shared.downloadSessionManager.tasks
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,25 +49,30 @@ class DownloadListViewController: NSViewController {
             make.leading.top.trailing.bottom.equalTo(view)
         }
         
-        refresh()
-    }
-    
-    func refresh() {
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1, execute: DispatchWorkItem(block: { [weak self] in
-            guard let self = self else { return }
-            self.tableView.reloadData()
-            self.refresh()
-        }))
+        self.tableView.reloadData()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(taskDidStartDownload(_:)), name: DownloadTask.runningNotification, object: nil)
     }
     
     @objc func tableViewDoubleClick(_ sender: AnyObject) {
         
     }
+    
+    @objc func taskDidStartDownload(_ notification: Notification) {
+        DispatchQueue.main.async {
+            if let downloadTask = notification.userInfo?.values.first as? DownloadTask {
+                if !self.downloadTasks.contains(downloadTask) {
+                    self.downloadTasks = ZigDownloadManager.shared.downloadSessionManager.tasks
+                    self.tableView.reloadData()
+                }
+            }
+        }
+    }
 }
 
 extension DownloadListViewController: NSTableViewDelegate, NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return ZigDownloadManager.shared.downloadSessionManager.tasks.count
+        return downloadTasks.count
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
@@ -71,7 +82,7 @@ extension DownloadListViewController: NSTableViewDelegate, NSTableViewDataSource
         }
         
         if let cell = rowView as? DownloadRowView {
-            let tasks: [DownloadTask] = ZigDownloadManager.shared.downloadSessionManager.tasks.reversed()
+            let tasks: [DownloadTask] = downloadTasks.reversed()
             cell.updateRowView(with: tasks[row])
         }
         
@@ -79,7 +90,7 @@ extension DownloadListViewController: NSTableViewDelegate, NSTableViewDataSource
     }
     
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        return 60
+        return 80
     }
 }
 

@@ -15,6 +15,14 @@ class DownloadRowView: NSTableRowView {
     
     let imageView = NSImageView()
     
+    let contentView = {
+        let contentView = NSView()
+        contentView.wantsLayer = true
+        contentView.layer?.backgroundColor = NSColor(hex: 0x000000, alpha: 0.6).cgColor
+        contentView.layer?.cornerRadius = 10
+        return contentView
+    }()
+    
     let fileNameLabel = {
         let label = NSTextField()
         label.isBordered = false
@@ -85,13 +93,9 @@ class DownloadRowView: NSTableRowView {
     }()
     
     let progressView = {
-        let progress = NSProgressIndicator()
-        progress.style = .bar
-        progress.isIndeterminate = false
-        progress.isDisplayedWhenStopped = true
-        progress.controlSize = .small
-        progress.minValue = 0.0
-        progress.maxValue = 1.0
+        let progress = NSView()
+        progress.wantsLayer = true
+        progress.layer?.backgroundColor = NSColor(hex: 0x32B3FB, alpha: 0.1).cgColor
         return progress
     }()
     
@@ -106,72 +110,75 @@ class DownloadRowView: NSTableRowView {
     
     func configUI() {
         
-        addSubview(progressView)
+        addSubview(contentView)
+        contentView.snp.makeConstraints { make in
+            make.edges.equalTo(self).inset(NSEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
+        }
+        
+        contentView.addSubview(progressView)
         progressView.snp.makeConstraints { make in
-            make.leading.equalTo(self).offset(12)
-            make.trailing.equalTo(self).offset(-12)
-            make.height.equalTo(4)
-            make.bottom.equalTo(self).offset(-5)
+            make.leading.top.bottom.equalTo(contentView)
+            make.width.equalTo(CGFLOAT_MIN)
         }
         
         showInFinderButton.target = self
         showInFinderButton.action = #selector(showInFinder)
-        addSubview(showInFinderButton)
+        contentView.addSubview(showInFinderButton)
         showInFinderButton.snp.makeConstraints { make in
-            make.trailing.equalTo(self).offset(-20)
+            make.trailing.equalTo(contentView).offset(-20)
             make.width.height.equalTo(Self.ButtonWidth)
-            make.centerY.equalTo(self)
+            make.centerY.equalTo(contentView)
         }
         
         deleteButton.target = self
         deleteButton.action = #selector(cancelDownload)
-        addSubview(deleteButton)
+        contentView.addSubview(deleteButton)
         deleteButton.snp.makeConstraints { make in
             make.trailing.equalTo(showInFinderButton.snp.leading).offset(-10)
             make.width.height.equalTo(Self.ButtonWidth)
-            make.centerY.equalTo(self)
+            make.centerY.equalTo(contentView)
         }
         
         pauseButton.target = self
         pauseButton.action = #selector(pauseDownload)
-        addSubview(pauseButton)
+        contentView.addSubview(pauseButton)
         pauseButton.snp.makeConstraints { make in
             make.trailing.equalTo(deleteButton.snp.leading).offset(-10)
             make.width.height.equalTo(Self.ButtonWidth)
-            make.centerY.equalTo(self)
+            make.centerY.equalTo(contentView)
         }
         
         resumeButton.target = self
         resumeButton.action = #selector(resumeDownload)
-        addSubview(resumeButton)
+        contentView.addSubview(resumeButton)
         resumeButton.snp.makeConstraints { make in
             make.trailing.equalTo(pauseButton.snp.leading).offset(-10)
             make.width.height.equalTo(Self.ButtonWidth)
-            make.centerY.equalTo(self)
+            make.centerY.equalTo(contentView)
         }
         
-        addSubview(downloadStatueLabel)
+        contentView.addSubview(downloadStatueLabel)
         downloadStatueLabel.snp.makeConstraints { make in
             make.trailing.equalTo(resumeButton.snp.leading).offset(-20)
-            make.centerY.equalTo(self)
+            make.centerY.equalTo(contentView)
             make.width.equalTo(150)
         }
         
-        addSubview(imageView)
+        contentView.addSubview(imageView)
         imageView.snp.makeConstraints { make in
             make.width.height.equalTo(34)
-            make.centerY.equalTo(self)
-            make.leading.equalTo(self).offset(12)
+            make.centerY.equalTo(contentView)
+            make.leading.equalTo(contentView).offset(12)
         }
         
-        addSubview(fileNameLabel)
+        contentView.addSubview(fileNameLabel)
         fileNameLabel.snp.makeConstraints { make in
             make.leading.equalTo(imageView.snp.trailing).offset(12)
             make.top.equalTo(imageView)
             make.trailing.lessThanOrEqualTo(downloadStatueLabel.snp.leading).offset(-20)
         }
         
-        addSubview(fileSizeLabel)
+        contentView.addSubview(fileSizeLabel)
         fileSizeLabel.snp.makeConstraints { make in
             make.leading.equalTo(fileNameLabel.snp.leading)
             make.bottom.equalTo(imageView)
@@ -220,12 +227,11 @@ class DownloadRowView: NSTableRowView {
     
     func updateRowView(with task: DownloadTask) {
         self.task = task
-//        imageView.image = Utils.thumbForFile(info: downloadItem.fileDetail)
+        imageView.image = Utils.thumbForFile(fileName: task.fileName)
         fileNameLabel.stringValue = task.fileName
         let downloadedSize = task.progress.completedUnitCount
         let totalSize = task.progress.totalUnitCount
         fileSizeLabel.stringValue = "\(Double(downloadedSize).binarySizeString) / \(Double(totalSize).binarySizeString)"
-        progressView.doubleValue = task.progress.fractionCompleted
         
         switch task.status {
         case .suspended:
@@ -275,7 +281,7 @@ class DownloadRowView: NSTableRowView {
             showInFinderButton.snp.remakeConstraints { make in
                 make.trailing.equalTo(attribute).offset(offset)
                 make.width.height.equalTo(Self.ButtonWidth)
-                make.centerY.equalTo(self)
+                make.centerY.equalTo(contentView)
             }
             attribute = showInFinderButton.snp.leading
             offset = -10
@@ -285,7 +291,7 @@ class DownloadRowView: NSTableRowView {
             deleteButton.snp.remakeConstraints { make in
                 make.trailing.equalTo(attribute).offset(offset)
                 make.width.height.equalTo(Self.ButtonWidth)
-                make.centerY.equalTo(self)
+                make.centerY.equalTo(contentView)
             }
             attribute = deleteButton.snp.leading
             offset = -10
@@ -295,7 +301,7 @@ class DownloadRowView: NSTableRowView {
             pauseButton.snp.remakeConstraints { make in
                 make.trailing.equalTo(attribute).offset(offset)
                 make.width.height.equalTo(Self.ButtonWidth)
-                make.centerY.equalTo(self)
+                make.centerY.equalTo(contentView)
             }
             attribute = pauseButton.snp.leading
             offset = -10
@@ -305,7 +311,7 @@ class DownloadRowView: NSTableRowView {
             resumeButton.snp.remakeConstraints { make in
                 make.trailing.equalTo(attribute).offset(offset)
                 make.width.height.equalTo(Self.ButtonWidth)
-                make.centerY.equalTo(self)
+                make.centerY.equalTo(contentView)
             }
             
             attribute = resumeButton.snp.leading
@@ -314,8 +320,33 @@ class DownloadRowView: NSTableRowView {
         
         downloadStatueLabel.snp.remakeConstraints { make in
             make.trailing.equalTo(attribute).offset(offset)
-            make.centerY.equalTo(self)
+            make.centerY.equalTo(contentView)
             make.width.equalTo(150)
+        }
+        
+        if task.status == .running {
+            task.progress { [weak self] (task) in
+                guard let self = self else { return }
+                let downloadedSize = task.progress.completedUnitCount
+                let totalSize = task.progress.totalUnitCount
+                self.downloadStatueLabel.stringValue = task.speedString
+                self.fileSizeLabel.stringValue = "\(Double(downloadedSize).binarySizeString) / \(Double(totalSize).binarySizeString)"
+                
+                NSAnimationContext.runAnimationGroup { context in
+                    context.duration = 0.25
+                    context.allowsImplicitAnimation = true
+                    self.progressView.snp.remakeConstraints { make in
+                        make.leading.top.bottom.equalTo(self.contentView)
+                        make.width.equalTo(self.contentView).multipliedBy(task.progress.fractionCompleted)
+                    }
+                    self.contentView.layoutSubtreeIfNeeded()
+                }
+            }
+        } else {
+            self.progressView.snp.remakeConstraints { make in
+                make.leading.top.bottom.equalTo(self.contentView)
+                make.width.equalTo(self.contentView).multipliedBy(task.progress.fractionCompleted)
+            }
         }
     }
 }
