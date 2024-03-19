@@ -27,7 +27,7 @@ class FileRowView: NSTableRowView {
         titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         titleLabel.drawsBackground = false
         titleLabel.isSelectable = false
-        titleLabel.font = NSFont(PingFang: 16)
+        titleLabel.font = NSFont(LXGWRegularSize: 16)
         titleLabel.isBordered = false
         return titleLabel
     }()
@@ -37,7 +37,7 @@ class FileRowView: NSTableRowView {
          titleLabel.isEditable = false
          titleLabel.drawsBackground = false
          titleLabel.isSelectable = false
-         titleLabel.font = NSFont(PingFang: 12)
+         titleLabel.font = NSFont(LXGWRegularSize: 12)
          titleLabel.isBordered = false
          return titleLabel
     }()
@@ -129,66 +129,7 @@ class FileRowView: NSTableRowView {
         if fileData.isDir {
             thumbImageView.image = NSImage(named: "icon_folder")
         } else {
-            if fileData.category == .Video {
-                thumbImageView.image = NSImage(named: "icon_video")
-            } else if fileData.category == .Audio {
-                thumbImageView.image = NSImage(named: "icon_audio")
-            } else if fileData.category == .Picture {
-                if let imageUrl = fileData.thumbnail {
-                    thumbImageView.kf.setImage(with: imageUrl, placeholder: NSImage(named: "icon_photo"))
-                } else if let imageUrl = fileData.thumbnail {
-                    thumbImageView.kf.setImage(with: imageUrl, placeholder: NSImage(named: "icon_photo"))
-                } else if let imageUrl = fileData.thumbnail {
-                    thumbImageView.kf.setImage(with: imageUrl, placeholder: NSImage(named: "icon_photo"))
-                } else {
-                    debugPrint(fileData.fileName)
-                    thumbImageView.image = NSImage(named: "icon_unknown")
-                }
-            } else if fileData.category == .Document {
-                if fileData.fileName.hasSuffix(".docx") == true ||
-                    fileData.fileName.hasSuffix(".doc") == true {
-                    thumbImageView.image = NSImage(named: "icon_word")
-                } else if fileData.fileName.hasSuffix(".xlsx") == true ||
-                            fileData.fileName.hasSuffix(".xls") == true {
-                    thumbImageView.image = NSImage(named: "icon_excel")
-                } else if fileData.fileName.hasSuffix(".pptx") == true ||
-                            fileData.fileName.hasSuffix(".ppt") == true {
-                    thumbImageView.image = NSImage(named: "icon_ppt")
-                } else if fileData.fileName.hasSuffix(".pdf") == true {
-                    thumbImageView.image = NSImage(named: "icon_pdf")
-                } else if fileData.fileName.hasSuffix(".txt") == true {
-                    thumbImageView.image = NSImage(named: "icon_txt")
-                } else {
-                    debugPrint(fileData.fileName)
-                    thumbImageView.image = NSImage(named: "icon_unknown")
-                }
-            } else if fileData.category == .Application {
-                if fileData.fileName.hasSuffix(".exe") == true {
-                    thumbImageView.image = NSImage(named: "icon_windows")
-                } else {
-                    debugPrint(fileData.fileName)
-                    thumbImageView.image = NSImage(named: "icon_unknown")
-                }
-            } else if fileData.category == .Torrent {
-                if fileData.fileName.hasSuffix(".torrent") == true {
-                    thumbImageView.image = NSImage(named: "icon_bt")
-                } else {
-                    debugPrint(fileData.fileName)
-                    thumbImageView.image = NSImage(named: "icon_unknown")
-                }
-            } else {
-                if fileData.fileName.hasSuffix(".zip") == true ||
-                    fileData.fileName.hasSuffix(".rar") == true {
-                    thumbImageView.image = NSImage(named: "icon_zip")
-                } else if fileData.fileName.hasSuffix(".psd") == true {
-                    thumbImageView.image = NSImage(named: "icon_psd")
-                } else if fileData.fileName.hasSuffix(".dmg") == true {
-                    thumbImageView.image = NSImage(named: "icon_apple")
-                } else {
-                    debugPrint(fileData.fileName)
-                    thumbImageView.image = NSImage(named: "icon_unknown")
-                }
-            }
+            thumbImageView.image = Utils.thumbForFile(info: fileData)
         }
         
         if fileData.isDir {

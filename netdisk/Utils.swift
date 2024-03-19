@@ -47,7 +47,12 @@ class Utils {
                 
                 if info.fileName.hasSuffix(".txt") == true {
                     return NSImage(named: "icon_txt")
-                } 
+                }
+                
+                if info.fileName.hasSuffix(".epub") == true {
+                    return NSImage(named: "icon_epub")
+                }
+                
                 debugPrint(info.fileName)
                 return NSImage(named: "icon_unknown")
             }
@@ -71,7 +76,7 @@ class Utils {
             if info.fileName.hasSuffix(".zip") == true ||
                 info.fileName.hasSuffix(".rar") == true {
                 return NSImage(named: "icon_zip")
-            } 
+            }
             
             if info.fileName.hasSuffix(".psd") == true {
                 return NSImage(named: "icon_psd")
@@ -155,6 +160,10 @@ class Utils {
         
         if lowercasedFileName.hasSuffix(".dmg") == true {
             return NSImage(named: "icon_apple")
+        }
+        
+        if lowercasedFileName.hasSuffix(".epub") == true {
+            return NSImage(named: "icon_epub")
         }
         
         debugPrint(lowercasedFileName)

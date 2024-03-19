@@ -28,6 +28,13 @@ class DownloadListViewController: NSViewController {
         NotificationCenter.default.removeObserver(self)
     }
     
+    override func loadView() {
+        let view = NSView()
+        view.wantsLayer = true
+        view.layer?.backgroundColor = NSColor(hex: 0x121213).cgColor
+        self.view = view
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -52,6 +59,7 @@ class DownloadListViewController: NSViewController {
         self.tableView.reloadData()
         
         NotificationCenter.default.addObserver(self, selector: #selector(taskDidStartDownload(_:)), name: DownloadTask.runningNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadData), name: DownloadTask.didCompleteNotification, object: nil)
     }
     
     @objc func tableViewDoubleClick(_ sender: AnyObject) {
@@ -62,10 +70,17 @@ class DownloadListViewController: NSViewController {
         DispatchQueue.main.async {
             if let downloadTask = notification.userInfo?.values.first as? DownloadTask {
                 if !self.downloadTasks.contains(downloadTask) {
-                    self.downloadTasks = ZigDownloadManager.shared.downloadSessionManager.tasks
+                    self.downloadTasks = ZigDownloadManager.shared.downloadSessionManager.tasks.filter({$0.status != .removed})
                     self.tableView.reloadData()
                 }
             }
+        }
+    }
+    
+    @objc func reloadData() {
+        DispatchQueue.main.async {
+            self.downloadTasks = ZigDownloadManager.shared.downloadSessionManager.tasks.filter({$0.status != .removed})
+            self.tableView.reloadData()
         }
     }
 }

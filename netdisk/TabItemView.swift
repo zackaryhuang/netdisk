@@ -48,7 +48,7 @@ class TabItemView: NSView {
         label.isEditable = false
         label.alignment = .center
         label.backgroundColor = .clear
-        label.font = NSFont(PingFangSemiBold: 12)
+        label.font = NSFont(LXGWBoldSize: 14)
         return label
     }()
     

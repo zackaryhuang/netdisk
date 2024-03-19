@@ -31,7 +31,7 @@ class AlertWindow: NSWindow {
         label.maximumNumberOfLines = 1
         label.alignment = .center
         label.textColor = .white
-        label.font = NSFont(PingFangSemiBold: 24)
+        label.font = NSFont(LXGWBoldSize: 24)
         return label
     }()
     
@@ -39,7 +39,7 @@ class AlertWindow: NSWindow {
         let label = ZHLabel()
         label.alignment = .center
         label.textColor = NSColor(hex: 0xB4B4B4)
-        label.font = NSFont(PingFang: 16)
+        label.font = NSFont(LXGWBoldSize: 16)
         return label
     }()
     
@@ -52,6 +52,7 @@ class AlertWindow: NSWindow {
         button.layer?.backgroundColor = NSColor(hex: 0x60605F).cgColor
         button.imagePosition = .noImage
         button.title = "确认"
+        button.font = NSFont(LXGWBoldSize: 16)
         return button
     }()
     
@@ -64,6 +65,7 @@ class AlertWindow: NSWindow {
         button.layer?.backgroundColor = NSColor(hex: 0xEB7974).cgColor
         button.imagePosition = .noImage
         button.title = "删除记录"
+        button.font = NSFont(LXGWBoldSize: 16)
         return button
     }()
     

@@ -34,6 +34,10 @@ class MainViewController: NSViewController {
         self.view = view
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configUI()

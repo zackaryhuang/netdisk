@@ -83,6 +83,9 @@
 		30BB718C2A9E444200ADBF01 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		30BB71902A9E45D300ADBF01 /* CommonDefine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonDefine.swift; sourceTree = "<group>"; };
 		30C508122AAB55D60076E842 /* ImagePreviewWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewWindowController.swift; sourceTree = "<group>"; };
+		30CE8BEF2BA9EDDB007D6052 /* LXGWWenKaiMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LXGWWenKaiMono-Regular.ttf"; sourceTree = "<group>"; };
+		30CE8BF02BA9EDDC007D6052 /* LXGWWenKaiMono-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LXGWWenKaiMono-Bold.ttf"; sourceTree = "<group>"; };
+		30CE8BF12BA9EDDC007D6052 /* LXGWWenKaiMono-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LXGWWenKaiMono-Light.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,12 +132,12 @@
 		30BB71762A9E414B00ADBF01 /* netdisk */ = {
 			isa = PBXGroup;
 			children = (
+				30CE8BE92BA9ED82007D6052 /* Resources */,
 				3065E34B2BA72B2100A3114F /* Tiercel */,
 				306954E12ABB3AA90059901F /* UIKit */,
 				300489392AA6398D0099450D /* Info.plist */,
 				30BB71862A9E418600ADBF01 /* main.swift */,
 				30BB71772A9E414B00ADBF01 /* AppDelegate.swift */,
-				30BB717B2A9E414C00ADBF01 /* Assets.xcassets */,
 				30BB71802A9E414C00ADBF01 /* netdisk.entitlements */,
 				30B883382B3DDE5B00794B57 /* Const.swift */,
 				3065E2D42BA5D1B300A3114F /* SearchView.swift */,
@@ -165,6 +168,25 @@
 				3065E3522BA73A8300A3114F /* ZigBookmark.swift */,
 			);
 			path = netdisk;
+			sourceTree = "<group>";
+		};
+		30CE8BE92BA9ED82007D6052 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				30CE8BEA2BA9ED91007D6052 /* Fonts */,
+				30BB717B2A9E414C00ADBF01 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		30CE8BEA2BA9ED91007D6052 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				30CE8BF02BA9EDDC007D6052 /* LXGWWenKaiMono-Bold.ttf */,
+				30CE8BF12BA9EDDC007D6052 /* LXGWWenKaiMono-Light.ttf */,
+				30CE8BEF2BA9EDDB007D6052 /* LXGWWenKaiMono-Regular.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

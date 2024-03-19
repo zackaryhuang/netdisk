@@ -33,6 +33,18 @@ extension NSFont {
     convenience init?(Menlo: Float) {
         self.init(name: "Menlo-Regular", size: CGFloat(Menlo))
     }
+    
+    convenience init?(LXGWRegularSize: Float) {
+        self.init(name: "LXGWWenKaiMono-Regular", size: CGFloat(LXGWRegularSize))
+    }
+    
+    convenience init?(LXGWLightSize: Float) {
+        self.init(name: "LXGWWenKaiMono-Light", size: CGFloat(LXGWLightSize))
+    }
+    
+    convenience init?(LXGWBoldSize: Float) {
+        self.init(name: "LXGWWenKaiMono-Bold", size: CGFloat(LXGWBoldSize))
+    }
 }
 
 extension String {
