@@ -25,6 +25,8 @@ class MainViewController: NSViewController {
     
     let sidePanel = SidePanelView()
     
+    let subSidePanel = SubSidePanelView()
+    
     var VCs = [any CategoryVC]()
     
     override func loadView() {
@@ -45,19 +47,28 @@ class MainViewController: NSViewController {
     }
     
     private func configUI() {
-        sidePanel.delegate = self
         view.addSubview(sidePanel)
         sidePanel.snp.makeConstraints { make in
             make.leading.top.bottom.equalTo(view)
             make.width.equalTo(78)
         }
         
+        view.addSubview(subSidePanel)
+        subSidePanel.delegate = self
+        subSidePanel.snp.makeConstraints { make in
+            make.leading.equalTo(sidePanel.snp.trailing)
+            make.width.equalTo(150)
+            make.top.bottom.equalTo(view)
+        }
+        
+        sidePanel.delegate = subSidePanel
+        
         let fileListVC = FileListViewController()
         addChild(fileListVC)
         view.addSubview(fileListVC.view)
         VCs.append(fileListVC)
         fileListVC.view.snp.makeConstraints { make in
-            make.leading.equalTo(sidePanel.snp.trailing)
+            make.leading.equalTo(subSidePanel.snp.trailing)
             make.top.bottom.trailing.equalTo(view)
         }
         
@@ -67,7 +78,17 @@ class MainViewController: NSViewController {
         view.addSubview(downloadListVC.view)
         VCs.append(downloadListVC)
         downloadListVC.view.snp.makeConstraints { make in
-            make.leading.equalTo(sidePanel.snp.trailing)
+            make.leading.equalTo(subSidePanel.snp.trailing)
+            make.top.bottom.trailing.equalTo(view)
+        }
+        
+        let resourceListVC = ResourceListViewController()
+        resourceListVC.view.isHidden = true
+        addChild(resourceListVC)
+        view.addSubview(resourceListVC.view)
+        VCs.append(resourceListVC)
+        resourceListVC.view.snp.makeConstraints { make in
+            make.leading.equalTo(subSidePanel.snp.trailing)
             make.top.bottom.trailing.equalTo(view)
         }
     }
@@ -77,10 +98,10 @@ class MainViewController: NSViewController {
     }
 }
 
-extension MainViewController: SidePanelViewDelegate {
-    func didSelect(tab: MainCategoryType) {
-        VCs.forEach { categoryVC in
-            categoryVC.view.isHidden = categoryVC.categoryType != tab
+extension MainViewController: SubSidePanelViewDelegate {
+    func didSelect(itemType: SubSidePanelItemType) {
+        VCs.forEach { viewController in
+            viewController.view.isHidden = viewController.categoryType != itemType
         }
     }
 }

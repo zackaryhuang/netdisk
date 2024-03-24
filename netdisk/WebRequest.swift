@@ -489,16 +489,24 @@ class WebRequest {
         return res
     }
     
-    static func requestFileList(startMark: String?, limit: Int, parentFolder: String) async throws -> FileListResp? {
+    static func requestFileList(startMark: String?, limit: Int, parentFolder: String, useResourceDrive: Bool = false) async throws -> FileListResp? {
         if ClientManager.shared.currentClient() == .Aliyun {
-            guard let driveID = ClientManager.shared.aliUserData?.defaultDriveID else {
-                return nil
-            }
             var params = [
-                "drive_id" : driveID,
                 "limit" : limit,
                 "parent_file_id": parentFolder
             ] as [String:Any]
+            
+            if useResourceDrive {
+                guard let driveID = ClientManager.shared.aliUserData?.resourceDriveID else {
+                    return nil
+                }
+                params["drive_id"] = driveID
+            } else {
+                guard let driveID = ClientManager.shared.aliUserData?.defaultDriveID else {
+                    return nil
+                }
+                params["drive_id"] = driveID
+            }
             
             if let mark = startMark, !mark.isEmpty {
                 params["marker"] = mark

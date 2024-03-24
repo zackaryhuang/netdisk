@@ -110,7 +110,7 @@ extension DownloadListViewController: NSTableViewDelegate, NSTableViewDataSource
 }
 
 extension DownloadListViewController: CategoryVC {
-    var categoryType: MainCategoryType {
-        return .Trans
+    var categoryType: SubSidePanelItemType {
+        return .download
     }
 }

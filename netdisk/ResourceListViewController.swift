@@ -1,18 +1,13 @@
 //
-//  FileListViewController.swift
+//  ResourceListViewController.swift
 //  netdisk
 //
-//  Created by Zackary on 2023/12/25.
+//  Created by Zackary on 2024/3/24.
 //
 
-import AppKit
+import Cocoa
 
-protocol CategoryVC {
-    var categoryType: SubSidePanelItemType { get }
-    var view: NSView { get }
-}
-
-class FileListViewController: NSViewController, CategoryVC {
+class ResourceListViewController: NSViewController {
 
     let tableView = {
         let tableView = NSTableView()
@@ -26,8 +21,6 @@ class FileListViewController: NSViewController, CategoryVC {
     
     let filePathView = {
         let view = FilePathView()
-//        view.wantsLayer = true
-//        view.layer?.backgroundColor = NSColor(hex: 0x121213).cgColor
         return view
     }()
     
@@ -93,7 +86,7 @@ class FileListViewController: NSViewController, CategoryVC {
     private func requestFiles() {
         Task {
             let currentClient = ClientManager.shared.currentClient()
-            if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? parentFolderID : path ?? "/") {
+            if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? parentFolderID : path ?? "/", useResourceDrive: true) {
                 fileList = fileResp.fileList
                 tableView.reloadData()
                 if ClientManager.shared.currentClient() == .Aliyun {
@@ -124,7 +117,7 @@ class FileListViewController: NSViewController, CategoryVC {
         
         Task {
             let currentClient = ClientManager.shared.currentClient()
-            if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? self.parentFolderID : self.path ?? "/") {
+            if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? self.parentFolderID : self.path ?? "/", useResourceDrive: true) {
                 isLoadingMore = false
                 
                 if let list = fileResp.fileList {
@@ -215,9 +208,16 @@ class FileListViewController: NSViewController, CategoryVC {
             }
         }
     }
+    
 }
 
-extension FileListViewController: NSTableViewDelegate, NSTableViewDataSource, FilePathViewDelegate {
+extension ResourceListViewController: CategoryVC {
+    var categoryType: SubSidePanelItemType {
+        return .resourceDrive
+    }
+}
+
+extension ResourceListViewController: NSTableViewDelegate, NSTableViewDataSource, FilePathViewDelegate {
     func numberOfRows(in tableView: NSTableView) -> Int {
         return fileList?.count ?? 0
     }
@@ -262,9 +262,4 @@ extension FileListViewController: NSTableViewDelegate, NSTableViewDataSource, Fi
             }
         }
     }
-    
-    var categoryType: SubSidePanelItemType {
-        return .backupDrive
-    }
-    
 }

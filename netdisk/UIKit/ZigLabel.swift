@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class ZHLabel: NSTextField {
+class ZigLabel: NSTextField {
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)

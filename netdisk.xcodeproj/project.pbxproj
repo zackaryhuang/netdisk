@@ -22,7 +22,7 @@
 		3065E3512BA7315700A3114F /* ZigDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3065E3502BA7315700A3114F /* ZigDownloadManager.swift */; };
 		3065E3532BA73A8300A3114F /* ZigBookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3065E3522BA73A8300A3114F /* ZigBookmark.swift */; };
 		306954E02ABB39910059901F /* AlertWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306954DF2ABB39910059901F /* AlertWindow.swift */; };
-		306954E32ABB3AC70059901F /* ZHLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306954E22ABB3AC70059901F /* ZHLabel.swift */; };
+		306954E32ABB3AC70059901F /* ZigLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306954E22ABB3AC70059901F /* ZigLabel.swift */; };
 		306EE5AF2AA0E3EB00428E82 /* FileRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EE5AE2AA0E3EB00428E82 /* FileRowView.swift */; };
 		306EE5B12AA0FF2900428E82 /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EE5B02AA0FF2900428E82 /* UsageView.swift */; };
 		308429D02AAC7AC70086AB2E /* ImagePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308429CF2AAC7AC70086AB2E /* ImagePreviewController.swift */; };
@@ -31,6 +31,9 @@
 		309AFD272AA4DD88005F50C9 /* CategoryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */; };
 		30ABAA232B3489F70098DC23 /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30ABAA222B3489F70098DC23 /* WebRequest.swift */; };
 		30ABAA282B34934C0098DC23 /* ClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30ABAA272B34934C0098DC23 /* ClientManager.swift */; };
+		30B7E92E2BB0584300870ABA /* SubSidePanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B7E92D2BB0584300870ABA /* SubSidePanelView.swift */; };
+		30B7E9302BB0596700870ABA /* SubSidePanelItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B7E92F2BB0596700870ABA /* SubSidePanelItemRowView.swift */; };
+		30B7E9322BB06C3A00870ABA /* ResourceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */; };
 		30B883392B3DDE5B00794B57 /* Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B883382B3DDE5B00794B57 /* Const.swift */; };
 		30BB71782A9E414B00ADBF01 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BB71772A9E414B00ADBF01 /* AppDelegate.swift */; };
 		30BB717C2A9E414C00ADBF01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30BB717B2A9E414C00ADBF01 /* Assets.xcassets */; };
@@ -63,7 +66,7 @@
 		3065E3502BA7315700A3114F /* ZigDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigDownloadManager.swift; sourceTree = "<group>"; };
 		3065E3522BA73A8300A3114F /* ZigBookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigBookmark.swift; sourceTree = "<group>"; };
 		306954DF2ABB39910059901F /* AlertWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertWindow.swift; sourceTree = "<group>"; };
-		306954E22ABB3AC70059901F /* ZHLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHLabel.swift; sourceTree = "<group>"; };
+		306954E22ABB3AC70059901F /* ZigLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigLabel.swift; sourceTree = "<group>"; };
 		306EE5AE2AA0E3EB00428E82 /* FileRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRowView.swift; sourceTree = "<group>"; };
 		306EE5B02AA0FF2900428E82 /* UsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageView.swift; sourceTree = "<group>"; };
 		308429CF2AAC7AC70086AB2E /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
@@ -72,6 +75,9 @@
 		309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRowView.swift; sourceTree = "<group>"; };
 		30ABAA222B3489F70098DC23 /* WebRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRequest.swift; sourceTree = "<group>"; };
 		30ABAA272B34934C0098DC23 /* ClientManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientManager.swift; sourceTree = "<group>"; };
+		30B7E92D2BB0584300870ABA /* SubSidePanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSidePanelView.swift; sourceTree = "<group>"; };
+		30B7E92F2BB0596700870ABA /* SubSidePanelItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSidePanelItemRowView.swift; sourceTree = "<group>"; };
+		30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceListViewController.swift; sourceTree = "<group>"; };
 		30B883382B3DDE5B00794B57 /* Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Const.swift; sourceTree = "<group>"; };
 		30BB71742A9E414B00ADBF01 /* netdisk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = netdisk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BB71772A9E414B00ADBF01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -108,7 +114,7 @@
 		306954E12ABB3AA90059901F /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
-				306954E22ABB3AC70059901F /* ZHLabel.swift */,
+				306954E22ABB3AC70059901F /* ZigLabel.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -143,9 +149,12 @@
 				3065E2D42BA5D1B300A3114F /* SearchView.swift */,
 				30BB71882A9E41C100ADBF01 /* MainWindowController.swift */,
 				3036F4532B3B1C6900F365E4 /* SidePanelView.swift */,
+				30B7E92D2BB0584300870ABA /* SubSidePanelView.swift */,
+				30B7E92F2BB0596700870ABA /* SubSidePanelItemRowView.swift */,
 				30BB718C2A9E444200ADBF01 /* LoginViewController.swift */,
 				300108EC2A9E58F5002FBB52 /* MainViewController.swift */,
 				3036F4512B39A0EB00F365E4 /* FileListViewController.swift */,
+				30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */,
 				30008DFA2B86458800F2BE37 /* DownloadListViewController.swift */,
 				300108ED2A9E58F5002FBB52 /* MainViewController.xib */,
 				30BB71902A9E45D300ADBF01 /* CommonDefine.swift */,
@@ -278,6 +287,7 @@
 			files = (
 				309AFD252AA49B6C005F50C9 /* TabItemView.swift in Sources */,
 				30ABAA282B34934C0098DC23 /* ClientManager.swift in Sources */,
+				30B7E9302BB0596700870ABA /* SubSidePanelItemRowView.swift in Sources */,
 				3036F4522B39A0EB00F365E4 /* FileListViewController.swift in Sources */,
 				30ABAA232B3489F70098DC23 /* WebRequest.swift in Sources */,
 				30BB718E2A9E444200ADBF01 /* LoginViewController.swift in Sources */,
@@ -286,7 +296,7 @@
 				306954E02ABB39910059901F /* AlertWindow.swift in Sources */,
 				3065E2D52BA5D1B300A3114F /* SearchView.swift in Sources */,
 				309AFD212AA4273B005F50C9 /* FilePathView.swift in Sources */,
-				306954E32ABB3AC70059901F /* ZHLabel.swift in Sources */,
+				306954E32ABB3AC70059901F /* ZigLabel.swift in Sources */,
 				30B883392B3DDE5B00794B57 /* Const.swift in Sources */,
 				306EE5B12AA0FF2900428E82 /* UsageView.swift in Sources */,
 				3013B9252AB75D3200DD2F63 /* Extensions.swift in Sources */,
@@ -303,6 +313,8 @@
 				30EFF4772BAD382B00ABD070 /* ZigPreviewHelper.swift in Sources */,
 				3024970B2AA77E2600E2AD24 /* DownloadRowView.swift in Sources */,
 				302830D92ADBDAEA00A3A549 /* ZHUserManager.swift in Sources */,
+				30B7E9322BB06C3A00870ABA /* ResourceListViewController.swift in Sources */,
+				30B7E92E2BB0584300870ABA /* SubSidePanelView.swift in Sources */,
 				306EE5AF2AA0E3EB00428E82 /* FileRowView.swift in Sources */,
 				3036F4542B3B1C6900F365E4 /* SidePanelView.swift in Sources */,
 			);

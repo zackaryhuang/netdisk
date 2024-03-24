@@ -27,7 +27,7 @@ class AlertOption {
 class AlertWindow: NSWindow {
     
     let titleLabel = {
-        let label = ZHLabel()
+        let label = ZigLabel()
         label.maximumNumberOfLines = 1
         label.alignment = .center
         label.textColor = .white
@@ -36,7 +36,7 @@ class AlertWindow: NSWindow {
     }()
     
     let subTitleLabel = {
-        let label = ZHLabel()
+        let label = ZigLabel()
         label.alignment = .center
         label.textColor = NSColor(hex: 0xB4B4B4)
         label.font = NSFont(LXGWBoldSize: 16)

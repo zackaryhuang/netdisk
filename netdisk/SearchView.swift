@@ -15,7 +15,7 @@ protocol SearchViewDelegate: NSObjectProtocol {
 
 class SearchView: NSView {
     var imageView: NSImageView!
-    var label: ZHLabel!
+    var label: ZigLabel!
     var searchTextField: NSTextField!
     weak var delegate: SearchViewDelegate?
     
