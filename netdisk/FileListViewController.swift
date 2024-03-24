@@ -164,24 +164,7 @@ class FileListViewController: NSViewController, CategoryVC {
             return
         }
         
-        switch fileData.category {
-        case .Picture:
-            debugPrint("预览照片")
-            previewImageWith(fileID: fileData.fileID)
-        case .Video:
-            debugPrint("预览视频")
-            previewVideoWith(fileID: fileData.fileID)
-        case .Audio:
-            debugPrint("预览音频")
-        case .Document:
-            debugPrint("预览文档")
-        case .Application:
-            debugPrint("预览应用")
-        case .Torrent:
-            debugPrint("预览种子")
-        case .Others:
-            debugPrint("预览其他")
-        }
+        ZigPreviewHelper.preview(fileData: fileData)
         
     }
     

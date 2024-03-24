@@ -58,20 +58,11 @@ class SidePanelView: NSView {
             make.width.equalTo(58)
         }
         
-        let searchTabItem = TabItemView(image: "icon_tab_search", type: MainCategoryType.Search, delegate: self)
-        tabs.append(searchTabItem)
-        addSubview(searchTabItem)
-        searchTabItem.snp.makeConstraints { make in
-            make.top.equalTo(filesTabItem.snp.bottom).offset(10)
-            make.centerX.equalTo(self)
-            make.width.equalTo(58)
-        }
-        
         let transTabItem = TabItemView(image: "icon_tab_trans", type: MainCategoryType.Trans, delegate: self)
         tabs.append(transTabItem)
         addSubview(transTabItem)
         transTabItem.snp.makeConstraints { make in
-            make.top.equalTo(searchTabItem.snp.bottom).offset(10)
+            make.top.equalTo(filesTabItem.snp.bottom).offset(10)
             make.centerX.equalTo(self)
             make.width.equalTo(58)
         }

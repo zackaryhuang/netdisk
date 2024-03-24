@@ -448,7 +448,7 @@ class WebRequest {
         return nil
     }
     
-    static func requestFileDetail(fileID: String) async throws -> (any FileDetail)? {
+    static func requestFileDetail(fileID: String) async throws -> FileDetail? {
         if ClientManager.shared.currentClient() == .Aliyun {
             guard let driveID = ClientManager.shared.aliUserData?.defaultDriveID else {
                 return nil

@@ -61,16 +61,6 @@ class MainViewController: NSViewController {
             make.top.bottom.trailing.equalTo(view)
         }
         
-        let searchListVC = SearchFileListViewController()
-        searchListVC.view.isHidden = true
-        addChild(searchListVC)
-        view.addSubview(searchListVC.view)
-        VCs.append(searchListVC)
-        searchListVC.view.snp.makeConstraints { make in
-            make.leading.equalTo(sidePanel.snp.trailing)
-            make.top.bottom.trailing.equalTo(view)
-        }
-        
         let downloadListVC = DownloadListViewController()
         downloadListVC.view.isHidden = true
         addChild(downloadListVC)
