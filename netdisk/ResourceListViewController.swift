@@ -237,7 +237,7 @@ extension ResourceListViewController: NSTableViewDelegate, NSTableViewDataSource
     }
     
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        return 60
+        return 54
     }
     
     func filePathViewPathDidChange(path: String, folderID: String?) {

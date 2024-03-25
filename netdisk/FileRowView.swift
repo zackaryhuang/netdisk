@@ -27,7 +27,7 @@ class FileRowView: NSTableRowView {
         titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         titleLabel.drawsBackground = false
         titleLabel.isSelectable = false
-        titleLabel.font = NSFont(LXGWRegularSize: 16)
+        titleLabel.font = NSFont(LXGWRegularSize: 14)
         titleLabel.isBordered = false
         return titleLabel
     }()
@@ -37,7 +37,7 @@ class FileRowView: NSTableRowView {
          titleLabel.isEditable = false
          titleLabel.drawsBackground = false
          titleLabel.isSelectable = false
-         titleLabel.font = NSFont(LXGWRegularSize: 12)
+         titleLabel.font = NSFont(LXGWRegularSize: 10)
          titleLabel.isBordered = false
          return titleLabel
     }()
@@ -57,7 +57,7 @@ class FileRowView: NSTableRowView {
     func configUI() {
         addSubview(thumbImageView)
         thumbImageView.snp.makeConstraints { make in
-            make.leading.equalTo(self).offset(20)
+            make.leading.equalTo(self).offset(50)
             make.centerY.equalTo(self)
             make.width.height.equalTo(28)
         }
@@ -73,8 +73,18 @@ class FileRowView: NSTableRowView {
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(thumbImageView.snp.trailing).offset(20)
             make.centerY.equalTo(self)
-//            make.trailing.lessThanOrEqualTo(fileSizeLabel.snp.leading).offset(-30)
             make.width.lessThanOrEqualTo(350)
+        }
+        
+        let sepLine = NSView()
+        sepLine.wantsLayer = true
+        sepLine.layer?.backgroundColor = NSColor(hex: 0x1A1A1C).cgColor
+        addSubview(sepLine)
+        sepLine.snp.makeConstraints { make in
+            make.leading.equalTo(self).offset(24)
+            make.trailing.equalTo(self).offset(-24)
+            make.bottom.equalTo(self)
+            make.height.equalTo(1)
         }
     }
 

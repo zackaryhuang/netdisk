@@ -41,6 +41,8 @@ class SidePanelView: NSView {
     }
     
     private func configUI() {
+        self.wantsLayer = true
+        self.layer?.backgroundColor = NSColor(hex: 0x222226).cgColor
         addSubview(avatarImageView)
         avatarImageView.snp.makeConstraints { make in
             make.top.equalTo(self).offset(60)

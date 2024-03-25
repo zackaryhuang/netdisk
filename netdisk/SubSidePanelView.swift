@@ -25,6 +25,8 @@ class SubSidePanelView: NSView {
         return tableView;
     }()
     
+    let usageView = UsageView()
+    
     var tableContainerView: NSScrollView!
     
     var dataList = {
@@ -43,6 +45,11 @@ class SubSidePanelView: NSView {
         super.init(frame: frameRect)
         configUI()
         tableView.reloadData()
+        Task {
+            if let aliSpaceInfo = try? await WebRequest.requestSpaceInfo() {
+                usageView.updateView(with: aliSpaceInfo)
+            }
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -67,7 +74,14 @@ class SubSidePanelView: NSView {
         tableContainerView.snp.makeConstraints { make in
             make.top.equalTo(self)
             make.leading.trailing.equalTo(self)
-            make.bottom.equalTo(self)
+        }
+        
+        addSubview(usageView)
+        usageView.snp.makeConstraints { make in
+            make.leading.trailing.equalTo(self)
+            make.bottom.equalTo(self).offset(-20)
+            make.height.equalTo(30)
+            make.top.equalTo(tableContainerView.snp.bottom)
         }
     }
     
@@ -109,7 +123,7 @@ extension SubSidePanelView: NSTableViewDelegate, NSTableViewDataSource {
     }
     
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        return 50
+        return 47
     }
 }
 

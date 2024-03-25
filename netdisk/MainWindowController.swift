@@ -41,7 +41,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
                     self.mainVC = MainViewController()
                     window.contentView = self.mainVC.view;
                     window.contentViewController = self.mainVC
-                    window.setFrame(NSMakeRect(0, 0, 830, 556), display: true, animate: false)
+                    window.setFrame(NSMakeRect(0, 0, 1120, 640), display: true, animate: false)
                     NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
                 } else {
                     // 未登录
@@ -76,8 +76,8 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
                     
                     let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
                     
-                    let newW = 830.0
-                    let newH = 556.0
+                    let newW = 1120.0
+                    let newH = 640.0
                     let newX = oldCenter.x - newW / 2.0
                     
                     let newY = oldCenter.y - newH / 2.0

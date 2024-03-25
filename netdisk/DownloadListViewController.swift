@@ -13,8 +13,6 @@ class DownloadListViewController: NSViewController {
     let tableView = {
         let tableView = NSTableView()
         tableView.selectionHighlightStyle = .none
-        tableView.wantsLayer = true
-        tableView.backgroundColor = NSColor(hex: 0x121213)
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(rawValue: "FileColumn"))
         tableView.addTableColumn(column)
         return tableView;
@@ -30,8 +28,6 @@ class DownloadListViewController: NSViewController {
     
     override func loadView() {
         let view = NSView()
-        view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor(hex: 0x121213).cgColor
         self.view = view
     }
     
@@ -39,6 +35,7 @@ class DownloadListViewController: NSViewController {
         super.viewDidLoad()
         
         tableView.focusRingType = .none
+        tableView.backgroundColor = .clear
         tableView.delegate = self
         tableView.dataSource = self
         tableView.headerView = nil

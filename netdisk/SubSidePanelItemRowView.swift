@@ -35,7 +35,7 @@ class SubSidePanelItemRowView: NSTableRowView {
     let backgroundView = {
         let view = NSView()
         view.wantsLayer = true
-        view.layer?.cornerRadius = 5
+        view.layer?.cornerRadius = 10
         view.layer?.backgroundColor = NSColor(hex: 0x3A3A3F).cgColor
         view.isHidden = true
         return view
@@ -48,7 +48,7 @@ class SubSidePanelItemRowView: NSTableRowView {
     
     let textLabel = {
         let textfield = ZigLabel()
-        textfield.font = NSFont(LXGWRegularSize: 16)
+        textfield.font = NSFont(LXGWRegularSize: 14)
         return textfield
     }()
     
@@ -67,21 +67,21 @@ class SubSidePanelItemRowView: NSTableRowView {
         
         addSubview(backgroundView)
         backgroundView.snp.makeConstraints { make in
-            make.edges.equalTo(self).inset(NSEdgeInsets(top: 0, left: 5, bottom: 0, right: 5))
+            make.edges.equalTo(self).inset(NSEdgeInsets(top: 5, left: 14, bottom: 5, right: 14))
         }
         
-        addSubview(imageView)
+        backgroundView.addSubview(imageView)
         imageView.snp.makeConstraints { make in
-            make.leading.equalTo(self).offset(20)
-            make.centerY.equalTo(self)
-            make.width.height.equalTo(32)
+            make.leading.equalTo(backgroundView).offset(10)
+            make.centerY.equalTo(backgroundView)
+            make.width.height.equalTo(20)
         }
         
-        addSubview(textLabel)
+        backgroundView.addSubview(textLabel)
         textLabel.snp.makeConstraints { make in
-            make.leading.equalTo(imageView.snp.trailing).offset(10)
-            make.centerY.equalTo(self)
-            make.trailing.equalTo(self).offset(-20)
+            make.leading.equalTo(imageView.snp.trailing).offset(15)
+            make.centerY.equalTo(backgroundView)
+            make.trailing.equalTo(backgroundView).offset(-10)
         }
     }
     

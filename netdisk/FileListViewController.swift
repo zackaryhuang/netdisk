@@ -17,8 +17,6 @@ class FileListViewController: NSViewController, CategoryVC {
     let tableView = {
         let tableView = NSTableView()
         tableView.selectionHighlightStyle = .none
-        tableView.wantsLayer = true
-        tableView.backgroundColor = NSColor(hex: 0x121213)
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(rawValue: "FileColumn"))
         tableView.addTableColumn(column)
         return tableView;
@@ -26,8 +24,6 @@ class FileListViewController: NSViewController, CategoryVC {
     
     let filePathView = {
         let view = FilePathView()
-//        view.wantsLayer = true
-//        view.layer?.backgroundColor = NSColor(hex: 0x121213).cgColor
         return view
     }()
     
@@ -53,15 +49,6 @@ class FileListViewController: NSViewController, CategoryVC {
     }
     
     private func configUI() {
-        let sepLine = NSView()
-        sepLine.wantsLayer = true
-        sepLine.layer?.backgroundColor = NSColor.darkGray.cgColor
-        view.addSubview(sepLine)
-        sepLine.snp.makeConstraints { make in
-            make.leading.top.bottom.equalTo(view)
-            make.width.equalTo(0.5)
-        }
-        
         tableView.focusRingType = .none
         tableView.backgroundColor = .clear
         tableView.delegate = self
@@ -237,7 +224,7 @@ extension FileListViewController: NSTableViewDelegate, NSTableViewDataSource, Fi
     }
     
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        return 60
+        return 54
     }
     
     func filePathViewPathDidChange(path: String, folderID: String?) {

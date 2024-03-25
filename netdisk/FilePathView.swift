@@ -72,7 +72,7 @@ class FilePathView: NSView {
             
             let attributedTitle = NSAttributedString(string: String(value.pathUnit), attributes: [
                 NSAttributedString.Key.foregroundColor : NSColor.gray,
-                NSAttributedString.Key.font : NSFont(PingFang: 16) as Any
+                NSAttributedString.Key.font : NSFont(PingFang: 18) as Any
             ])
             totalWidth += attributedTitle.size().width
         }
@@ -80,7 +80,7 @@ class FilePathView: NSView {
         if hasIgnoredItem {
             let attributedTitle = NSAttributedString(string: String("..."), attributes: [
                 NSAttributedString.Key.foregroundColor : NSColor.gray,
-                NSAttributedString.Key.font : NSFont(PingFang: 16) as Any
+                NSAttributedString.Key.font : NSFont(PingFang: 18) as Any
             ])
             totalWidth += 24
             totalWidth += attributedTitle.size().width
@@ -134,7 +134,7 @@ class FilePathView: NSView {
             }
             let button = NSButton(title: String(stringValue), target: self, action: #selector(buttonClick(_:)))
             button.attributedTitle = NSAttributedString(string: String(stringValue), attributes: [
-                NSAttributedString.Key.font : NSFont(LXGWRegularSize: 16) as Any
+                NSAttributedString.Key.font : NSFont(LXGWRegularSize: 18) as Any
             ])
             button.isBordered = false
             self.addSubview(button)
@@ -158,7 +158,7 @@ class FilePathView: NSView {
             }
             lastButton.attributedTitle = NSAttributedString(string: String(lastButton.attributedTitle.string), attributes: [
                 NSAttributedString.Key.foregroundColor : NSColor.white,
-                NSAttributedString.Key.font : NSFont(LXGWRegularSize: 16) as Any
+                NSAttributedString.Key.font : NSFont(LXGWRegularSize: 18) as Any
             ])
         }
     }

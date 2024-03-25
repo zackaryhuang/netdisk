@@ -32,7 +32,7 @@ class MainViewController: NSViewController {
     override func loadView() {
         let view = NSView()
         view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor(hex: 0x1F1F22).cgColor
+        view.layer?.backgroundColor = NSColor(hex: 0x111114).cgColor
         self.view = view
     }
     
@@ -50,15 +50,25 @@ class MainViewController: NSViewController {
         view.addSubview(sidePanel)
         sidePanel.snp.makeConstraints { make in
             make.leading.top.bottom.equalTo(view)
-            make.width.equalTo(78)
+            make.width.equalTo(79)
         }
         
         view.addSubview(subSidePanel)
         subSidePanel.delegate = self
         subSidePanel.snp.makeConstraints { make in
             make.leading.equalTo(sidePanel.snp.trailing)
-            make.width.equalTo(150)
+            make.width.equalTo(168)
             make.top.bottom.equalTo(view)
+        }
+        
+        let sepLine = NSView()
+        sepLine.wantsLayer = true
+        sepLine.layer?.backgroundColor = NSColor(hex: 0x1A1A1C).cgColor
+        view.addSubview(sepLine)
+        sepLine.snp.makeConstraints { make in
+            make.leading.equalTo(subSidePanel.snp.trailing)
+            make.top.bottom.equalTo(view)
+            make.width.equalTo(0.5)
         }
         
         sidePanel.delegate = subSidePanel
