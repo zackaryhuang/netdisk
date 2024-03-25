@@ -181,8 +181,8 @@ struct AliUserData: UserData {
     let name: String
     let userID: String
     let defaultDriveID: String
-    let resourceDriveID: String
-    let backupDriveID: String
+    let resourceDriveID: String?
+    let backupDriveID: String?
     var avatarURL: URL? { URL(string: avatar) }
     
     enum CodingKeys : String, CodingKey {

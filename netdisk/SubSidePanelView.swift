@@ -27,8 +27,17 @@ class SubSidePanelView: NSView {
     
     var tableContainerView: NSScrollView!
     
-    var dataList = [SubSidePanelItem(icon: "icon_backup_drive", title: "备份盘", type: .backupDrive, isSelected: true),
-                    SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .resourceDrive)]
+    var dataList = {
+        var list = [SubSidePanelItem]()
+        if ClientManager.shared.aliUserData?.backupDriveID != nil {
+            list.append(SubSidePanelItem(icon: "icon_backup_drive", title: "备份盘", type: .backupDrive, isSelected: true))
+        }
+        
+        if ClientManager.shared.aliUserData?.resourceDriveID != nil {
+            list.append(SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .backupDrive, isSelected: list.count == 0))
+        }
+        return list
+    }()
     
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
@@ -107,8 +116,14 @@ extension SubSidePanelView: NSTableViewDelegate, NSTableViewDataSource {
 extension SubSidePanelView: SidePanelViewDelegate {
     func didSelect(tab: MainCategoryType) {
         if tab == .Files {
-            dataList = [SubSidePanelItem(icon: "icon_backup_drive", title: "备份盘", type: .backupDrive, isSelected: true),
-                            SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .resourceDrive)]
+            dataList = []
+            if ClientManager.shared.aliUserData?.backupDriveID != nil {
+                dataList.append(SubSidePanelItem(icon: "icon_backup_drive", title: "备份盘", type: .backupDrive, isSelected: true))
+            }
+            
+            if ClientManager.shared.aliUserData?.resourceDriveID != nil {
+                dataList.append(SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .backupDrive, isSelected: dataList.count == 0))
+            }
             self.delegate?.didSelect(itemType: .backupDrive)
         } else {
             dataList = [SubSidePanelItem(icon: "icon_download", title: "下载", type: .download, isSelected: true),
