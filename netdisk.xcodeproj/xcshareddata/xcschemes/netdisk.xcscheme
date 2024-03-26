@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "30BB71732A9E414B00ADBF01"
-               BuildableName = "netdisk.app"
+               BuildableName = "Zig Drive.app"
                BlueprintName = "netdisk"
                ReferencedContainer = "container:netdisk.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "30BB71732A9E414B00ADBF01"
-            BuildableName = "netdisk.app"
+            BuildableName = "Zig Drive.app"
             BlueprintName = "netdisk"
             ReferencedContainer = "container:netdisk.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "30BB71732A9E414B00ADBF01"
-            BuildableName = "netdisk.app"
+            BuildableName = "Zig Drive.app"
             BlueprintName = "netdisk"
             ReferencedContainer = "container:netdisk.xcodeproj">
          </BuildableReference>
