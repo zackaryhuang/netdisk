@@ -48,6 +48,23 @@ class ZigClientManager {
         }
     }
     
+    var refreshToken: String? {
+        get {
+            if currentClient() == .Aliyun {
+                return UserDefaults.standard.object(forKey: "AliRefreshToken") as? String
+            }
+            return UserDefaults.standard.object(forKey: "AliRefreshToken") as? String
+        }
+        set {
+            if currentClient() == .Aliyun {
+                UserDefaults.standard.set(newValue, forKey: "RefreshToken")
+            } else {
+                UserDefaults.standard.set(newValue, forKey: "RefreshToken")
+            }
+            
+        }
+    }
+    
     var aliUserData: AliUserData? = nil
     var baiduUserData: BaiduUserData? = nil
     

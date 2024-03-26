@@ -11,7 +11,7 @@ import SwiftyJSON
 
 enum RequestError: Error {
     case networkFail
-    case statusFail(code: Int, message: String)
+    case statusFail(code: String, message: String)
     case decodeFail(message: String)
 }
 
@@ -376,6 +376,11 @@ struct BaiduQRCodeData: Codable, QRCodeData {
     }
 }
 
+enum AliAuthType: String {
+    case code = "authorization_code"
+    case refreshToken = "refresh_token"
+}
+
 class WebRequest {
     
     static let shared = WebRequest()
@@ -575,27 +580,38 @@ class WebRequest {
         return res
     }
     
-    static func requestAccessToken(authCode: String) async throws -> (any AccessTokenData)? {
+    static func requestAccessToken(authCode: String?, grantType: AliAuthType = .code) async throws -> (any AccessTokenData)? {
         if (ZigClientManager.shared.currentClient() == .Aliyun) {
-            let params = [
+            var params = [
                 "client_secret" : AliClientSecret,
                 "client_id": AliClientID,
-                "grant_type": "authorization_code",
-                "code": authCode
+                "grant_type": grantType.rawValue,
             ]
+            
+            if let code = authCode {
+                params["code"] = code
+            }
+            
+            if grantType == .refreshToken {
+                guard let aliRefreshToken = ZigClientManager.shared.refreshToken else { return nil }
+                params["refresh_token"] = aliRefreshToken
+            }
             
             let res: AliAccessTokenData = try await request(method: .post, url: EndPoint.AliGetAccessToken, parameters: params)
             let authHeader = res.tokenType + " " + res.accessToken
             ZigClientManager.shared.authorization = authHeader
+            ZigClientManager.shared.refreshToken = res.refreshToken
+            ZigClientManager.shared.accessToken = res.accessToken
             return res
         }
-        let params = [
-            "grant_type" : "device_token",
-            "code" : authCode,
-            "client_id" : BaiduClientID,
-            "client_secret" : BaiduClientSecret] as [String : Any]
-        let res: BaiduAccessTokenData = try await request(method: .get, url: EndPoint.BaiduGetAccessToken, parameters: params)
-        return res
+//        let params = [
+//            "grant_type" : "device_token",
+//            "code" : authCode,
+//            "client_id" : BaiduClientID,
+//            "client_secret" : BaiduClientSecret] as [String : Any]
+//        let res: BaiduAccessTokenData = try await request(method: .get, url: EndPoint.BaiduGetAccessToken, parameters: params)
+//        return res
+        return nil
     }
     
     static func queryQRCodeScanStatus(code: String) async throws -> QRCodeStatus {
@@ -613,7 +629,6 @@ class WebRequest {
             if res["status"] == "LoginSuccess" {
                 let authCode = res["authCode"].stringValue
                 if let accessTokenData = try await requestAccessToken(authCode: authCode) {
-                    ZigClientManager.shared.accessToken = accessTokenData.accessToken
                     return .AuthSuccess
                 }
                 return .LoginSuccess
@@ -693,19 +708,29 @@ class WebRequest {
             switch response {
             case let .success(data):
                 let json = JSON(data)
-                let errorCode = json["code"].intValue
-                if errorCode != 0 {
+                let errorCode = json["code"].stringValue
+                if !errorCode.isEmpty {
                     let message = json["message"].stringValue
                     print(errorCode, message)
-                    complete?(.failure(.statusFail(code: errorCode, message: message)))
-                    return
+                    if errorCode == "AccessTokenExpired" {
+                        Task {
+                            if let _ = try? await requestAccessToken(authCode: nil, grantType: .refreshToken) {
+                                requestJSON(method: method, url: url, headers: headers, dataObj: dataObj, complete: complete)
+                            } else {
+                                complete?(.failure(.statusFail(code: errorCode, message: message)))
+                            }
+                        }
+                    } else {
+                        complete?(.failure(.statusFail(code: errorCode, message: message)))
+                    }
+                } else {
+                    var data = json
+                    if let dataObj {
+                        data = json[dataObj]
+                    }
+                    print("\(url) response: \(data)")
+                    complete?(.success(data))
                 }
-                var data = json
-                if let dataObj {
-                    data = json[dataObj]
-                }
-                print("\(url) response: \(data)")
-                complete?(.success(data))
             case let .failure(err):
                 complete?(.failure(err))
             }

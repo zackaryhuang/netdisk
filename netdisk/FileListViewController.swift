@@ -23,7 +23,7 @@ class FileListViewController: NSViewController, CategoryVC {
     }()
     
     let filePathView = {
-        let view = FilePathView()
+        let view = FilePathView(rootName: "备份盘")
         return view
     }()
     

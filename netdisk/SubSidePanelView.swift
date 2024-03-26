@@ -72,7 +72,7 @@ class SubSidePanelView: NSView {
         tableContainerView.autohidesScrollers = true
         tableContainerView.documentView = tableView
         tableContainerView.snp.makeConstraints { make in
-            make.top.equalTo(self).offset(-28)
+            make.top.equalTo(self).offset(-9)
             make.leading.trailing.equalTo(self)
         }
         

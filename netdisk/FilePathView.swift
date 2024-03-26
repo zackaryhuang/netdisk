@@ -17,12 +17,14 @@ class FilePathView: NSView {
     static let SearchViewWidth = 120.0
     var searchView: SearchView!
     
+    var rootName: String
+    
     var inSearchMode = false
     var isSearchViewAnimating = false
     
     weak var delegate: FilePathViewDelegate?
     
-    var filePaths:[(String, String?)] = [("我的网盘", "root")] {
+    lazy var filePaths:[(String, String?)] = [(self.rootName, "root")] {
         didSet {
             updateUI()
         }
@@ -30,8 +32,9 @@ class FilePathView: NSView {
     
     var paths = [PathItem]()
     
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
+    init(rootName: String) {
+        self.rootName = rootName
+        super.init(frame: NSZeroRect)
         setupUI()
     }
     
@@ -167,7 +170,7 @@ class FilePathView: NSView {
         if let button = sender as? NSButton {
             if button.tag == 0 {
                 self.delegate?.filePathViewPathDidChange(path: "/", folderID: "root")
-                filePaths = [("我的网盘", "root")]
+                filePaths = [(self.rootName, "root")]
             } else {
                 let path = paths[1..<(button.tag+1)]
                 var originPath = [String]()
@@ -176,7 +179,7 @@ class FilePathView: NSView {
                     originPath.append(item.pathUnit)
                     newFilePaths.append((item.pathUnit, item.folderID))
                 }
-                newFilePaths.insert(("我的网盘", "root"), at: 0)
+                newFilePaths.insert((self.rootName, "root"), at: 0)
                 debugPrint("/" + originPath.joined(separator: "/"))
                 let fullPath = "/" + originPath.joined(separator: "/")
                 self.delegate?.filePathViewPathDidChange(path: fullPath, folderID: path.last?.folderID)

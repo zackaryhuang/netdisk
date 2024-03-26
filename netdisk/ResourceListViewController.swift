@@ -20,7 +20,7 @@ class ResourceListViewController: NSViewController {
     }()
     
     let filePathView = {
-        let view = FilePathView()
+        let view = FilePathView(rootName: "资源库")
         return view
     }()
     
@@ -46,15 +46,6 @@ class ResourceListViewController: NSViewController {
     }
     
     private func configUI() {
-        let sepLine = NSView()
-        sepLine.wantsLayer = true
-        sepLine.layer?.backgroundColor = NSColor.darkGray.cgColor
-        view.addSubview(sepLine)
-        sepLine.snp.makeConstraints { make in
-            make.leading.top.bottom.equalTo(view)
-            make.width.equalTo(0.5)
-        }
-        
         tableView.focusRingType = .none
         tableView.backgroundColor = .clear
         tableView.delegate = self
