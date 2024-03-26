@@ -22,7 +22,8 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     }
     
     override func loadWindow() {
-        ZHUserManager.sharedInstance.delegate = self
+        debugPrint(NSFontManager.shared.availableFontFamilies.description)
+        ZigUserManager.sharedInstance.delegate = self
         let frame: CGRect = CGRect(x: 0, y: 0, width: 280, height: 400)
         let style: NSWindow.StyleMask = [.titled, .closable, .fullSizeContentView]
         let back: NSWindow.BackingStoreType = .buffered
@@ -33,7 +34,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
         window.standardWindowButton(.zoomButton)?.isHidden = true
         window.center()
         self.window = window
-        ZHUserManager.sharedInstance.requestUserData { success in
+        ZigUserManager.sharedInstance.requestUserData { success in
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 if success {
@@ -60,7 +61,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     }
     
     func loginSuccess() {
-        ZHUserManager.sharedInstance.requestUserData { success in
+        ZigUserManager.sharedInstance.requestUserData { success in
             if success {
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
@@ -99,7 +100,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     }
 }
 
-extension MainWindowController: ZHUserManagerDelegate {
+extension MainWindowController: ZigUserManagerDelegate {
     func loginDataExpired() {
         window?.contentView = loginVC.view;
         window?.contentViewController = loginVC

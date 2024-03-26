@@ -411,8 +411,8 @@ class WebRequest {
     }
     
     static func requestFileSearch(keywords: String) async throws -> AliFileSearchResp? {
-        if ClientManager.shared.currentClient() == .Aliyun {
-            guard let driveID = ClientManager.shared.aliUserData?.defaultDriveID else { return nil }
+        if ZigClientManager.shared.currentClient() == .Aliyun {
+            guard let driveID = ZigClientManager.shared.aliUserData?.defaultDriveID else { return nil }
             let params = [
                 "drive_id" : driveID,
                 "query" : "name match \"\(keywords)\"",
@@ -424,7 +424,7 @@ class WebRequest {
     }
     
     static func requestSpaceInfo() async throws -> SpaceInfo? {
-        if ClientManager.shared.currentClient() == .Aliyun {
+        if ZigClientManager.shared.currentClient() == .Aliyun {
             let res: AliSpaceInfo? = try? await request(method: .post, url: EndPoint.AliGetSpaceInfo, dataObj: "personal_space_info")
             return res
         }
@@ -432,8 +432,8 @@ class WebRequest {
     }
     
     static func requestVideoPlayInfo(fileID: String) async throws -> VideoPlayInfo? {
-        if ClientManager.shared.currentClient() == .Aliyun {
-            guard let driveID = ClientManager.shared.aliUserData?.defaultDriveID else {
+        if ZigClientManager.shared.currentClient() == .Aliyun {
+            guard let driveID = ZigClientManager.shared.aliUserData?.defaultDriveID else {
                 return nil
             }
             let params = [
@@ -449,8 +449,8 @@ class WebRequest {
     }
     
     static func requestFileDetail(fileID: String) async throws -> FileDetail? {
-        if ClientManager.shared.currentClient() == .Aliyun {
-            guard let driveID = ClientManager.shared.aliUserData?.defaultDriveID else {
+        if ZigClientManager.shared.currentClient() == .Aliyun {
+            guard let driveID = ZigClientManager.shared.aliUserData?.defaultDriveID else {
                 return nil
             }
             let params = [
@@ -462,7 +462,7 @@ class WebRequest {
             return res
         }
         
-        guard let accessToken = ClientManager.shared.accessToken else {
+        guard let accessToken = ZigClientManager.shared.accessToken else {
             return nil
         }
         
@@ -475,7 +475,7 @@ class WebRequest {
         return res
     }
     
-    static func requestDownloadUrl(driveID: String? = ClientManager.shared.aliUserData?.defaultDriveID, fileID: String) async throws -> DownloadInfo?  {
+    static func requestDownloadUrl(driveID: String? = ZigClientManager.shared.aliUserData?.defaultDriveID, fileID: String) async throws -> DownloadInfo?  {
         guard let id = driveID, !fileID.isEmpty else {
             return nil
         }
@@ -490,19 +490,19 @@ class WebRequest {
     }
     
     static func requestFileList(startMark: String?, limit: Int, parentFolder: String, useResourceDrive: Bool = false) async throws -> FileListResp? {
-        if ClientManager.shared.currentClient() == .Aliyun {
+        if ZigClientManager.shared.currentClient() == .Aliyun {
             var params = [
                 "limit" : limit,
                 "parent_file_id": parentFolder
             ] as [String:Any]
             
             if useResourceDrive {
-                guard let driveID = ClientManager.shared.aliUserData?.resourceDriveID else {
+                guard let driveID = ZigClientManager.shared.aliUserData?.resourceDriveID else {
                     return nil
                 }
                 params["drive_id"] = driveID
             } else {
-                guard let driveID = ClientManager.shared.aliUserData?.defaultDriveID else {
+                guard let driveID = ZigClientManager.shared.aliUserData?.defaultDriveID else {
                     return nil
                 }
                 params["drive_id"] = driveID
@@ -516,7 +516,7 @@ class WebRequest {
             return res
         }
         
-        guard let accessToken = ClientManager.shared.accessToken else {
+        guard let accessToken = ZigClientManager.shared.accessToken else {
             return nil
         }
         
@@ -532,16 +532,16 @@ class WebRequest {
     }
     
     static func requestUserData() async throws -> Bool {
-        if ClientManager.shared.currentClient() == .Aliyun {
+        if ZigClientManager.shared.currentClient() == .Aliyun {
             let res: AliUserData? = try? await request(method: .post, url: EndPoint.AliUserInfo)
             if let userData = res {
-                ClientManager.shared.aliUserData = userData
+                ZigClientManager.shared.aliUserData = userData
                 return true
             }
             return false
         }
         
-        guard let accessToken = ClientManager.shared.accessToken else {
+        guard let accessToken = ZigClientManager.shared.accessToken else {
             return false
         }
         let params = [
@@ -549,14 +549,14 @@ class WebRequest {
         ] as [String : Any]
         let res: BaiduUserData? = try? await request(method: .get, url: EndPoint.BaiduUserInfo, parameters: params)
         if let userData = res {
-            ClientManager.shared.baiduUserData = userData
+            ZigClientManager.shared.baiduUserData = userData
             return true
         }
         return false
     }
     
     static func requestLoginQRCode() async throws -> (any QRCodeData) {
-        if ClientManager.shared.currentClient() == .Aliyun {
+        if ZigClientManager.shared.currentClient() == .Aliyun {
             let params = [
                 "client_secret" : AliClientSecret,
                 "client_id": AliClientID,
@@ -576,7 +576,7 @@ class WebRequest {
     }
     
     static func requestAccessToken(authCode: String) async throws -> (any AccessTokenData)? {
-        if (ClientManager.shared.currentClient() == .Aliyun) {
+        if (ZigClientManager.shared.currentClient() == .Aliyun) {
             let params = [
                 "client_secret" : AliClientSecret,
                 "client_id": AliClientID,
@@ -586,7 +586,7 @@ class WebRequest {
             
             let res: AliAccessTokenData = try await request(method: .post, url: EndPoint.AliGetAccessToken, parameters: params)
             let authHeader = res.tokenType + " " + res.accessToken
-            ClientManager.shared.authorization = authHeader
+            ZigClientManager.shared.authorization = authHeader
             return res
         }
         let params = [
@@ -599,7 +599,7 @@ class WebRequest {
     }
     
     static func queryQRCodeScanStatus(code: String) async throws -> QRCodeStatus {
-        if ClientManager.shared.currentClient() == .Aliyun {
+        if ZigClientManager.shared.currentClient() == .Aliyun {
             let path = AliyunDomain + "/oauth/qrcode/\(code)/status"
             let res: JSON = try await request(method: .get, url: path)
             if res["status"] == "WaitLogin" {
@@ -613,7 +613,7 @@ class WebRequest {
             if res["status"] == "LoginSuccess" {
                 let authCode = res["authCode"].stringValue
                 if let accessTokenData = try await requestAccessToken(authCode: authCode) {
-                    ClientManager.shared.accessToken = accessTokenData.accessToken
+                    ZigClientManager.shared.accessToken = accessTokenData.accessToken
                     return .AuthSuccess
                 }
                 return .LoginSuccess
@@ -631,7 +631,7 @@ class WebRequest {
         }
         
         if let data = try await requestAccessToken(authCode: code), !data.accessToken.isEmpty {
-            ClientManager.shared.accessToken = data.accessToken
+            ZigClientManager.shared.accessToken = data.accessToken
             return .AuthSuccess
         }
         return .WaitScan
@@ -740,7 +740,7 @@ class WebRequest {
 //            AFHeaders.add(HTTPHeader(name: "Referer", value: "https://www.bilibili.com"))
 //        }
         
-        if let authHeader = ClientManager.shared.authorization {
+        if let authHeader = ZigClientManager.shared.authorization {
             AFHeaders.add(HTTPHeader(name: "Authorization", value: authHeader))
         }
 

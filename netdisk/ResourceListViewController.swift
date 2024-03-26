@@ -85,11 +85,11 @@ class ResourceListViewController: NSViewController {
     
     private func requestFiles() {
         Task {
-            let currentClient = ClientManager.shared.currentClient()
+            let currentClient = ZigClientManager.shared.currentClient()
             if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? parentFolderID : path ?? "/", useResourceDrive: true) {
                 fileList = fileResp.fileList
                 tableView.reloadData()
-                if ClientManager.shared.currentClient() == .Aliyun {
+                if ZigClientManager.shared.currentClient() == .Aliyun {
                     startMarker = fileResp.nextMarker
                     if let marker = startMarker, !marker.isEmpty {
                         hasMore = true
@@ -116,7 +116,7 @@ class ResourceListViewController: NSViewController {
         isLoadingMore = true
         
         Task {
-            let currentClient = ClientManager.shared.currentClient()
+            let currentClient = ZigClientManager.shared.currentClient()
             if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? self.parentFolderID : self.path ?? "/", useResourceDrive: true) {
                 isLoadingMore = false
                 
@@ -125,7 +125,7 @@ class ResourceListViewController: NSViewController {
                     tableView.reloadData()
                 }
                 
-                if ClientManager.shared.currentClient() == .Aliyun {
+                if ZigClientManager.shared.currentClient() == .Aliyun {
                     startMarker = fileResp.nextMarker
                     if let marker = startMarker, !marker.isEmpty {
                         hasMore = true

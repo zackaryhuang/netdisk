@@ -9,18 +9,18 @@ import Cocoa
 import Alamofire
 import Kingfisher
 
-protocol ZHUserManagerDelegate: NSObjectProtocol {
+protocol ZigUserManagerDelegate: NSObjectProtocol {
     func loginDataExpired()
 }
 
-class ZHUserManager: NSObject {
+class ZigUserManager: NSObject {
     
-    weak var delegate: ZHUserManagerDelegate?
+    weak var delegate: ZigUserManagerDelegate?
     
     var currentUserData: BaiduUserData?
     
     public static let sharedInstance = {
-        let manager = ZHUserManager()
+        let manager = ZigUserManager()
         return manager
     }()
     

@@ -31,11 +31,11 @@ class SubSidePanelView: NSView {
     
     var dataList = {
         var list = [SubSidePanelItem]()
-        if ClientManager.shared.aliUserData?.backupDriveID != nil {
+        if ZigClientManager.shared.aliUserData?.backupDriveID != nil {
             list.append(SubSidePanelItem(icon: "icon_backup_drive", title: "备份盘", type: .backupDrive, isSelected: true))
         }
         
-        if ClientManager.shared.aliUserData?.resourceDriveID != nil {
+        if ZigClientManager.shared.aliUserData?.resourceDriveID != nil {
             list.append(SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .backupDrive, isSelected: list.count == 0))
         }
         return list
@@ -131,11 +131,11 @@ extension SubSidePanelView: SidePanelViewDelegate {
     func didSelect(tab: MainCategoryType) {
         if tab == .Files {
             dataList = []
-            if ClientManager.shared.aliUserData?.backupDriveID != nil {
+            if ZigClientManager.shared.aliUserData?.backupDriveID != nil {
                 dataList.append(SubSidePanelItem(icon: "icon_backup_drive", title: "备份盘", type: .backupDrive, isSelected: true))
             }
             
-            if ClientManager.shared.aliUserData?.resourceDriveID != nil {
+            if ZigClientManager.shared.aliUserData?.resourceDriveID != nil {
                 dataList.append(SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .backupDrive, isSelected: dataList.count == 0))
             }
             self.delegate?.didSelect(itemType: .backupDrive)

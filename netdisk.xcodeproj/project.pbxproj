@@ -13,7 +13,7 @@
 		3013B9252AB75D3200DD2F63 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3013B9242AB75D3200DD2F63 /* Extensions.swift */; };
 		3024970B2AA77E2600E2AD24 /* DownloadRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3024970A2AA77E2600E2AD24 /* DownloadRowView.swift */; };
 		3024970D2AA7889F00E2AD24 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3024970C2AA7889F00E2AD24 /* Utils.swift */; };
-		302830D92ADBDAEA00A3A549 /* ZHUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302830D82ADBDAEA00A3A549 /* ZHUserManager.swift */; };
+		302830D92ADBDAEA00A3A549 /* ZigUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302830D82ADBDAEA00A3A549 /* ZigUserManager.swift */; };
 		3036F4522B39A0EB00F365E4 /* FileListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3036F4512B39A0EB00F365E4 /* FileListViewController.swift */; };
 		3036F4542B3B1C6900F365E4 /* SidePanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3036F4532B3B1C6900F365E4 /* SidePanelView.swift */; };
 		3065E2D52BA5D1B300A3114F /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3065E2D42BA5D1B300A3114F /* SearchView.swift */; };
@@ -30,7 +30,7 @@
 		309AFD252AA49B6C005F50C9 /* TabItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD242AA49B6C005F50C9 /* TabItemView.swift */; };
 		309AFD272AA4DD88005F50C9 /* CategoryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */; };
 		30ABAA232B3489F70098DC23 /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30ABAA222B3489F70098DC23 /* WebRequest.swift */; };
-		30ABAA282B34934C0098DC23 /* ClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30ABAA272B34934C0098DC23 /* ClientManager.swift */; };
+		30ABAA282B34934C0098DC23 /* ZigClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30ABAA272B34934C0098DC23 /* ZigClientManager.swift */; };
 		30B7E92E2BB0584300870ABA /* SubSidePanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B7E92D2BB0584300870ABA /* SubSidePanelView.swift */; };
 		30B7E9302BB0596700870ABA /* SubSidePanelItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B7E92F2BB0596700870ABA /* SubSidePanelItemRowView.swift */; };
 		30B7E9322BB06C3A00870ABA /* ResourceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */; };
@@ -58,7 +58,7 @@
 		3013B9242AB75D3200DD2F63 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3024970A2AA77E2600E2AD24 /* DownloadRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRowView.swift; sourceTree = "<group>"; };
 		3024970C2AA7889F00E2AD24 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		302830D82ADBDAEA00A3A549 /* ZHUserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHUserManager.swift; sourceTree = "<group>"; };
+		302830D82ADBDAEA00A3A549 /* ZigUserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigUserManager.swift; sourceTree = "<group>"; };
 		3036F4512B39A0EB00F365E4 /* FileListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileListViewController.swift; sourceTree = "<group>"; };
 		3036F4532B3B1C6900F365E4 /* SidePanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidePanelView.swift; sourceTree = "<group>"; };
 		3065E2D42BA5D1B300A3114F /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -74,7 +74,7 @@
 		309AFD242AA49B6C005F50C9 /* TabItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabItemView.swift; sourceTree = "<group>"; };
 		309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRowView.swift; sourceTree = "<group>"; };
 		30ABAA222B3489F70098DC23 /* WebRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRequest.swift; sourceTree = "<group>"; };
-		30ABAA272B34934C0098DC23 /* ClientManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientManager.swift; sourceTree = "<group>"; };
+		30ABAA272B34934C0098DC23 /* ZigClientManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigClientManager.swift; sourceTree = "<group>"; };
 		30B7E92D2BB0584300870ABA /* SubSidePanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSidePanelView.swift; sourceTree = "<group>"; };
 		30B7E92F2BB0596700870ABA /* SubSidePanelItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSidePanelItemRowView.swift; sourceTree = "<group>"; };
 		30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceListViewController.swift; sourceTree = "<group>"; };
@@ -169,9 +169,9 @@
 				308429CF2AAC7AC70086AB2E /* ImagePreviewController.swift */,
 				3013B9242AB75D3200DD2F63 /* Extensions.swift */,
 				306954DF2ABB39910059901F /* AlertWindow.swift */,
-				302830D82ADBDAEA00A3A549 /* ZHUserManager.swift */,
+				302830D82ADBDAEA00A3A549 /* ZigUserManager.swift */,
 				30ABAA222B3489F70098DC23 /* WebRequest.swift */,
-				30ABAA272B34934C0098DC23 /* ClientManager.swift */,
+				30ABAA272B34934C0098DC23 /* ZigClientManager.swift */,
 				3065E3502BA7315700A3114F /* ZigDownloadManager.swift */,
 				3065E3522BA73A8300A3114F /* ZigBookmark.swift */,
 				30EFF4762BAD382B00ABD070 /* ZigPreviewHelper.swift */,
@@ -286,7 +286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				309AFD252AA49B6C005F50C9 /* TabItemView.swift in Sources */,
-				30ABAA282B34934C0098DC23 /* ClientManager.swift in Sources */,
+				30ABAA282B34934C0098DC23 /* ZigClientManager.swift in Sources */,
 				30B7E9302BB0596700870ABA /* SubSidePanelItemRowView.swift in Sources */,
 				3036F4522B39A0EB00F365E4 /* FileListViewController.swift in Sources */,
 				30ABAA232B3489F70098DC23 /* WebRequest.swift in Sources */,
@@ -312,7 +312,7 @@
 				309AFD272AA4DD88005F50C9 /* CategoryRowView.swift in Sources */,
 				30EFF4772BAD382B00ABD070 /* ZigPreviewHelper.swift in Sources */,
 				3024970B2AA77E2600E2AD24 /* DownloadRowView.swift in Sources */,
-				302830D92ADBDAEA00A3A549 /* ZHUserManager.swift in Sources */,
+				302830D92ADBDAEA00A3A549 /* ZigUserManager.swift in Sources */,
 				30B7E9322BB06C3A00870ABA /* ResourceListViewController.swift in Sources */,
 				30B7E92E2BB0584300870ABA /* SubSidePanelView.swift in Sources */,
 				306EE5AF2AA0E3EB00428E82 /* FileRowView.swift in Sources */,

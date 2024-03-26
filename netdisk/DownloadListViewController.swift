@@ -55,8 +55,8 @@ class DownloadListViewController: NSViewController {
         
         self.tableView.reloadData()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(taskDidStartDownload(_:)), name: DownloadTask.runningNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadData), name: DownloadTask.didCompleteNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(taskDidStartDownload(_:)), name: DownloadTask.runningNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadData), name: DownloadTask.statusDidChangeNotification, object: nil)
     }
     
     @objc func tableViewDoubleClick(_ sender: AnyObject) {

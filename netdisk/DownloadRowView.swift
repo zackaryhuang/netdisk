@@ -95,7 +95,7 @@ class DownloadRowView: NSTableRowView {
     let progressView = {
         let progress = NSView()
         progress.wantsLayer = true
-        progress.layer?.backgroundColor = NSColor(hex: 0x32B3FB, alpha: 0.1).cgColor
+        progress.layer?.backgroundColor = NSColor(hex: 0x55C494, alpha: 0.4).cgColor
         return progress
     }()
     
@@ -187,19 +187,26 @@ class DownloadRowView: NSTableRowView {
     
     @objc func cancelDownload() {
         if let task = self.task {
-            ZigDownloadManager.shared.downloadSessionManager.cancel(task)
+            if task.status == .succeeded {
+                ZigDownloadManager.shared.downloadSessionManager.remove(task)
+            } else {
+                ZigDownloadManager.shared.downloadSessionManager.cancel(task)
+                updateRowView(with: task)
+            }
         }
     }
     
     @objc func pauseDownload() {
         if let task = self.task {
             ZigDownloadManager.shared.downloadSessionManager.suspend(task)
+            updateRowView(with: task)
         }
     }
     
     @objc func resumeDownload() {
         if let task = self.task {
             ZigDownloadManager.shared.downloadSessionManager.start(task)
+            updateRowView(with: task)
         }
     }
     
@@ -241,7 +248,7 @@ class DownloadRowView: NSTableRowView {
             downloadStatueLabel.stringValue = "失败"
             pauseButton.isHidden = true
             resumeButton.isHidden = false
-            cancelButton.isHidden = true
+            cancelButton.isHidden = false
             showInFinderButton.isHidden = true
         case .waiting:
             downloadStatueLabel.stringValue = "等待下载"
@@ -259,7 +266,7 @@ class DownloadRowView: NSTableRowView {
             downloadStatueLabel.stringValue = "已完成"
             pauseButton.isHidden = true
             resumeButton.isHidden = true
-            cancelButton.isHidden = true
+            cancelButton.isHidden = false
             showInFinderButton.isHidden = false
         case .canceled:
             downloadStatueLabel.stringValue = "已取消"

@@ -104,7 +104,7 @@ class MainViewController: NSViewController {
     }
     
     @objc func didLogin() {
-        sidePanel.avatarImageView.kf.setImage(with: ClientManager.shared.userData?.avatarURL)
+        sidePanel.avatarImageView.kf.setImage(with: ZigClientManager.shared.userData?.avatarURL)
     }
 }
 

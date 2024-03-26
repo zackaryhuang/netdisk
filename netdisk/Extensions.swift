@@ -35,15 +35,18 @@ extension NSFont {
     }
     
     convenience init?(LXGWRegularSize: Float) {
-        self.init(name: "LXGWWenKaiMono-Regular", size: CGFloat(LXGWRegularSize))
+//        self.init(name: "LXGWWenKaiMono-Regular", size: CGFloat(LXGWRegularSize))
+        self.init(name: "PingFangSC-Regular", size: CGFloat(LXGWRegularSize))
     }
     
     convenience init?(LXGWLightSize: Float) {
-        self.init(name: "LXGWWenKaiMono-Light", size: CGFloat(LXGWLightSize))
+//        self.init(name: "LXGWWenKaiMono-Light", size: CGFloat(LXGWLightSize))
+        self.init(name: "PingFangSC-Light", size: CGFloat(LXGWLightSize))
     }
     
     convenience init?(LXGWBoldSize: Float) {
-        self.init(name: "LXGWWenKaiMono-Bold", size: CGFloat(LXGWBoldSize))
+//        self.init(name: "LXGWWenKaiMono-Bold", size: CGFloat(LXGWBoldSize))
+        self.init(name: "PingFangSC-Bold", size: CGFloat(LXGWBoldSize))
     }
 }
 

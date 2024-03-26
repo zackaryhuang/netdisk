@@ -12,8 +12,8 @@ enum CloudNetdiskType {
     case Aliyun
 }
 
-class ClientManager {
-    static let shared = ClientManager()
+class ZigClientManager {
+    static let shared = ZigClientManager()
     var accessToken: String? {
         get {
             if currentClient() == .Aliyun {

@@ -29,7 +29,7 @@ class LoginViewController: NSViewController {
     weak var windowController: MainWindowController?
     
     let scanTipsLabel = {
-        let textField = NSTextField(labelWithString: ClientManager.shared.currentClient() == .Baidu ? "扫码登录百度网盘" : "扫码登录阿里云盘")
+        let textField = NSTextField(labelWithString: ZigClientManager.shared.currentClient() == .Baidu ? "扫码登录百度网盘" : "扫码登录阿里云盘")
         textField.isEditable = false
         textField.drawsBackground = false
         textField.font = NSFont(PingFang: 16)
