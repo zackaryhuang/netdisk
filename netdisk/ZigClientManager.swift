@@ -14,6 +14,17 @@ enum CloudNetdiskType {
 
 class ZigClientManager {
     static let shared = ZigClientManager()
+    
+    weak var mainWindowController: MainWindowController?
+    
+    func clearAccessData() {
+        self.accessToken = nil
+        self.refreshToken = nil
+        self.authorization = nil
+        ZigDownloadManager.shared.downloadSessionManager.totalSuspend()
+        self.mainWindowController?.exitLogin()
+    }
+    
     var accessToken: String? {
         get {
             if currentClient() == .Aliyun {
@@ -53,11 +64,11 @@ class ZigClientManager {
             if currentClient() == .Aliyun {
                 return UserDefaults.standard.object(forKey: "AliRefreshToken") as? String
             }
-            return UserDefaults.standard.object(forKey: "AliRefreshToken") as? String
+            return UserDefaults.standard.object(forKey: "RefreshToken") as? String
         }
         set {
             if currentClient() == .Aliyun {
-                UserDefaults.standard.set(newValue, forKey: "RefreshToken")
+                UserDefaults.standard.set(newValue, forKey: "AliRefreshToken")
             } else {
                 UserDefaults.standard.set(newValue, forKey: "RefreshToken")
             }

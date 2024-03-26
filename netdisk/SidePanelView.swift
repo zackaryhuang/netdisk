@@ -9,6 +9,7 @@ import AppKit
 
 
 enum MainCategoryType: String {
+    case Exit = "退出"
     case Files = "文件"
     case Search = "搜索"
     case Trans = "传输"
@@ -21,6 +22,8 @@ protocol SidePanelViewDelegate: NSObjectProtocol {
 class SidePanelView: NSView {
 
     weak var delegate: SidePanelViewDelegate?
+    
+    weak var currentAlter: NSAlert?
     
     let avatarImageView = {
         let imageView = NSImageView()
@@ -68,11 +71,34 @@ class SidePanelView: NSView {
             make.centerX.equalTo(self)
             make.width.equalTo(58)
         }
+        
+        let exitTabItem = TabItemView(image: "icon_exit", type: MainCategoryType.Exit, delegate: self)
+        tabs.append(exitTabItem)
+        addSubview(exitTabItem)
+        exitTabItem.snp.makeConstraints { make in
+            make.bottom.equalTo(self).offset(-20)
+            make.centerX.equalTo(self)
+            make.width.equalTo(58)
+        }
     }
 }
 
 extension SidePanelView: TabItemViewDelegate {
     func didClickTabView(tabView: TabItemView) {
+        if tabView.type == .Exit {
+            let alertOption = AlertOption(title: "确认退出吗", subTitle: nil, leftButtonTitle: "确认", rightButtonTitle: "取消") { window in
+                window.orderOut(nil)
+                ZigClientManager.shared.clearAccessData()
+            } rightActionBlock: { window in
+                
+                window.orderOut(nil)
+            }
+
+            let window = AlertWindow(with: alertOption)
+            window.level = .modalPanel
+            window.showIn(window: self.window!)
+            return
+        }
         tabs.forEach { tabItemView in
             if (tabItemView == tabView) {
                 if !tabView.isSelected {

@@ -19,6 +19,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     
     override func windowDidLoad() {
         super.windowDidLoad()
+        ZigClientManager.shared.mainWindowController = self
     }
     
     override func loadWindow() {
@@ -90,6 +91,32 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
                 }
             }
         }
+    }
+    
+    func exitLogin() {
+        self.loginVC = LoginViewController()
+        self.loginVC.windowController = self
+        self.window?.contentView = self.loginVC.view;
+        self.window?.contentViewController = self.loginVC
+        
+        let oldX = self.window?.frame.origin.x ?? 0.0
+        let oldY = self.window?.frame.origin.y ?? 0.0
+        let oldW = self.window?.frame.size.width ?? 0.0
+        let oldH = self.window?.frame.size.height ?? 0.0
+        
+        let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
+        
+        let newW = 280.0
+        let newH = 400.0
+        let newX = oldCenter.x - newW / 2.0
+        
+        let newY = oldCenter.y - newH / 2.0
+        
+        NSAnimationContext.runAnimationGroup({context in
+          context.duration = 0.25
+          context.allowsImplicitAnimation = true
+            self.window?.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
+        }, completionHandler:nil)
     }
     
     override func mouseDown(with event: NSEvent) {
