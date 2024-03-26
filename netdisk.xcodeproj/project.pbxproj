@@ -79,7 +79,7 @@
 		30B7E92F2BB0596700870ABA /* SubSidePanelItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSidePanelItemRowView.swift; sourceTree = "<group>"; };
 		30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceListViewController.swift; sourceTree = "<group>"; };
 		30B883382B3DDE5B00794B57 /* Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Const.swift; sourceTree = "<group>"; };
-		30BB71742A9E414B00ADBF01 /* netdisk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = netdisk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		30BB71742A9E414B00ADBF01 /* Zig Drive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zig Drive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BB71772A9E414B00ADBF01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		30BB717B2A9E414C00ADBF01 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		30BB71802A9E414C00ADBF01 /* netdisk.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = netdisk.entitlements; sourceTree = "<group>"; };
@@ -130,7 +130,7 @@
 		30BB71752A9E414B00ADBF01 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				30BB71742A9E414B00ADBF01 /* netdisk.app */,
+				30BB71742A9E414B00ADBF01 /* Zig Drive.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -223,7 +223,7 @@
 				3065E34E2BA72BEB00A3114F /* Tiercel */,
 			);
 			productName = netdisk;
-			productReference = 30BB71742A9E414B00ADBF01 /* netdisk.app */;
+			productReference = 30BB71742A9E414B00ADBF01 /* Zig Drive.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -460,7 +460,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thatisawesome.netdisk;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Zig Drive";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -490,7 +490,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thatisawesome.netdisk;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Zig Drive";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};

@@ -22,7 +22,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     }
     
     override func loadWindow() {
-        debugPrint(NSFontManager.shared.availableFontFamilies.description)
+//        debugPrint(NSFontManager.shared.availableFontFamilies.description)
         ZigUserManager.sharedInstance.delegate = self
         let frame: CGRect = CGRect(x: 0, y: 0, width: 280, height: 400)
         let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]

@@ -20,8 +20,8 @@ class SubSidePanelView: NSView {
         tableView.selectionHighlightStyle = .none
         tableView.wantsLayer = true
         tableView.backgroundColor = NSColor(hex: 0x121213)
-        let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(rawValue: "SubSidePanelItem"))
-        tableView.addTableColumn(column)
+//        let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(rawValue: "SubSidePanelItem"))
+//        tableView.addTableColumn(column)
         return tableView;
     }()
     
@@ -36,7 +36,7 @@ class SubSidePanelView: NSView {
         }
         
         if ZigClientManager.shared.aliUserData?.resourceDriveID != nil {
-            list.append(SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .backupDrive, isSelected: list.count == 0))
+            list.append(SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .resourceDrive, isSelected: list.count == 0))
         }
         return list
     }()
@@ -106,7 +106,7 @@ extension SubSidePanelView: NSTableViewDelegate, NSTableViewDataSource {
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        return NSView()
+        return nil
     }
     
     func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
@@ -136,7 +136,7 @@ extension SubSidePanelView: SidePanelViewDelegate {
             }
             
             if ZigClientManager.shared.aliUserData?.resourceDriveID != nil {
-                dataList.append(SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .backupDrive, isSelected: dataList.count == 0))
+                dataList.append(SubSidePanelItem(icon: "icon_resource_drive", title: "资源库", type: .resourceDrive, isSelected: dataList.count == 0))
             }
             self.delegate?.didSelect(itemType: .backupDrive)
         } else {

@@ -36,8 +36,7 @@ class SubSidePanelItemRowView: NSTableRowView {
         let view = NSView()
         view.wantsLayer = true
         view.layer?.cornerRadius = 10
-        view.layer?.backgroundColor = NSColor(hex: 0x3A3A3F).cgColor
-        view.isHidden = true
+        view.layer?.backgroundColor = NSColor.clear.cgColor
         return view
     }()
     
@@ -87,7 +86,7 @@ class SubSidePanelItemRowView: NSTableRowView {
     
     func updateItem(item: SubSidePanelItem) {
         self.item = item
-        backgroundView.isHidden = !item.isSelected
+        backgroundView.layer?.backgroundColor = item.isSelected ? NSColor(hex: 0x3A3A3F).cgColor : NSColor.clear.cgColor
         imageView.image = NSImage(named: item.icon)
         textLabel.stringValue = item.title
     }
