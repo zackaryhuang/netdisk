@@ -88,6 +88,26 @@ class FileRowView: NSTableRowView {
         }
     }
 
+    @objc func copyDownloadLink() {
+        if let fileID = data?.fileID {
+            Task {
+                if let downloadInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID) {
+                    if let downloadURL = downloadInfo.downloadURL {
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString(downloadURL.absoluteString, forType: .string)
+                        let alert = NSAlert()
+                        alert.messageText = "已拷贝下载链接"
+                        alert.runModal()
+                    }
+                } else {
+                    let alert = NSAlert()
+                    alert.messageText = "获取下载链接失败"
+                    alert.runModal()
+                }
+            }
+        }
+    }
+    
     @objc func downloadFile() {
         if !ZigBookmark.bookmarkStartAccessing(filePath: ZigDownloadManager.downloadPath) {
             let openPanel = NSOpenPanel()
@@ -147,6 +167,9 @@ class FileRowView: NSTableRowView {
         } else {
             let menu = NSMenu()
             menu.addItem(NSMenuItem(title: "下载", action: #selector(downloadFile), keyEquivalent: ""))
+            #if DEBUG
+            menu.addItem(NSMenuItem(title: "拷贝下载链接", action: #selector(copyDownloadLink), keyEquivalent: ""))
+            #endif
             self.menu = menu
         }
     }
