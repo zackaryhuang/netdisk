@@ -90,10 +90,8 @@ extension SidePanelView: TabItemViewDelegate {
                 window.orderOut(nil)
                 ZigClientManager.shared.clearAccessData()
             } rightActionBlock: { window in
-                
                 window.orderOut(nil)
             }
-
             let window = AlertWindow(with: alertOption)
             window.level = .modalPanel
             window.showIn(window: self.window!)

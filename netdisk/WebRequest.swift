@@ -628,7 +628,7 @@ class WebRequest {
             
             if res["status"] == "LoginSuccess" {
                 let authCode = res["authCode"].stringValue
-                if let accessTokenData = try await requestAccessToken(authCode: authCode) {
+                if (try await requestAccessToken(authCode: authCode)) != nil {
                     return .AuthSuccess
                 }
                 return .LoginSuccess

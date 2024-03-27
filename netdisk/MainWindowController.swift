@@ -17,41 +17,46 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
         self.init(windowNibName: "")
     }
     
-    override func windowDidLoad() {
-        super.windowDidLoad()
-        ZigClientManager.shared.mainWindowController = self
-    }
-    
     override func loadWindow() {
 //        debugPrint(NSFontManager.shared.availableFontFamilies.description)
+        ZigClientManager.shared.mainWindowController = self
         ZigUserManager.sharedInstance.delegate = self
-        let frame: CGRect = CGRect(x: 0, y: 0, width: 280, height: 400)
-        let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
-        let back: NSWindow.BackingStoreType = .buffered
-        let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
-        window.titlebarAppearsTransparent = true
-        window.delegate = self
-        window.standardWindowButton(.zoomButton)?.isHidden = true
-        window.center()
-        self.window = window
         ZigUserManager.sharedInstance.requestUserData { success in
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 if success {
                     // 已登录
+                    let frame: CGRect = CGRect(x: 0, y: 0, width: 1120, height: 640)
+                    let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
+                    let back: NSWindow.BackingStoreType = .buffered
+                    let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
+                    window.titlebarAppearsTransparent = true
+                    window.delegate = self
+                    window.standardWindowButton(.zoomButton)?.isHidden = true
                     self.mainVC = MainViewController()
                     window.contentView = self.mainVC.view;
                     window.contentViewController = self.mainVC
-                    window.setFrame(NSMakeRect(0, 0, 1120, 640), display: true, animate: false)
+                    window.center()
+                    window.makeKeyAndOrderFront(nil)
+                    self.window = window
                     NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
                 } else {
                     // 未登录
+                    let frame: CGRect = CGRect(x: 0, y: 0, width: 280, height: 400)
+                    let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
+                    let back: NSWindow.BackingStoreType = .buffered
+                    let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
+                    window.titlebarAppearsTransparent = true
+                    window.delegate = self
+                    window.standardWindowButton(.zoomButton)?.isHidden = true
                     self.loginVC = LoginViewController()
                     self.loginVC.windowController = self
                     window.contentView = self.loginVC.view;
                     window.contentViewController = self.loginVC
+                    window.center()
+                    window.makeKeyAndOrderFront(nil)
+                    self.window = window
                 }
-                window.center()
             }
         }
     }
