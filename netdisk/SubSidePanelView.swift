@@ -87,6 +87,7 @@ class SubSidePanelView: NSView {
     
     @objc func tableViewDoubleClick(_ sender: AnyObject) {
         let row = tableView.selectedRow
+        if row < 0 { return }
         for (index, item) in dataList.enumerated() {
             if index == row {
                 item.isSelected = true

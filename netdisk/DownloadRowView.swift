@@ -31,7 +31,7 @@ class DownloadRowView: NSTableRowView {
         label.maximumNumberOfLines = 1
         label.lineBreakMode = .byTruncatingMiddle
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        label.font = NSFont(LXGWRegularSize: 16)
+        label.font = NSFont(LXGWRegularSize: 14)
         label.textColor = .white
         return label
     }()
@@ -43,7 +43,7 @@ class DownloadRowView: NSTableRowView {
         btn.isBordered = false
         btn.contentTintColor = .white
         btn.imagePosition = .imageOnly
-        btn.image = NSImage(systemSymbolName: "pause.circle.fill", accessibilityDescription: nil)?.withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 20, weight: .medium))
+        btn.image = NSImage(symbolName: "pause.circle.fill", pointSize: 20)
         return btn
     }()
     
@@ -51,7 +51,7 @@ class DownloadRowView: NSTableRowView {
         let btn = NSButton()
         btn.isBordered = false
         btn.contentTintColor = .white
-        btn.image = NSImage(systemSymbolName: "play.circle.fill", accessibilityDescription: nil)?.withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 20, weight: .medium))
+        btn.image = NSImage(symbolName: "play.circle.fill", pointSize: 20)
         return btn
     }()
     
@@ -59,7 +59,7 @@ class DownloadRowView: NSTableRowView {
         let btn = NSButton()
         btn.isBordered = false
         btn.contentTintColor = .white
-        btn.image = NSImage(systemSymbolName: "trash.circle.fill", accessibilityDescription: nil)?.withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 20, weight: .medium))
+        btn.image = NSImage(symbolName: "trash.circle.fill", pointSize: 20)
         return btn
     }()
     
@@ -67,7 +67,7 @@ class DownloadRowView: NSTableRowView {
         let btn = NSButton()
         btn.isBordered = false
         btn.contentTintColor = .white
-        btn.image = NSImage(systemSymbolName: "folder.circle.fill", accessibilityDescription: nil)?.withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 20, weight: .medium))
+        btn.image = NSImage(symbolName: "folder.circle.fill", pointSize: 20)
         return btn
     }()
     
@@ -76,7 +76,7 @@ class DownloadRowView: NSTableRowView {
         label.isBordered = false
         label.isEditable = false
         label.drawsBackground = false
-        label.font = NSFont(LXGWRegularSize: 12)
+        label.font = NSFont(LXGWRegularSize: 10)
         label.textColor = .white
         return label
     }()

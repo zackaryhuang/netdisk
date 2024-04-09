@@ -21,6 +21,14 @@ extension NSColor {
     }
 }
 
+extension NSImage {
+    convenience init?(symbolName: String, pointSize: CGFloat) {
+        self.init(systemSymbolName: symbolName, accessibilityDescription: nil)
+//        self.size = NSSize(width: 40, height: 40)
+//        self.init(symbolName: symbolName, variableValue: 1)
+    }
+}
+
 extension NSFont {
     convenience init?(PingFangSemiBold: Float) {
         self.init(name: "PingFangSC-Semibold", size: CGFloat(PingFangSemiBold))

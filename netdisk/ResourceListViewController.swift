@@ -158,7 +158,7 @@ class ResourceListViewController: NSViewController {
             return
         }
         
-        ZigPreviewHelper.preview(fileData: fileData)
+        ZigPreviewHelper.preview(fileData: fileData, driveID: ZigClientManager.shared.aliUserData?.resourceDriveID)
         
     }
     
@@ -182,24 +182,7 @@ class ResourceListViewController: NSViewController {
             }
         }
 
-    }
-    
-    private func previewVideoWith(fileID: String) {
-        Task {
-            if let fileInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID),
-               let url = fileInfo.downloadURL?.absoluteString.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed),
-               let playURL = URL(string: "iina://weblink?url=\(url)"){
-                // DownloadUrl 获取的链接为原画画质
-                NSWorkspace.shared.open(playURL)
-            } else if let playInfo = try? await WebRequest.requestVideoPlayInfo(fileID: fileID),
-                      let url = playInfo.playURL?.absoluteString.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed),
-                      let playURL = URL(string: "iina://weblink?url=\(url)"){
-                // 通过 PlayInfo 获取的为转码后的画质中的最好的一档画质
-                NSWorkspace.shared.open(playURL)
-            }
-        }
-    }
-    
+    }    
 }
 
 extension ResourceListViewController: CategoryVC {
@@ -245,12 +228,19 @@ extension ResourceListViewController: NSTableViewDelegate, NSTableViewDataSource
     }
     
     func searchViewStartSearch(keywords: String) {
+        guard let driveID = ZigClientManager.shared.aliUserData?.resourceDriveID else { return }
         Task { [weak self] in
-            let res = try? await WebRequest.requestFileSearch(keywords: keywords)
+            let res = try? await WebRequest.requestFileSearch(keywords: keywords, driveID: driveID)
             if let fileList = res?.items {
                 self?.fileList = fileList
                 self?.tableView.reloadData()
             }
         }
+    }
+    
+    func searchViewDidEndSearch() {
+        startMarker = nil
+        fileList = nil
+        requestFiles()
     }
 }

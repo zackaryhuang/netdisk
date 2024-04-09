@@ -108,6 +108,10 @@ class FileRowView: NSTableRowView {
         }
     }
     
+    @objc func createFolder() {
+        
+    }
+    
     @objc func downloadFile() {
         if !ZigBookmark.bookmarkStartAccessing(filePath: ZigDownloadManager.downloadPath) {
             let openPanel = NSOpenPanel()

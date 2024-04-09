@@ -10,6 +10,7 @@ import Cocoa
 protocol FilePathViewDelegate: NSObjectProtocol {
     func filePathViewPathDidChange(path: String, folderID: String?)
     func searchViewStartSearch(keywords: String)
+    func searchViewDidEndSearch()
 }
 
 class FilePathView: NSView {
@@ -239,6 +240,7 @@ extension FilePathView: SearchViewDelegate {
         inSearchMode = false
         searchView.searchTextField.stringValue = ""
         startSearchAnimation()
+        self.delegate?.searchViewDidEndSearch()
     }
     
     func searchViewStartSearch(keywords: String) {

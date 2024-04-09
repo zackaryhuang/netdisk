@@ -33,7 +33,7 @@ enum FileCategory {
     case Others
 }
 
-protocol AccessTokenData: Hashable, Codable {
+protocol AccessTokenData: Codable {
     var accessToken: String { get }
     var refreshToken: String { get }
     var expiresIn: Int { get }
@@ -46,6 +46,11 @@ protocol UserData: Hashable, Codable {
 
 protocol FileDetail: Codable {
     var previewURL: URL? { get }
+    var fileID: String? { get }
+}
+
+protocol CreateFolderResp: Codable {
+    
 }
 
 protocol VideoPlayInfo: Codable {
@@ -61,6 +66,15 @@ protocol DownloadInfo: Codable {
 protocol SpaceInfo: Codable {
     var usedSize: Int { get }
     var totalSize: Int { get }
+}
+
+struct AliCreateFolderResp: CreateFolderResp {
+    let status: String?
+    let parentFolderID: String?
+    enum CodingKeys : String, CodingKey {
+        case status
+        case parentFolderID = "parent_file_id"
+    }
 }
 
 struct AliFileSearchResp: Codable {
@@ -132,11 +146,21 @@ struct BaiduDownloadInfo: DownloadInfo {
 
 struct AliFileDetail: FileDetail {
     let url: String?
+    let id: String?
     var previewURL: URL? {
         if let urlString = url {
             return URL(string: urlString)
         }
         return nil
+    }
+    
+    var fileID: String? {
+        return id
+    }
+    
+    enum CodingKeys : String, CodingKey {
+        case url
+        case id = "file_id"
     }
 }
 
@@ -161,6 +185,10 @@ struct BaiduFileDetail: FileDetail {
             }
             return nil
         }
+        return nil
+    }
+    
+    var fileID: String? {
         return nil
     }
 }
@@ -347,7 +375,7 @@ struct BaiduFileData: FileData {
     }
 }
 
-protocol QRCodeData: Hashable, Codable {
+protocol QRCodeData: Codable {
     var qrCodeUrl: String { get }
     var code: String { get }
 }
@@ -399,6 +427,7 @@ class WebRequest {
     static let BaiduScopes = ["basic,netdisk"]
     
     enum EndPoint {
+        static let AliCreateFolder = AliyunDomain + "/adrive/v1.0/openFile/create"
         static let AliGenerateQRCode = AliyunDomain + "/oauth/authorize/qrcode"
         static let AliGetAccessToken = AliyunDomain + "/oauth/access_token"
         static let AliUserInfo = AliyunDomain + "/adrive/v1.0/user/getDriveInfo"
@@ -415,9 +444,13 @@ class WebRequest {
         static let BaiduFileDetail = BaiduDomain2 + "/rest/2.0/xpan/multimedia"
     }
     
-    static func requestFileSearch(keywords: String) async throws -> AliFileSearchResp? {
+    /// 文件搜索
+    /// - Parameters:
+    ///   - keywords: 搜索关键词
+    ///   - driveID: 资源盘/备份盘
+    /// - Returns: 搜索结果列表
+    static func requestFileSearch(keywords: String, driveID: String) async throws -> AliFileSearchResp? {
         if ZigClientManager.shared.currentClient() == .Aliyun {
-            guard let driveID = ZigClientManager.shared.aliUserData?.defaultDriveID else { return nil }
             let params = [
                 "drive_id" : driveID,
                 "query" : "name match \"\(keywords)\"",
@@ -428,6 +461,8 @@ class WebRequest {
         return nil;
     }
     
+    /// 获取当前空间使用情况
+    /// - Returns: 空间信息
     static func requestSpaceInfo() async throws -> SpaceInfo? {
         if ZigClientManager.shared.currentClient() == .Aliyun {
             let res: AliSpaceInfo? = try? await request(method: .post, url: EndPoint.AliGetSpaceInfo, dataObj: "personal_space_info")
@@ -436,6 +471,9 @@ class WebRequest {
         return nil
     }
     
+    /// 获取视频播放信息（一般是转码后的播放链接，如需原画，直接获取下载链接播放）
+    /// - Parameter fileID: 视频文件 ID
+    /// - Returns: 播放信息
     static func requestVideoPlayInfo(fileID: String) async throws -> VideoPlayInfo? {
         if ZigClientManager.shared.currentClient() == .Aliyun {
             guard let driveID = ZigClientManager.shared.aliUserData?.defaultDriveID else {
@@ -453,13 +491,18 @@ class WebRequest {
         return nil
     }
     
-    static func requestFileDetail(fileID: String) async throws -> FileDetail? {
+    /// 获取指定文件详细信息
+    /// - Parameters:
+    ///   - fileID: 文件 ID
+    ///   - driveID: 资源盘/备份盘
+    /// - Returns: 文件详情
+    static func requestFileDetail(fileID: String, driveID: String? = ZigClientManager.shared.aliUserData?.defaultDriveID) async throws -> FileDetail? {
         if ZigClientManager.shared.currentClient() == .Aliyun {
-            guard let driveID = ZigClientManager.shared.aliUserData?.defaultDriveID else {
+            guard let id = driveID else {
                 return nil
             }
             let params = [
-                "drive_id" : driveID,
+                "drive_id" : id,
                 "file_id" : fileID,
             ] as [String:Any]
             
@@ -480,7 +523,12 @@ class WebRequest {
         return res
     }
     
-    static func requestDownloadUrl(driveID: String? = ZigClientManager.shared.aliUserData?.defaultDriveID, fileID: String) async throws -> DownloadInfo?  {
+    /// 获取下载链接
+    /// - Parameters:
+    ///   - fileID: 文件 ID
+    ///   - driveID: 资源盘/备份盘
+    /// - Returns: 下载相关信息
+    static func requestDownloadUrl(fileID: String, driveID: String? = ZigClientManager.shared.aliUserData?.defaultDriveID) async throws -> DownloadInfo?  {
         guard let id = driveID, !fileID.isEmpty else {
             return nil
         }
@@ -536,6 +584,8 @@ class WebRequest {
         return res
     }
     
+    /// 获取登录用户信息
+    /// - Returns: true 代表已登录，反之则未登录
     static func requestUserData() async throws -> Bool {
         if ZigClientManager.shared.currentClient() == .Aliyun {
             let res: AliUserData? = try? await request(method: .post, url: EndPoint.AliUserInfo)
@@ -560,7 +610,9 @@ class WebRequest {
         return false
     }
     
-    static func requestLoginQRCode() async throws -> (any QRCodeData) {
+    /// 获取登录二维码
+    /// - Returns: 二维码信息
+    static func requestLoginQRCode() async throws -> QRCodeData? {
         if ZigClientManager.shared.currentClient() == .Aliyun {
             let params = [
                 "client_secret" : AliClientSecret,
@@ -580,7 +632,7 @@ class WebRequest {
         return res
     }
     
-    static func requestAccessToken(authCode: String?, grantType: AliAuthType = .code) async throws -> (any AccessTokenData)? {
+    static func requestAccessToken(authCode: String?, grantType: AliAuthType = .code) async throws -> AccessTokenData? {
         if (ZigClientManager.shared.currentClient() == .Aliyun) {
             var params = [
                 "client_secret" : AliClientSecret,
@@ -652,6 +704,31 @@ class WebRequest {
         return .WaitScan
     }
     
+    /// 创建文件夹
+    /// - Parameters:
+    ///   - driveID: 资源盘/备份盘
+    ///   - parentFileID: 父文件夹 ID
+    ///   - folderName: 文件夹名
+    /// - Returns: 是否创建成功
+    static func createFolder(driveID: String? = ZigClientManager.shared.aliUserData?.defaultDriveID, parentFileID: String, folderName: String) async throws -> Bool {
+        guard let id = driveID else { return false }
+        let params = [
+            "drive_id": id,
+            "parent_file_id": parentFileID,
+            "name": folderName,
+            "type": "folder",
+            "check_name_mode": "auto_rename"
+        ]
+        
+        if let resp: AliCreateFolderResp = try await request(method: .post, url: EndPoint.AliCreateFolder, parameters: params) {
+            return true
+        }
+        return false
+    }
+}
+
+
+extension WebRequest {
     static func request<T: Decodable>(method: HTTPMethod = .get,
                                       url: URLConvertible,
                                       parameters: Parameters = [:],

@@ -75,9 +75,25 @@ class FileListViewController: NSViewController, CategoryVC {
             make.top.equalTo(filePathView.snp.bottom)
             make.leading.trailing.bottom.equalTo(view)
         }
+        
+        let menu = NSMenu()
+        menu.addItem(NSMenuItem(title: "新建文件夹", action: #selector(createFolder), keyEquivalent: ""))
+        tableContainerView.menu = menu
+        
+    }
+    
+    @objc func createFolder() {
+        debugPrint("新建文件夹");
+        Task {
+            if let success = try? await WebRequest.createFolder(parentFileID: parentFolderID, folderName: "这是一个新建的文件夹"), success {
+                debugPrint("创建成功")
+                requestFiles()
+            }
+        }
     }
     
     private func requestFiles() {
+        startMarker = nil
         Task {
             let currentClient = ZigClientManager.shared.currentClient()
             if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? parentFolderID : path ?? "/") {
@@ -161,8 +177,7 @@ class FileListViewController: NSViewController, CategoryVC {
             return
         }
         
-        ZigPreviewHelper.preview(fileData: fileData)
-        
+        ZigPreviewHelper.preview(fileData: fileData, driveID: ZigClientManager.shared.aliUserData?.defaultDriveID)
     }
     
     @objc func endScroll(_ notification: Notification) {
@@ -171,35 +186,6 @@ class FileListViewController: NSViewController, CategoryVC {
            let documentViewHeight = (notification.object as? NSScrollView)?.documentView?.frame.height,
            offsetY + visibleHeight == documentViewHeight {
             requestMoreFiles()
-        }
-    }
-    
-    private func previewImageWith(fileID: String) {
-        Task {
-            let fileDetail = try? await WebRequest.requestFileDetail(fileID: fileID)
-            if let detailInfo = fileDetail {
-                let previewWindow = ImagePreviewWindowController()
-                previewWindow.detailInfo = detailInfo
-                previewWindow.window?.makeKeyAndOrderFront(nil)
-                previewWindow.window?.center()
-            }
-        }
-
-    }
-    
-    private func previewVideoWith(fileID: String) {
-        Task {
-            if let fileInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID),
-               let url = fileInfo.downloadURL?.absoluteString.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed),
-               let playURL = URL(string: "iina://weblink?url=\(url)"){
-                // DownloadUrl 获取的链接为原画画质
-                NSWorkspace.shared.open(playURL)
-            } else if let playInfo = try? await WebRequest.requestVideoPlayInfo(fileID: fileID),
-                      let url = playInfo.playURL?.absoluteString.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed),
-                      let playURL = URL(string: "iina://weblink?url=\(url)"){
-                // 通过 PlayInfo 获取的为转码后的画质中的最好的一档画质
-                NSWorkspace.shared.open(playURL)
-            }
         }
     }
 }
@@ -233,7 +219,6 @@ extension FileListViewController: NSTableViewDelegate, NSTableViewDataSource, Fi
             if let id = folderID {
                 self.parentFolderID = id
             }
-            startMarker = nil
             fileList?.removeAll()
             tableView.reloadData()
             requestFiles()
@@ -241,13 +226,19 @@ extension FileListViewController: NSTableViewDelegate, NSTableViewDataSource, Fi
     }
     
     func searchViewStartSearch(keywords: String) {
+        guard let driveID = ZigClientManager.shared.aliUserData?.defaultDriveID else { return }
         Task { [weak self] in
-            let res = try? await WebRequest.requestFileSearch(keywords: keywords)
+            let res = try? await WebRequest.requestFileSearch(keywords: keywords, driveID: driveID)
             if let fileList = res?.items {
                 self?.fileList = fileList
                 self?.tableView.reloadData()
             }
         }
+    }
+    
+    func searchViewDidEndSearch() {
+        fileList = nil
+        requestFiles()
     }
     
     var categoryType: SubSidePanelItemType {

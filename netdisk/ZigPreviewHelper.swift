@@ -10,14 +10,14 @@ import AppKit
 
 class ZigPreviewHelper {
     
-    public static func preview(fileData: FileData) {
+    public static func preview(fileData: FileData, driveID: String?) {
         switch fileData.category {
         case .Picture:
             debugPrint("预览照片")
-            previewImageWith(fileID: fileData.fileID)
+            previewImageWith(fileID: fileData.fileID, driveID:driveID)
         case .Video:
             debugPrint("预览视频")
-            previewVideoWith(fileID: fileData.fileID)
+            previewVideoWith(fileID: fileData.fileID, driveID: driveID)
         case .Audio:
             debugPrint("预览音频")
         case .Document:
@@ -31,9 +31,9 @@ class ZigPreviewHelper {
         }
     }
     
-    public static func previewImageWith(fileID: String) {
+    public static func previewImageWith(fileID: String, driveID: String?) {
         Task {
-            let fileDetail = try? await WebRequest.requestFileDetail(fileID: fileID)
+            let fileDetail = try? await WebRequest.requestFileDetail(fileID: fileID, driveID: driveID)
             if let detailInfo = fileDetail {
                 await showImagePreviewController(detailInfo: detailInfo)
             }
@@ -49,9 +49,9 @@ class ZigPreviewHelper {
         previewWindow.window?.center()
     }
     
-    public static func previewVideoWith(fileID: String) {
+    public static func previewVideoWith(fileID: String, driveID: String?) {
         Task {
-            if let fileInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID),
+            if let fileInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID, driveID: driveID),
                let url = fileInfo.downloadURL?.absoluteString.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed),
                let playURL = URL(string: "iina://weblink?url=\(url)"){
                 // DownloadUrl 获取的链接为原画画质
