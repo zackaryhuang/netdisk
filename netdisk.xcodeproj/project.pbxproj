@@ -47,6 +47,8 @@
 		30D5887F2B96045500DCE9CB /* FMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 30D5887E2B96045500DCE9CB /* FMDB */; };
 		30D588822B96067A00DCE9CB /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 30D588812B96067A00DCE9CB /* Alamofire */; };
 		30D588852B96069600DCE9CB /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 30D588842B96069600DCE9CB /* SnapKit */; };
+		30E491ED2BC82F29008FEA2D /* ZigViewAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E491EC2BC82F29008FEA2D /* ZigViewAlert.swift */; };
+		30E491EF2BC83CA9008FEA2D /* ZigTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E491EE2BC83CA9008FEA2D /* ZigTextField.swift */; };
 		30EFF4772BAD382B00ABD070 /* ZigPreviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30EFF4762BAD382B00ABD070 /* ZigPreviewHelper.swift */; };
 /* End PBXBuildFile section */
 
@@ -91,6 +93,8 @@
 		30CE8BEF2BA9EDDB007D6052 /* LXGWWenKaiMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LXGWWenKaiMono-Regular.ttf"; sourceTree = "<group>"; };
 		30CE8BF02BA9EDDC007D6052 /* LXGWWenKaiMono-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LXGWWenKaiMono-Bold.ttf"; sourceTree = "<group>"; };
 		30CE8BF12BA9EDDC007D6052 /* LXGWWenKaiMono-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LXGWWenKaiMono-Light.ttf"; sourceTree = "<group>"; };
+		30E491EC2BC82F29008FEA2D /* ZigViewAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigViewAlert.swift; sourceTree = "<group>"; };
+		30E491EE2BC83CA9008FEA2D /* ZigTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigTextField.swift; sourceTree = "<group>"; };
 		30EFF4762BAD382B00ABD070 /* ZigPreviewHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigPreviewHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -175,6 +179,8 @@
 				3065E3502BA7315700A3114F /* ZigDownloadManager.swift */,
 				3065E3522BA73A8300A3114F /* ZigBookmark.swift */,
 				30EFF4762BAD382B00ABD070 /* ZigPreviewHelper.swift */,
+				30E491EC2BC82F29008FEA2D /* ZigViewAlert.swift */,
+				30E491EE2BC83CA9008FEA2D /* ZigTextField.swift */,
 			);
 			path = netdisk;
 			sourceTree = "<group>";
@@ -287,6 +293,7 @@
 			files = (
 				309AFD252AA49B6C005F50C9 /* TabItemView.swift in Sources */,
 				30ABAA282B34934C0098DC23 /* ZigClientManager.swift in Sources */,
+				30E491EF2BC83CA9008FEA2D /* ZigTextField.swift in Sources */,
 				30B7E9302BB0596700870ABA /* SubSidePanelItemRowView.swift in Sources */,
 				3036F4522B39A0EB00F365E4 /* FileListViewController.swift in Sources */,
 				30ABAA232B3489F70098DC23 /* WebRequest.swift in Sources */,
@@ -304,6 +311,7 @@
 				308429D02AAC7AC70086AB2E /* ImagePreviewController.swift in Sources */,
 				30008DFB2B86458800F2BE37 /* DownloadListViewController.swift in Sources */,
 				300108EE2A9E58F5002FBB52 /* MainViewController.swift in Sources */,
+				30E491ED2BC82F29008FEA2D /* ZigViewAlert.swift in Sources */,
 				30C508132AAB55D60076E842 /* ImagePreviewWindowController.swift in Sources */,
 				30BB71912A9E45D300ADBF01 /* CommonDefine.swift in Sources */,
 				3065E3532BA73A8300A3114F /* ZigBookmark.swift in Sources */,

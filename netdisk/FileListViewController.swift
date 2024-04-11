@@ -83,13 +83,29 @@ class FileListViewController: NSViewController, CategoryVC {
     }
     
     @objc func createFolder() {
-        debugPrint("新建文件夹");
-        Task {
-            if let success = try? await WebRequest.createFolder(parentFileID: parentFolderID, folderName: "这是一个新建的文件夹"), success {
-                debugPrint("创建成功")
-                requestFiles()
+        if let view = self.view.window?.contentView {
+            let alert = ZigViewAlert()
+            alert.showInView(view)
+            alert.confirmBlock = { (name:String?) in
+                if let folderName = name {
+                    Task { [weak self] in
+                        guard let self = self else { return }
+                        if let success = try? await WebRequest.createFolder(parentFileID: self.parentFolderID, folderName: folderName), success {
+                            debugPrint("创建成功")
+                            self.requestFiles()
+                        }
+                    }
+                }
             }
         }
+        
+//        debugPrint("新建文件夹");
+//        Task {
+//            if let success = try? await WebRequest.createFolder(parentFileID: parentFolderID, folderName: "这是一个新建的文件夹"), success {
+//                debugPrint("创建成功")
+//                requestFiles()
+//            }
+//        }
     }
     
     private func requestFiles() {
