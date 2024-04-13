@@ -7,18 +7,13 @@
 
 import Cocoa
 
-class ZigViewAlert: NSView {
+class ZigFolerEditAlterView: ZigBaseAlertView {
     
     var confirmBlock: ((String?) -> ())?
-    
-    let contentView = {
-        let view = NSView()
-        view.wantsLayer = true
-        view.layer?.backgroundColor = NSColor(hex: 0x252528).cgColor
-        view.layer?.cornerRadius = 13
-        return view
-    }()
-    
+    var title = "新建文件夹"
+    var placeHolder = "新建文件夹"
+    let label = ZigLabel()
+    let inputTextfield = ZigTextField()
     var inputView: ZigTextField!
     
     override init(frame frameRect: NSRect) {
@@ -26,6 +21,14 @@ class ZigViewAlert: NSView {
         self.wantsLayer = true
         self.layer?.backgroundColor = NSColor(hex: 0x000000, alpha: 0.0).cgColor
         configUI()
+    }
+    
+    convenience init(title: String, placeholder: String) {
+        self.init(frame: NSZeroRect)
+        self.title = title
+        self.placeHolder = placeholder
+        self.label.stringValue = title
+        self.inputTextfield.stringValue = placeholder
     }
     
     required init?(coder: NSCoder) {
@@ -40,13 +43,12 @@ class ZigViewAlert: NSView {
             make.center.equalTo(self)
         }
         
-        let label = ZigLabel()
         label.stringValue = "新建文件夹"
-        label.font = NSFont(PingFangSemiBold: 17)
+        label.font = NSFont(PingFangSemiBold: 19)
         contentView.addSubview(label)
         label.snp.makeConstraints { make in
             make.leading.equalTo(contentView).offset(20)
-            make.top.equalTo(contentView).offset(19)
+            make.top.equalTo(contentView).offset(14)
         }
         
         let topSepLine = NSView()
@@ -68,13 +70,12 @@ class ZigViewAlert: NSView {
             make.top.equalTo(topSepLine.snp.bottom).offset(42)
         }
         
-        let inputTextfield = ZigTextField()
         inputTextfield.cell?.wraps = false
         inputTextfield.cell?.isScrollable = true
         inputTextfield.cell?.isEditable = true
         inputTextfield.focusRingType = .none
         inputTextfield.currentEditor()?.selectAll(nil)
-        inputTextfield.stringValue = "新建文件夹"
+        inputTextfield.stringValue = placeHolder
         inputTextfield.cell?.font = NSFont(PingFang: 17)
         inputTextfield.wantsLayer = true
         inputTextfield.layer?.cornerRadius = 9
@@ -138,14 +139,7 @@ class ZigViewAlert: NSView {
     
     
     @objc func cancelBtnClick() {
-        NSAnimationContext.runAnimationGroup({context in
-            context.duration = 0.3
-            context.allowsImplicitAnimation = true
-            self.layer?.backgroundColor = NSColor(hex: 0x000000, alpha: 0.0).cgColor
-            self.contentView.alphaValue = 0
-        }) {
-            self.removeFromSuperview()
-        }
+        dismiss()
     }
     
     @objc func confirmBtnClick() {
@@ -158,19 +152,5 @@ class ZigViewAlert: NSView {
             confirmBlock?(inputView.stringValue)
             self.removeFromSuperview()
         }
-    }
-    
-    func showInView(_ view: NSView) {
-        view.addSubview(self)
-        self.snp.makeConstraints { make in
-            make.edges.equalTo(view)
-        }
-        
-        NSAnimationContext.runAnimationGroup({context in
-            context.duration = 0.3
-            context.allowsImplicitAnimation = true
-            self.layer?.backgroundColor = NSColor(hex: 0x000000, alpha: 0.5).cgColor
-            self.contentView.alphaValue = 1
-        }, completionHandler:nil)
     }
 }

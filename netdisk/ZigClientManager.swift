@@ -17,6 +17,18 @@ class ZigClientManager {
     
     weak var mainWindowController: MainWindowController?
     
+    static var backupDriveID: String? {
+        get {
+            return ZigClientManager.shared.aliUserData?.backupDriveID ?? ZigClientManager.shared.aliUserData?.defaultDriveID
+        }
+    }
+    
+    static var resourceDriveID: String? {
+        get {
+            return ZigClientManager.shared.aliUserData?.resourceDriveID
+        }
+    }
+    
     func clearAccessData() {
         self.accessToken = nil
         self.refreshToken = nil

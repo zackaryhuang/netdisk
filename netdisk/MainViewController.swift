@@ -73,7 +73,7 @@ class MainViewController: NSViewController {
         
         sidePanel.delegate = subSidePanel
         
-        let fileListVC = FileListViewController()
+        let fileListVC = FileListViewController(listType: .backup)
         addChild(fileListVC)
         view.addSubview(fileListVC.view)
         VCs.append(fileListVC)
@@ -92,7 +92,7 @@ class MainViewController: NSViewController {
             make.top.bottom.trailing.equalTo(view)
         }
         
-        let resourceListVC = ResourceListViewController()
+        let resourceListVC = FileListViewController(listType: .resource)
         resourceListVC.view.isHidden = true
         addChild(resourceListVC)
         view.addSubview(resourceListVC.view)

@@ -437,6 +437,8 @@ class WebRequest {
         static let AliGetDownloadUrl = AliyunDomain + "/adrive/v1.0/openFile/getDownloadUrl"
         static let AliGetSpaceInfo = AliyunDomain + "/adrive/v1.0/user/getSpaceInfo"
         static let AliFileSearch = AliyunDomain + "/adrive/v1.0/openFile/search"
+        static let AliFileUpdate = AliyunDomain + "/adrive/v1.0/openFile/update"
+        static let AliFileTrash = AliyunDomain + "/adrive/v1.0/openFile/recyclebin/trash"
         static let BaiduGenerateQRCode = BaiduDomain + "/oauth/2.0/device/code"
         static let BaiduGetAccessToken = BaiduDomain + "/oauth/2.0/token"
         static let BaiduUserInfo = BaiduDomain2 + "/rest/2.0/xpan/nas?method=uinfo"
@@ -697,7 +699,7 @@ class WebRequest {
             return .QRCodeExpired
         }
         
-        if let data = try await requestAccessToken(authCode: code), !data.accessToken.isEmpty {
+        if let data = try? await requestAccessToken(authCode: code), !data.accessToken.isEmpty {
             ZigClientManager.shared.accessToken = data.accessToken
             return .AuthSuccess
         }
@@ -720,8 +722,34 @@ class WebRequest {
             "check_name_mode": "auto_rename"
         ]
         
-        if let resp: AliCreateFolderResp = try await request(method: .post, url: EndPoint.AliCreateFolder, parameters: params) {
+        if let _: AliCreateFolderResp = try? await request(method: .post, url: EndPoint.AliCreateFolder, parameters: params) {
             return true
+        }
+        return false
+    }
+    
+    static func rename(driveID: String, fileID: String, newName: String) async throws -> Bool {
+        let params = [
+            "drive_id": driveID,
+            "file_id": fileID,
+            "name": newName,
+            "check_name_mode": "auto_rename"
+        ]
+        
+        if let _: AliCreateFolderResp = try? await request(method: .post, url: EndPoint.AliFileUpdate, parameters: params) {
+            return true
+        }
+        return false
+    }
+    
+    static func trash(driveID: String, fileID: String) async throws -> Bool {
+        let params = [
+            "drive_id": driveID,
+            "file_id": fileID,
+        ]
+        
+        if let res: JSON = try? await request(method: .post, url: EndPoint.AliFileTrash, parameters: params) {
+            return res["status"].numberValue == 0
         }
         return false
     }

@@ -11,7 +11,22 @@ import SwiftUI
 import Kingfisher
 import Tiercel
 
+protocol FileRowViewDelegate: NSObjectProtocol {
+    func fileRowViewDidClickDownload(fileID: String, fileName: String)
+    func fileRowViewDidClickRename(fileID: String, originalName: String)
+    func fileRowViewDidClickDelete(fileID: String)
+    func fileRowViewDidClickCopyDownloadLink(fileID: String)
+    func fileRowViewDidClickCreateFolder()
+    func fileRowViewDidClickTrash(fileID: String)
+    func fileRowViewDidClickCopy(fileID: String)
+    func fileRowViewDidClickMove(fileID: String)
+}
+
+
 class FileRowView: NSTableRowView {
+    static var shouldHandleTracking = true
+    weak var delegate: FileRowViewDelegate?
+    weak var lastHighligtItem: ZigMenuItem?
     
     let thumbImageView = {
         let imageView = NSImageView()
@@ -46,6 +61,7 @@ class FileRowView: NSTableRowView {
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         configUI()
+        updateTrackingAreas()
     }
     
     required init?(coder: NSCoder) {
@@ -109,45 +125,38 @@ class FileRowView: NSTableRowView {
     }
     
     @objc func createFolder() {
-        
+        self.delegate?.fileRowViewDidClickCreateFolder()
+    }
+    
+    @objc func renameFile() {
+        guard let fileID = data?.fileID else { return }
+        guard let originalName = data?.fileName else { return }
+        self.delegate?.fileRowViewDidClickRename(fileID: fileID, originalName: originalName)
     }
     
     @objc func downloadFile() {
-        if !ZigBookmark.bookmarkStartAccessing(filePath: ZigDownloadManager.downloadPath) {
-            let openPanel = NSOpenPanel()
-            openPanel.canChooseFiles = false
-            openPanel.canChooseDirectories = true
-            openPanel.allowsMultipleSelection = false
-            openPanel.begin { [weak self] result in
-                if result == .OK,
-                   let downloadPath = openPanel.urls.first {
-                    if !(ZigBookmark.saveBookmark(filePath: downloadPath.absoluteString)) || !ZigBookmark.bookmarkStartAccessing(filePath: downloadPath.absoluteString) { return }
-                    ZigDownloadManager.downloadPath = downloadPath.absoluteString
-                    self?.startDownload()
-                }
-            }
-        } else {
-            startDownload()
-        }
+        guard let fileID = data?.fileID, let fileName = data?.fileName else { return }
+        self.delegate?.fileRowViewDidClickDownload(fileID: fileID, fileName: fileName)
     }
     
-    func startDownload() {
-        if let fileID = data?.fileID {
-            Task {
-                if let downloadInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID) {
-                    debugPrint(downloadInfo.downloadURL ?? "未知链接")
-                    let manager = ZigDownloadManager.shared.downloadSessionManager
-                    let task = manager.download(downloadInfo.downloadURL!, fileName: data?.fileName)
-                    task?.progress { (task) in
-                        debugPrint("progress:\(task.progress.fractionCompleted)")
-                    }.success { (task) in
-                        debugPrint("下载完成")
-                    }.failure { (task) in
-                        debugPrint("下载失败")
-                    }
-                }
-            }
-        }
+    @objc func trashFile() {
+        guard let fileID = data?.fileID else { return }
+        self.delegate?.fileRowViewDidClickTrash(fileID: fileID)
+    }
+    
+    @objc func copyFile() {
+        guard let fileID = data?.fileID else { return }
+        self.delegate?.fileRowViewDidClickCopy(fileID: fileID)
+    }
+    
+    @objc func moveFile() {
+        guard let fileID = data?.fileID else { return }
+        self.delegate?.fileRowViewDidClickMove(fileID: fileID)
+    }
+    
+    @objc func deleteFile() {
+        guard let fileID = data?.fileID else { return }
+        self.delegate?.fileRowViewDidClickDelete(fileID: fileID)
     }
     
     func updateRowView(with fileData: any FileData) {
@@ -165,32 +174,36 @@ class FileRowView: NSTableRowView {
         } else {
             thumbImageView.image = Utils.thumbForFile(info: fileData)
         }
-        
-        if fileData.isDir {
-            self.menu = nil
-        } else {
-            let menu = NSMenu()
-            menu.addItem(NSMenuItem(title: "下载", action: #selector(downloadFile), keyEquivalent: ""))
-            #if DEBUG
-            menu.addItem(NSMenuItem(title: "拷贝下载链接", action: #selector(copyDownloadLink), keyEquivalent: ""))
-            #endif
-            self.menu = menu
-        }
+        self.menu = getMenu()
     }
     
-    
-    
     override func updateTrackingAreas() {
-        let trackingArea = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow], owner: self)
+        trackingAreas.forEach { area in
+            removeTrackingArea(area)
+        }
+        let trackingArea = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeAlways], owner: self)
         addTrackingArea(trackingArea)
+        let mouseLocation = self.window?.mouseLocationOutsideOfEventStream
+        if let location = mouseLocation {
+            let newLocation = self.convert(location, from: nil)
+            
+            if NSPointInRect(newLocation, bounds) {
+                self.mouseEntered(with: NSEvent())
+            } else {
+                self.mouseExited(with: NSEvent())
+            }
+        }
+        super.updateTrackingAreas()
     }
     
     override func mouseEntered(with event: NSEvent) {
+        if !FileRowView.shouldHandleTracking { return }
         isFocused = true
         display()
     }
     
     override func mouseExited(with event: NSEvent) {
+        if !FileRowView.shouldHandleTracking { return }
         isFocused = false
         display()
     }
@@ -205,4 +218,52 @@ class FileRowView: NSTableRowView {
         let hoverPath = NSBezierPath(roundedRect: dirtyRect, xRadius: 10, yRadius: 10)
         hoverPath.fill()
     }
+    
+    private func getMenu() -> NSMenu? {
+        guard let fileData = data else { return nil }
+        let menu = NSMenu()
+        if fileData.isDir {
+            
+        } else {
+            menu.addItem(ZigMenuItem(title: "下载", target:self, action: #selector(downloadFile), keyEquivalent: ""))
+            #if DEBUG
+            menu.addItem(ZigMenuItem(title: "拷贝下载链接", target:self, action: #selector(copyDownloadLink), keyEquivalent: ""))
+            #endif
+        }
+        menu.addItem(ZigMenuItem(title: "新建文件夹", target:self, action: #selector(createFolder), keyEquivalent: ""))
+        menu.addItem(ZigMenuItem(title: "重命名", target:self, action: #selector(renameFile), keyEquivalent: ""))
+//        menu.addItem(ZigMenuItem(title: "移动", target:self, action: #selector(moveFile), keyEquivalent: ""))
+//        menu.addItem(ZigMenuItem(title: "复制", target:self, action: #selector(copyFile), keyEquivalent: ""))
+        menu.addItem(ZigMenuItem(title: "放入回收站", target:self, action: #selector(trashFile), keyEquivalent: ""))
+//        menu.addItem(ZigMenuItem(title: "直接删除", target:self, action: #selector(deleteFile), keyEquivalent: ""))
+        menu.delegate = self
+        return menu
+    }
+}
+
+extension FileRowView: NSMenuDelegate {
+    
+//    func menuDidClose(_ menu: NSMenu) {
+////        FileRowView.shouldHandleTracking = true
+//        isFocused = false
+//        mouseExited(with: NSEvent())
+//    }
+//    
+//    func menuWillOpen(_ menu: NSMenu) {
+////        FileRowView.shouldHandleTracking = false
+//        isFocused = true
+//        updateTrackingAreas()
+//    }
+    
+    func menu(_ menu: NSMenu, willHighlight item: NSMenuItem?) {
+        if let last = lastHighligtItem {
+            last.zig_isHiglight = false
+        }
+        
+        if let zigMenuItem = item as? ZigMenuItem {
+            zigMenuItem.zig_isHiglight = true
+            lastHighligtItem = zigMenuItem
+        }
+    }
+    
 }
