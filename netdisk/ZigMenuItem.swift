@@ -25,7 +25,10 @@ class ZigMenuItem: NSMenuItem {
     
     override init(title string: String, action selector: Selector?, keyEquivalent charCode: String) {
         super.init(title: string, action: selector, keyEquivalent: charCode)
-        configView()
+        let attributedString = NSAttributedString(string: title, attributes: [
+            NSAttributedString.Key.font: NSFont(PingFang: 16) as Any
+        ])
+        configView(width: attributedString.size().width + 28)
     }
     
     convenience init(title string: String, target: AnyObject?, action selector: Selector?, keyEquivalent charCode: String) {
@@ -37,8 +40,8 @@ class ZigMenuItem: NSMenuItem {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func configView() {
-        let menuView = ZigMenuItemView(frame: NSMakeRect(0, 0, 150, 35))
+    private func configView(width: CGFloat) {
+        let menuView = ZigMenuItemView(frame: NSMakeRect(0, 0, width, 35))
         
         let label = ZigLabel()
         label.stringValue = title

@@ -20,6 +20,7 @@ protocol FileRowViewDelegate: NSObjectProtocol {
     func fileRowViewDidClickTrash(fileID: String)
     func fileRowViewDidClickCopy(fileID: String)
     func fileRowViewDidClickMove(fileID: String)
+    func fileRowViewDidClickUpload()
 }
 
 
@@ -27,6 +28,14 @@ class FileRowView: NSTableRowView {
     static var shouldHandleTracking = true
     weak var delegate: FileRowViewDelegate?
     weak var lastHighligtItem: ZigMenuItem?
+    
+    var contentView = {
+        let view = NSView()
+        view.wantsLayer = true
+        view.layer?.cornerRadius = 10
+        view.layer?.backgroundColor = NSColor(hex: 0x2C2C2C, alpha: 0).cgColor
+        return view
+    }()
     
     let thumbImageView = {
         let imageView = NSImageView()
@@ -61,7 +70,7 @@ class FileRowView: NSTableRowView {
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         configUI()
-        updateTrackingAreas()
+//        updateTrackingAreas()
     }
     
     required init?(coder: NSCoder) {
@@ -71,35 +80,40 @@ class FileRowView: NSTableRowView {
     
     
     func configUI() {
-        addSubview(thumbImageView)
+        addSubview(contentView)
+        contentView.snp.makeConstraints { make in
+            make.edges.equalTo(self)
+        }
+        
+        contentView.addSubview(thumbImageView)
         thumbImageView.snp.makeConstraints { make in
-            make.leading.equalTo(self).offset(50)
-            make.centerY.equalTo(self)
+            make.leading.equalTo(contentView).offset(50)
+            make.centerY.equalTo(contentView)
             make.width.height.equalTo(28)
         }
         
-        addSubview(fileSizeLabel)
+        contentView.addSubview(fileSizeLabel)
         fileSizeLabel.snp.makeConstraints { make in
-            make.trailing.equalTo(self).offset(-20)
-            make.centerY.equalTo(self)
+            make.trailing.equalTo(contentView).offset(-20)
+            make.centerY.equalTo(contentView)
             
         }
         
-        addSubview(titleLabel)
+        contentView.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(thumbImageView.snp.trailing).offset(20)
-            make.centerY.equalTo(self)
+            make.centerY.equalTo(contentView)
             make.width.lessThanOrEqualTo(350)
         }
         
         let sepLine = NSView()
         sepLine.wantsLayer = true
         sepLine.layer?.backgroundColor = NSColor(hex: 0x1A1A1C).cgColor
-        addSubview(sepLine)
+        contentView.addSubview(sepLine)
         sepLine.snp.makeConstraints { make in
-            make.leading.equalTo(self).offset(24)
-            make.trailing.equalTo(self).offset(-24)
-            make.bottom.equalTo(self)
+            make.leading.equalTo(contentView).offset(24)
+            make.trailing.equalTo(contentView).offset(-24)
+            make.bottom.equalTo(contentView)
             make.height.equalTo(1)
         }
     }
@@ -132,6 +146,10 @@ class FileRowView: NSTableRowView {
         guard let fileID = data?.fileID else { return }
         guard let originalName = data?.fileName else { return }
         self.delegate?.fileRowViewDidClickRename(fileID: fileID, originalName: originalName)
+    }
+    
+    @objc func uploadFile() {
+        self.delegate?.fileRowViewDidClickUpload()
     }
     
     @objc func downloadFile() {
@@ -177,47 +195,47 @@ class FileRowView: NSTableRowView {
         self.menu = getMenu()
     }
     
-    override func updateTrackingAreas() {
-        trackingAreas.forEach { area in
-            removeTrackingArea(area)
-        }
-        let trackingArea = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeAlways], owner: self)
-        addTrackingArea(trackingArea)
-        let mouseLocation = self.window?.mouseLocationOutsideOfEventStream
-        if let location = mouseLocation {
-            let newLocation = self.convert(location, from: nil)
-            
-            if NSPointInRect(newLocation, bounds) {
-                self.mouseEntered(with: NSEvent())
-            } else {
-                self.mouseExited(with: NSEvent())
-            }
-        }
-        super.updateTrackingAreas()
-    }
+//    override func updateTrackingAreas() {
+//        trackingAreas.forEach { area in
+//            removeTrackingArea(area)
+//        }
+//        let trackingArea = NSTrackingArea(rect: bounds, options: [.mouseEnteredAndExited, .mouseMoved, .activeAlways], owner: self)
+//        addTrackingArea(trackingArea)
+//        let mouseLocation = self.window?.mouseLocationOutsideOfEventStream
+//        if let location = mouseLocation {
+//            let newLocation = self.convert(location, from: nil)
+//            
+//            if NSPointInRect(newLocation, bounds) {
+//                self.mouseEntered(with: NSEvent())
+//            } else {
+//                self.mouseExited(with: NSEvent())
+//            }
+//        }
+//        super.updateTrackingAreas()
+//    }
     
-    override func mouseEntered(with event: NSEvent) {
-        if !FileRowView.shouldHandleTracking { return }
-        isFocused = true
-        display()
-    }
+//    override func mouseEntered(with event: NSEvent) {
+//        if !FileRowView.shouldHandleTracking { return }
+//        isFocused = true
+//        display()
+//    }
+//    
+//    override func mouseExited(with event: NSEvent) {
+//        if !FileRowView.shouldHandleTracking { return }
+//        isFocused = false
+//        display()
+//    }
     
-    override func mouseExited(with event: NSEvent) {
-        if !FileRowView.shouldHandleTracking { return }
-        isFocused = false
-        display()
-    }
-    
-    override func drawBackground(in dirtyRect: NSRect) {
-        super.drawBackground(in: dirtyRect)
-        if !isFocused {
-            return
-        }
-        
-        NSColor(hex: 0x2C2C2C).setFill()
-        let hoverPath = NSBezierPath(roundedRect: dirtyRect, xRadius: 10, yRadius: 10)
-        hoverPath.fill()
-    }
+//    override func drawBackground(in dirtyRect: NSRect) {
+//        super.drawBackground(in: dirtyRect)
+//        if !isFocused {
+//            return
+//        }
+//        
+//        NSColor(hex: 0x2C2C2C).setFill()
+//        let hoverPath = NSBezierPath(roundedRect: dirtyRect, xRadius: 10, yRadius: 10)
+//        hoverPath.fill()
+//    }
     
     private func getMenu() -> NSMenu? {
         guard let fileData = data else { return nil }
@@ -232,6 +250,7 @@ class FileRowView: NSTableRowView {
         }
         menu.addItem(ZigMenuItem(title: "新建文件夹", target:self, action: #selector(createFolder), keyEquivalent: ""))
         menu.addItem(ZigMenuItem(title: "重命名", target:self, action: #selector(renameFile), keyEquivalent: ""))
+        menu.addItem(ZigMenuItem(title: "上传文件到当前目录", target:self, action: #selector(uploadFile), keyEquivalent: ""))
 //        menu.addItem(ZigMenuItem(title: "移动", target:self, action: #selector(moveFile), keyEquivalent: ""))
 //        menu.addItem(ZigMenuItem(title: "复制", target:self, action: #selector(copyFile), keyEquivalent: ""))
         menu.addItem(ZigMenuItem(title: "放入回收站", target:self, action: #selector(trashFile), keyEquivalent: ""))
@@ -239,21 +258,29 @@ class FileRowView: NSTableRowView {
         menu.delegate = self
         return menu
     }
+    
+    override func rightMouseDown(with event: NSEvent) {
+        NSAnimationContext.runAnimationGroup({context in
+            context.duration = 0.2
+            context.allowsImplicitAnimation = true
+            contentView.layer?.backgroundColor = NSColor(hex: 0x2C2C2C, alpha: 1).cgColor
+        }) { [weak self] in
+            self?.fadeAnimation()
+        }
+        
+        super.rightMouseDown(with: event)
+    }
+    
+    func fadeAnimation() {
+        NSAnimationContext.runAnimationGroup({context in
+            context.duration = 0.2
+            context.allowsImplicitAnimation = true
+            contentView.layer?.backgroundColor = NSColor(hex: 0x2C2C2C, alpha: 0).cgColor
+        })
+    }
 }
 
 extension FileRowView: NSMenuDelegate {
-    
-//    func menuDidClose(_ menu: NSMenu) {
-////        FileRowView.shouldHandleTracking = true
-//        isFocused = false
-//        mouseExited(with: NSEvent())
-//    }
-//    
-//    func menuWillOpen(_ menu: NSMenu) {
-////        FileRowView.shouldHandleTracking = false
-//        isFocused = true
-//        updateTrackingAreas()
-//    }
     
     func menu(_ menu: NSMenu, willHighlight item: NSMenuItem?) {
         if let last = lastHighligtItem {

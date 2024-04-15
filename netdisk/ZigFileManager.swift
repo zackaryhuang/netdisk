@@ -88,4 +88,8 @@ class ZigFileManager {
             }
         }
     }
+    
+    func uploadFile(driveID: String, parentFileID: String) {
+        
+    }
 }

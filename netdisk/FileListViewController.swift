@@ -359,4 +359,9 @@ extension FileListViewController: FileRowViewDelegate {
         }
         renameAlert.showInView(contentView)
     }
+    
+    func fileRowViewDidClickUpload() {
+        guard let driveID = listType == .backup ? ZigClientManager.backupDriveID : ZigClientManager.resourceDriveID else { return }
+        ZigFileManager.shared.uploadFile(driveID: driveID, parentFileID: parentFolderID)
+    }
 }
