@@ -89,7 +89,31 @@ class ZigFileManager {
         }
     }
     
-    func uploadFile(driveID: String, parentFileID: String) {
+    func uploadFile(driveID: String, parentFileID: String, filePath: URL) {
+        guard let data = try? Data(contentsOf: filePath) else { return }
         
+        debugPrint("正在上传文件\(filePath.lastPathComponent), 文件大小\(Double(data.count).binarySizeString)")
+        
+        Task {
+            
+            guard let createFileResp = try? await WebRequest.requestCreateFile(driveID: driveID, 
+                                                                               parentFileID: parentFileID,
+                                                                               name: filePath.lastPathComponent,
+                                                                               preHash: nil),
+                  let uploadUrl = createFileResp.partInfoList.first?.uploadUrl,
+                  let uploadID = createFileResp.uploadID else {
+                return
+            }
+            
+            WebRequest.uploadFile(data: data, uploadUrl: uploadUrl) { progress in
+                debugPrint("已上传:\((Double(data.count) * Double(progress)).binarySizeString) / \(Double(data.count).binarySizeString)")
+            } completion: { success in
+                debugPrint("上传\(success ? "成功": "失败")")
+                Task {
+                    let res = try? await WebRequest.uploadFileComplete(driveID: driveID, fileID: createFileResp.fileID, uploadID: uploadID)
+                    
+                }
+            }
+        }
     }
 }

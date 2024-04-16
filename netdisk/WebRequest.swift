@@ -267,9 +267,50 @@ protocol FileData: Codable {
     var isDir: Bool { get }
 }
 
+protocol FileCreateResp: Codable {
+    
+}
+
 protocol FileListResp: Codable {
     var fileList: [any FileData]? { get }
     var nextMarker: String? { get }
+}
+
+struct AliFileCreateResp: FileCreateResp {
+    let driveID: String
+    let fileID: String
+    let status: Int?
+    let parentFileID: String
+    let uploadID: String?
+    let fileName: String
+    let available: Bool?
+    let isExist: Bool?
+    let isRapidUpload: Bool
+    let partInfoList: [AliPartInfo]
+    
+    enum CodingKeys: String, CodingKey {
+        case status, available
+        case driveID = "drive_id"
+        case fileID = "file_id"
+        case parentFileID = "parent_file_id"
+        case uploadID = "upload_id"
+        case fileName = "file_name"
+        case isExist = "exist"
+        case isRapidUpload = "rapid_upload"
+        case partInfoList = "part_info_list"
+    }
+}
+
+struct AliPartInfo: Codable {
+    let partNumber: Int
+    let uploadUrl: String
+    let partSize: Int?
+    
+    enum CodingKeys: String, CodingKey {
+        case partNumber = "part_number"
+        case uploadUrl = "upload_url"
+        case partSize = "part_size"
+    }
 }
 
 struct AliFileListResp: FileListResp {
@@ -439,11 +480,66 @@ class WebRequest {
         static let AliFileSearch = AliyunDomain + "/adrive/v1.0/openFile/search"
         static let AliFileUpdate = AliyunDomain + "/adrive/v1.0/openFile/update"
         static let AliFileTrash = AliyunDomain + "/adrive/v1.0/openFile/recyclebin/trash"
+        static let AliFileCreate = AliyunDomain + "/adrive/v1.0/openFile/create"
+        static let AliFileGetUploadUrl = AliyunDomain + "/adrive/v1.0/openFile/getUploadUrl"
+        static let AliFileUploadComplete = AliyunDomain + "/adrive/v1.0/openFile/complete"
         static let BaiduGenerateQRCode = BaiduDomain + "/oauth/2.0/device/code"
         static let BaiduGetAccessToken = BaiduDomain + "/oauth/2.0/token"
         static let BaiduUserInfo = BaiduDomain2 + "/rest/2.0/xpan/nas?method=uinfo"
         static let BaiduFileList = BaiduDomain2 + "/rest/2.0/xpan/file"
         static let BaiduFileDetail = BaiduDomain2 + "/rest/2.0/xpan/multimedia"
+    }
+    
+    static func uploadFile(data: Data,
+                           uploadUrl: String,
+                           progress: @escaping((CGFloat) -> Void),
+                           completion: @escaping((Bool) -> Void)) {
+        
+        guard let urlRequest = try? URLRequest(url: uploadUrl, method: .put, headers: HTTPHeaders(dictionaryLiteral: ("Content-Length", "\(data.count)"))) else { completion(false)
+            return
+        }
+        
+        AF.upload(data,
+                  with: urlRequest)
+        .uploadProgress { p in
+            progress(p.fractionCompleted)
+        }
+        .response(completionHandler: { res in
+            switch res.result {
+            case .success(let content):
+                completion(true)
+            case .failure(let err):
+                completion(false)
+            }
+        })
+    }
+    
+    static func uploadFileComplete(driveID: String, fileID: String, uploadID: String) async throws -> Bool {
+        let params = [
+            "drive_id" : driveID,
+            "file_id" : fileID,
+            "upload_id" : uploadID
+        ]
+        
+        let res: JSON? = try? await request(method: .post, url: EndPoint.AliFileUploadComplete, parameters: params)
+        return res == nil
+    }
+    
+    static func requestCreateFile(driveID: String, parentFileID: String, name: String, preHash: String?) async throws -> AliFileCreateResp? {
+        var params = [
+            "drive_id" : driveID,
+            "parent_file_id" : parentFileID,
+            "name" : name,
+            "type" : "file",
+            "check_name_mode" : "auto_rename"
+        ]
+        
+        if let hash = preHash {
+            params["pre_hash"] = hash
+        }
+        
+        let res: AliFileCreateResp? = try? await request(method: .post, url: EndPoint.AliFileCreate, parameters: params)
+        return res
     }
     
     /// 文件搜索

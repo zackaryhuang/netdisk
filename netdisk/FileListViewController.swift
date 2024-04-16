@@ -362,6 +362,16 @@ extension FileListViewController: FileRowViewDelegate {
     
     func fileRowViewDidClickUpload() {
         guard let driveID = listType == .backup ? ZigClientManager.backupDriveID : ZigClientManager.resourceDriveID else { return }
-        ZigFileManager.shared.uploadFile(driveID: driveID, parentFileID: parentFolderID)
+        
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = true
+        openPanel.canChooseDirectories = false
+        openPanel.allowsMultipleSelection = false
+        openPanel.begin { [weak self] result in
+            guard let filePath = openPanel.urls.first, let self = self else { return }
+            ZigFileManager.shared.uploadFile(driveID: driveID, 
+                                             parentFileID: self.parentFolderID,
+                                             filePath: filePath)
+        }
     }
 }
