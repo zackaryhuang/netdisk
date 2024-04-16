@@ -215,16 +215,13 @@ class DownloadRowView: NSTableRowView {
             if FileManager.default.fileExists(atPath: url) {
                 NSWorkspace.shared.activateFileViewerSelecting([finderURL])
             } else {
-                let alertOption = AlertOption(title: "文件不存在", subTitle: "当前文件已被删除或移动至其他目录", leftButtonTitle: "取消", rightButtonTitle: "删除记录") { window in
-                    window.orderOut(nil)
-                } rightActionBlock: { window in
+                guard let contentView = self.window?.contentView else { return }
+                let alertView = ZigTextAlertView(title: "文件不存在", message: "当前文件已被删除或移动至其他目录，是否删除记录?")
+                alertView.confirmBlock = { [weak self] in
+                    guard let self = self else { return }
                     ZigDownloadManager.shared.downloadSessionManager.remove(self.task!)
-                    window.orderOut(nil)
                 }
-
-                let window = AlertWindow(with: alertOption)
-                window.level = .modalPanel
-                window.showIn(window: self.window!)
+                alertView.showInView(contentView)
             }
         }
     }
