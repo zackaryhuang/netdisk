@@ -105,13 +105,22 @@ class ZigFileManager {
                 return
             }
             
-            WebRequest.uploadFile(data: data, uploadUrl: uploadUrl) { progress in
-                debugPrint("已上传:\((Double(data.count) * Double(progress)).binarySizeString) / \(Double(data.count).binarySizeString)")
-            } completion: { success in
-                debugPrint("上传\(success ? "成功": "失败")")
-                Task {
-                    let res = try? await WebRequest.uploadFileComplete(driveID: driveID, fileID: createFileResp.fileID, uploadID: uploadID)
-                    
+//            WebRequest.uploadFile(data: data, uploadUrl: uploadUrl) { progress in
+//                debugPrint("已上传:\((Double(data.count) * Double(progress)).binarySizeString) / \(Double(data.count).binarySizeString)")
+//            } completion: { success in
+//                debugPrint("上传\(success ? "成功": "失败")")
+//                Task {
+//                    let res = try? await WebRequest.uploadFileComplete(driveID: driveID, fileID: createFileResp.fileID, uploadID: uploadID)
+//                    
+//                }
+//            }
+            if let task = UploadManager.shared.upload(url: uploadUrl, fileName: filePath.path()) {
+                task.progressHandler = { progress in
+                    if progress == 1.0 {
+                        Task {
+                            let res = try? await WebRequest.uploadFileComplete(driveID: driveID, fileID: createFileResp.fileID, uploadID: uploadID)
+                        }
+                    }
                 }
             }
         }

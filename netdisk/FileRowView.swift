@@ -23,6 +23,16 @@ protocol FileRowViewDelegate: NSObjectProtocol {
     func fileRowViewDidClickUpload()
 }
 
+class MenuItemModel {
+    let title: String
+    let action: Selector
+    let target: AnyObject
+    init(title: String, action: Selector, target: AnyObject) {
+        self.title = title
+        self.action = action
+        self.target = target
+    }
+}
 
 class FileRowView: NSTableRowView {
     static var shouldHandleTracking = true
@@ -240,21 +250,32 @@ class FileRowView: NSTableRowView {
     private func getMenu() -> NSMenu? {
         guard let fileData = data else { return nil }
         let menu = NSMenu()
+        var menuItems = [MenuItemModel]()
         if fileData.isDir {
             
         } else {
-            menu.addItem(ZigMenuItem(title: "下载", target:self, action: #selector(downloadFile), keyEquivalent: ""))
+            menuItems.append(MenuItemModel(title: "下载", action: #selector(downloadFile), target: self))
             #if DEBUG
-            menu.addItem(ZigMenuItem(title: "拷贝下载链接", target:self, action: #selector(copyDownloadLink), keyEquivalent: ""))
+            menuItems.append(MenuItemModel(title: "拷贝下载链接", action: #selector(copyDownloadLink), target: self))
             #endif
         }
-        menu.addItem(ZigMenuItem(title: "新建文件夹", target:self, action: #selector(createFolder), keyEquivalent: ""))
-        menu.addItem(ZigMenuItem(title: "重命名", target:self, action: #selector(renameFile), keyEquivalent: ""))
-        menu.addItem(ZigMenuItem(title: "上传文件到当前目录", target:self, action: #selector(uploadFile), keyEquivalent: ""))
-//        menu.addItem(ZigMenuItem(title: "移动", target:self, action: #selector(moveFile), keyEquivalent: ""))
-//        menu.addItem(ZigMenuItem(title: "复制", target:self, action: #selector(copyFile), keyEquivalent: ""))
-        menu.addItem(ZigMenuItem(title: "放入回收站", target:self, action: #selector(trashFile), keyEquivalent: ""))
-//        menu.addItem(ZigMenuItem(title: "直接删除", target:self, action: #selector(deleteFile), keyEquivalent: ""))
+        menuItems.append(MenuItemModel(title: "新建文件夹", action: #selector(createFolder), target: self))
+        menuItems.append(MenuItemModel(title: "重命名", action: #selector(renameFile), target: self))
+        menuItems.append(MenuItemModel(title: "上传文件到当前目录", action: #selector(uploadFile), target: self))
+//        menuItems.append(MenuItemModel(title: "移动", action: #selector(moveFile), target: self))
+//        menuItems.append(MenuItemModel(title: "复制", action: #selector(copyFile), target: self))
+        menuItems.append(MenuItemModel(title: "放入回收站", action: #selector(trashFile), target: self))
+        menuItems.append(MenuItemModel(title: "直接删除", action: #selector(deleteFile), target: self))
+        var itemWidth = 0.0
+        menuItems.forEach { item in
+            let attributedString = NSAttributedString(string: item.title, attributes: [
+                NSAttributedString.Key.font: NSFont(PingFang: 16) as Any
+            ])
+            itemWidth = max(itemWidth, attributedString.size().width + 28)
+        }
+        menuItems.forEach { item in
+            menu.addItem(ZigMenuItem(title: item.title, target: item.target, action: item.action, keyEquivalent: "", itemWidth: itemWidth))
+        }
         menu.delegate = self
         return menu
     }

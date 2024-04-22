@@ -7,6 +7,7 @@
 
 import Foundation
 import AppKit
+import CryptoKit
 
 extension NSColor {
     convenience init(hex: Int, alpha: Float) {
@@ -84,6 +85,14 @@ extension String {
     subscript(_ indexs: PartialRangeUpTo<Int>) -> String {
         let endIndex = index(startIndex, offsetBy: indexs.upperBound)
         return String(self[startIndex..<endIndex])
+    }
+    
+    var md5: String {
+        let digest = Insecure.MD5.hash(data: data(using: .utf8) ?? Data())
+
+        return digest.map {
+            String(format: "%02hhx", $0)
+        }.joined()
     }
 }
 

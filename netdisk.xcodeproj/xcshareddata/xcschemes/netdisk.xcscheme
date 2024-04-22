@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "30BB71732A9E414B00ADBF01"
-               BuildableName = "Zig Drive.app"
-               BlueprintName = "netdisk"
+               BuildableName = "ABCloud.app"
+               BlueprintName = "ABCloud"
                ReferencedContainer = "container:netdisk.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "30BB71732A9E414B00ADBF01"
-            BuildableName = "Zig Drive.app"
-            BlueprintName = "netdisk"
+            BuildableName = "ABCloud.app"
+            BlueprintName = "ABCloud"
             ReferencedContainer = "container:netdisk.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "30BB71732A9E414B00ADBF01"
-            BuildableName = "Zig Drive.app"
-            BlueprintName = "netdisk"
+            BuildableName = "ABCloud.app"
+            BlueprintName = "ABCloud"
             ReferencedContainer = "container:netdisk.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

@@ -25,14 +25,18 @@ class ZigMenuItem: NSMenuItem {
     
     override init(title string: String, action selector: Selector?, keyEquivalent charCode: String) {
         super.init(title: string, action: selector, keyEquivalent: charCode)
-        let attributedString = NSAttributedString(string: title, attributes: [
-            NSAttributedString.Key.font: NSFont(PingFang: 16) as Any
-        ])
-        configView(width: attributedString.size().width + 28)
     }
     
-    convenience init(title string: String, target: AnyObject?, action selector: Selector?, keyEquivalent charCode: String) {
+    convenience init(title string: String, target: AnyObject?, action selector: Selector?, keyEquivalent charCode: String, itemWidth: CGFloat?) {
         self.init(title: string, action: selector, keyEquivalent: charCode)
+        if let width = itemWidth {
+            configView(width: width)
+        } else {
+            let attributedString = NSAttributedString(string: title, attributes: [
+                NSAttributedString.Key.font: NSFont(PingFang: 16) as Any
+            ])
+            configView(width: attributedString.size().width + 28)
+        }
         self.target = target
     }
     

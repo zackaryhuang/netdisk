@@ -32,6 +32,8 @@
 		309AFD272AA4DD88005F50C9 /* CategoryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */; };
 		30ABAA232B3489F70098DC23 /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30ABAA222B3489F70098DC23 /* WebRequest.swift */; };
 		30ABAA282B34934C0098DC23 /* ZigClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30ABAA272B34934C0098DC23 /* ZigClientManager.swift */; };
+		30AC005F2BD6B6D200E8E6E7 /* UploadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30AC005E2BD6B6D200E8E6E7 /* UploadTask.swift */; };
+		30AC00612BD6B7E600E8E6E7 /* UploadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30AC00602BD6B7E600E8E6E7 /* UploadManager.swift */; };
 		30B7E92E2BB0584300870ABA /* SubSidePanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B7E92D2BB0584300870ABA /* SubSidePanelView.swift */; };
 		30B7E9302BB0596700870ABA /* SubSidePanelItemRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B7E92F2BB0596700870ABA /* SubSidePanelItemRowView.swift */; };
 		30B7E9322BB06C3A00870ABA /* ResourceListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */; };
@@ -83,11 +85,13 @@
 		309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRowView.swift; sourceTree = "<group>"; };
 		30ABAA222B3489F70098DC23 /* WebRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRequest.swift; sourceTree = "<group>"; };
 		30ABAA272B34934C0098DC23 /* ZigClientManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigClientManager.swift; sourceTree = "<group>"; };
+		30AC005E2BD6B6D200E8E6E7 /* UploadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
+		30AC00602BD6B7E600E8E6E7 /* UploadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadManager.swift; sourceTree = "<group>"; };
 		30B7E92D2BB0584300870ABA /* SubSidePanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSidePanelView.swift; sourceTree = "<group>"; };
 		30B7E92F2BB0596700870ABA /* SubSidePanelItemRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubSidePanelItemRowView.swift; sourceTree = "<group>"; };
 		30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceListViewController.swift; sourceTree = "<group>"; };
 		30B883382B3DDE5B00794B57 /* Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Const.swift; sourceTree = "<group>"; };
-		30BB71742A9E414B00ADBF01 /* Zig Drive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zig Drive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		30BB71742A9E414B00ADBF01 /* ABCloud.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ABCloud.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		30BB71772A9E414B00ADBF01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		30BB717B2A9E414C00ADBF01 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		30BB71802A9E414C00ADBF01 /* netdisk.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = netdisk.entitlements; sourceTree = "<group>"; };
@@ -144,7 +148,7 @@
 		30BB71752A9E414B00ADBF01 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				30BB71742A9E414B00ADBF01 /* Zig Drive.app */,
+				30BB71742A9E414B00ADBF01 /* ABCloud.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -196,6 +200,8 @@
 				30E27CD82BC983F200C07C5C /* ZigFileManager.swift */,
 				30E27CDC2BC9970500C07C5C /* ZigMenu.swift */,
 				305EA5D32BCA6D22007D70FE /* ZigBaseAlertView.swift */,
+				30AC005E2BD6B6D200E8E6E7 /* UploadTask.swift */,
+				30AC00602BD6B7E600E8E6E7 /* UploadManager.swift */,
 			);
 			path = netdisk;
 			sourceTree = "<group>";
@@ -222,9 +228,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		30BB71732A9E414B00ADBF01 /* netdisk */ = {
+		30BB71732A9E414B00ADBF01 /* ABCloud */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 30BB71832A9E414C00ADBF01 /* Build configuration list for PBXNativeTarget "netdisk" */;
+			buildConfigurationList = 30BB71832A9E414C00ADBF01 /* Build configuration list for PBXNativeTarget "ABCloud" */;
 			buildPhases = (
 				30BB71702A9E414B00ADBF01 /* Sources */,
 				30BB71712A9E414B00ADBF01 /* Frameworks */,
@@ -234,7 +240,7 @@
 			);
 			dependencies = (
 			);
-			name = netdisk;
+			name = ABCloud;
 			packageProductDependencies = (
 				30D588782B96043200DCE9CB /* SwiftyJSON */,
 				30D5887B2B96044500DCE9CB /* Kingfisher */,
@@ -244,7 +250,7 @@
 				3065E34E2BA72BEB00A3114F /* Tiercel */,
 			);
 			productName = netdisk;
-			productReference = 30BB71742A9E414B00ADBF01 /* Zig Drive.app */;
+			productReference = 30BB71742A9E414B00ADBF01 /* ABCloud.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -283,7 +289,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				30BB71732A9E414B00ADBF01 /* netdisk */,
+				30BB71732A9E414B00ADBF01 /* ABCloud */,
 			);
 		};
 /* End PBXProject section */
@@ -307,6 +313,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				309AFD252AA49B6C005F50C9 /* TabItemView.swift in Sources */,
+				30AC00612BD6B7E600E8E6E7 /* UploadManager.swift in Sources */,
 				30ABAA282B34934C0098DC23 /* ZigClientManager.swift in Sources */,
 				30E491EF2BC83CA9008FEA2D /* ZigTextField.swift in Sources */,
 				30B7E9302BB0596700870ABA /* SubSidePanelItemRowView.swift in Sources */,
@@ -341,6 +348,7 @@
 				30EFF4772BAD382B00ABD070 /* ZigPreviewHelper.swift in Sources */,
 				3024970B2AA77E2600E2AD24 /* DownloadRowView.swift in Sources */,
 				302830D92ADBDAEA00A3A549 /* ZigUserManager.swift in Sources */,
+				30AC005F2BD6B6D200E8E6E7 /* UploadTask.swift in Sources */,
 				30B7E9322BB06C3A00870ABA /* ResourceListViewController.swift in Sources */,
 				30B7E92E2BB0584300870ABA /* SubSidePanelView.swift in Sources */,
 				306EE5AF2AA0E3EB00428E82 /* FileRowView.swift in Sources */,
@@ -484,7 +492,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = netdisk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Zig Drive";
+				INFOPLIST_KEY_CFBundleDisplayName = "Fox Clolud";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -495,7 +503,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thatisawesome.netdisk;
-				PRODUCT_NAME = "Zig Drive";
+				PRODUCT_NAME = ABCloud;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -515,7 +523,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = netdisk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Zig Drive";
+				INFOPLIST_KEY_CFBundleDisplayName = "Fox Clolud";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -526,7 +534,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thatisawesome.netdisk;
-				PRODUCT_NAME = "Zig Drive";
+				PRODUCT_NAME = ABCloud;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -544,7 +552,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		30BB71832A9E414C00ADBF01 /* Build configuration list for PBXNativeTarget "netdisk" */ = {
+		30BB71832A9E414C00ADBF01 /* Build configuration list for PBXNativeTarget "ABCloud" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				30BB71842A9E414C00ADBF01 /* Debug */,

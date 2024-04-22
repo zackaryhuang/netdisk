@@ -93,7 +93,7 @@ class FileListViewController: NSViewController, CategoryVC {
         }
         
         let menu = NSMenu()
-        menu.addItem(ZigMenuItem(title: "新建文件夹", target:self, action: #selector(createFolder), keyEquivalent: ""))
+        menu.addItem(ZigMenuItem(title: "新建文件夹", target:self, action: #selector(createFolder), keyEquivalent: "", itemWidth: nil))
         tableContainerView.menu = menu
         
     }
