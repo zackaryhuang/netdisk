@@ -46,11 +46,11 @@ class UploadManager: NSObject {
             return nil
         }
         allUploadTask.append(newTask)
-        storeTasks()
         if (uploadingCount < multiUploadCount) {
             createTimer()
             newTask.startUpload()
         }
+        storeTasks()
         completion?(nil)
         return newTask
     }
@@ -84,7 +84,13 @@ class UploadManager: NSObject {
     
     private func fetchTasks() -> [UploadTask] {
         if let data = try? Data(contentsOf: uploadListsURL) {
-            return (try? PropertyListDecoder().decode([UploadTask].self, from: data)) ?? [UploadTask]()
+            let tasks = (try? PropertyListDecoder().decode([UploadTask].self, from: data)) ?? [UploadTask]()
+            tasks.forEach { task in
+                if task.state == .running {
+                    task.state = .failed
+                }
+            }
+            return tasks
         }
         return [UploadTask]()
     }

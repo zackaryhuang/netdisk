@@ -17,6 +17,14 @@ class UploadListViewController: NSViewController {
         return tableView;
     }()
     
+    let titleLabel = {
+        let label = ZigLabel()
+        label.font = NSFont(PingFangSemiBold: 18)
+        label.textColor = .white
+        label.stringValue = "上传"
+        return label
+    }()
+    
     var tableContainerView: NSScrollView!
     
     var uploadTasks = UploadManager.shared.allUploadTask
@@ -32,6 +40,12 @@ class UploadListViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(titleLabel)
+        
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(view).offset(41)
+            make.top.equalTo(view).offset(34)
+        }
         
         tableView.focusRingType = .none
         tableView.backgroundColor = .clear
@@ -49,7 +63,8 @@ class UploadListViewController: NSViewController {
         tableContainerView.autohidesScrollers = true
         tableContainerView.documentView = tableView
         tableContainerView.snp.makeConstraints { make in
-            make.leading.top.trailing.bottom.equalTo(view)
+            make.top.equalTo(titleLabel.snp.bottom).offset(24)
+            make.leading.trailing.bottom.equalTo(view)
         }
         self.tableView.reloadData()
         
@@ -72,6 +87,10 @@ extension UploadListViewController: NSTableViewDelegate, NSTableViewDataSource {
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        return nil
+    }
+    
+    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
         var rowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DownloadRowView"), owner: self)
         if rowView == nil {
             rowView = UploadRowView()

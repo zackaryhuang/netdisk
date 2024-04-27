@@ -64,7 +64,7 @@ class UploadTask: Equatable, Codable {
         }
     }
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: CodingKey {
             case url, pathURL, identifier, state, progress
         }
     
