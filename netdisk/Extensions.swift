@@ -22,6 +22,12 @@ extension NSColor {
     }
 }
 
+extension NSError {
+    convenience init(code: Int, description: String) {
+        self.init(domain: "ABCloud.Client.Error", code: code, userInfo: [NSError.UserInfoKey.description(): description])
+    }
+}
+
 extension NSImage {
     convenience init?(symbolName: String, pointSize: CGFloat) {
         self.init(systemSymbolName: symbolName, accessibilityDescription: nil)
@@ -140,18 +146,18 @@ extension Double {
             let GB = pow(Double(1024.0), 3)
             let TB = pow(Double(1024.0), 4)
             if self >= TB {
-                return String(format: "%.2fTB", self / TB)
+                return String(format: "%.2f TB", self / TB)
             }
             if self >= GB {
-                return String(format: "%.2fGB", self / GB)
+                return String(format: "%.2f GB", self / GB)
             }
             if self >= MB {
-                return String(format: "%.2fMB", self / MB)
+                return String(format: "%.2f MB", self / MB)
             }
             if self >= KB {
-                return String(format: "%.2fKB", self / KB)
+                return String(format: "%.2f KB", self / KB)
             }
-            return String(format: "%.2fByte", self)
+            return String(format: "%.2f Byte", self)
         }
     }
 }

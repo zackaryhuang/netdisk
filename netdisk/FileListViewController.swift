@@ -306,7 +306,9 @@ extension FileListViewController: FileRowViewDelegate {
     
     func fileRowViewDidClickDownload(fileID: String, fileName: String) {
         guard let driveID = listType == .backup ? ZigClientManager.backupDriveID : ZigClientManager.resourceDriveID else { return }
-        ZigFileManager.shared.download(driveID: driveID, fileID: fileID, fileName: fileName)
+        ZigFileManager.shared.download(driveID: driveID, fileID: fileID, fileName: fileName) { error in
+            debugPrint(error?.localizedDescription ?? "已添加至下载队列")
+        }
     }
     
     func fileRowViewDidClickRename(fileID: String, originalName: String) {
@@ -371,7 +373,10 @@ extension FileListViewController: FileRowViewDelegate {
             guard let filePath = openPanel.urls.first, let self = self else { return }
             ZigFileManager.shared.uploadFile(driveID: driveID, 
                                              parentFileID: self.parentFolderID,
-                                             filePath: filePath)
+                                             filePath: filePath) { error in
+                guard let err = error else { return }
+                debugPrint(err.localizedDescription)
+            }
         }
     }
 }

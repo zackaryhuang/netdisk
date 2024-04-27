@@ -92,6 +92,16 @@ class MainViewController: NSViewController {
             make.top.bottom.trailing.equalTo(view)
         }
         
+        let uploadListVC = UploadListViewController()
+        uploadListVC.view.isHidden = true
+        addChild(uploadListVC)
+        view.addSubview(uploadListVC.view)
+        VCs.append(uploadListVC)
+        uploadListVC.view.snp.makeConstraints { make in
+            make.leading.equalTo(subSidePanel.snp.trailing)
+            make.top.bottom.trailing.equalTo(view)
+        }
+        
         let resourceListVC = FileListViewController(listType: .resource)
         resourceListVC.view.isHidden = true
         addChild(resourceListVC)

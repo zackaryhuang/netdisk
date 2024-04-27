@@ -30,6 +30,9 @@
 		309AFD212AA4273B005F50C9 /* FilePathView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD202AA4273B005F50C9 /* FilePathView.swift */; };
 		309AFD252AA49B6C005F50C9 /* TabItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD242AA49B6C005F50C9 /* TabItemView.swift */; };
 		309AFD272AA4DD88005F50C9 /* CategoryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */; };
+		309DDC9A2BD7FF93008ACB9C /* UploadListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309DDC992BD7FF93008ACB9C /* UploadListViewController.swift */; };
+		309DDC9C2BD80098008ACB9C /* UploadRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309DDC9B2BD80098008ACB9C /* UploadRowView.swift */; };
+		30AB5E2D2BDABD1100340D79 /* HoverButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30AB5E2C2BDABD1100340D79 /* HoverButton.swift */; };
 		30ABAA232B3489F70098DC23 /* WebRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30ABAA222B3489F70098DC23 /* WebRequest.swift */; };
 		30ABAA282B34934C0098DC23 /* ZigClientManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30ABAA272B34934C0098DC23 /* ZigClientManager.swift */; };
 		30AC005F2BD6B6D200E8E6E7 /* UploadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30AC005E2BD6B6D200E8E6E7 /* UploadTask.swift */; };
@@ -83,6 +86,9 @@
 		309AFD202AA4273B005F50C9 /* FilePathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePathView.swift; sourceTree = "<group>"; };
 		309AFD242AA49B6C005F50C9 /* TabItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabItemView.swift; sourceTree = "<group>"; };
 		309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryRowView.swift; sourceTree = "<group>"; };
+		309DDC992BD7FF93008ACB9C /* UploadListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadListViewController.swift; sourceTree = "<group>"; };
+		309DDC9B2BD80098008ACB9C /* UploadRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadRowView.swift; sourceTree = "<group>"; };
+		30AB5E2C2BDABD1100340D79 /* HoverButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverButton.swift; sourceTree = "<group>"; };
 		30ABAA222B3489F70098DC23 /* WebRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRequest.swift; sourceTree = "<group>"; };
 		30ABAA272B34934C0098DC23 /* ZigClientManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigClientManager.swift; sourceTree = "<group>"; };
 		30AC005E2BD6B6D200E8E6E7 /* UploadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
@@ -174,6 +180,7 @@
 				3036F4512B39A0EB00F365E4 /* FileListViewController.swift */,
 				30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */,
 				30008DFA2B86458800F2BE37 /* DownloadListViewController.swift */,
+				309DDC992BD7FF93008ACB9C /* UploadListViewController.swift */,
 				300108ED2A9E58F5002FBB52 /* MainViewController.xib */,
 				30BB71902A9E45D300ADBF01 /* CommonDefine.swift */,
 				306EE5AE2AA0E3EB00428E82 /* FileRowView.swift */,
@@ -182,6 +189,7 @@
 				309AFD242AA49B6C005F50C9 /* TabItemView.swift */,
 				309AFD262AA4DD88005F50C9 /* CategoryRowView.swift */,
 				3024970A2AA77E2600E2AD24 /* DownloadRowView.swift */,
+				309DDC9B2BD80098008ACB9C /* UploadRowView.swift */,
 				3024970C2AA7889F00E2AD24 /* Utils.swift */,
 				30C508122AAB55D60076E842 /* ImagePreviewWindowController.swift */,
 				308429CF2AAC7AC70086AB2E /* ImagePreviewController.swift */,
@@ -190,6 +198,7 @@
 				302830D82ADBDAEA00A3A549 /* ZigUserManager.swift */,
 				30ABAA222B3489F70098DC23 /* WebRequest.swift */,
 				30ABAA272B34934C0098DC23 /* ZigClientManager.swift */,
+				30AB5E2C2BDABD1100340D79 /* HoverButton.swift */,
 				3065E3502BA7315700A3114F /* ZigDownloadManager.swift */,
 				3065E3522BA73A8300A3114F /* ZigBookmark.swift */,
 				30EFF4762BAD382B00ABD070 /* ZigPreviewHelper.swift */,
@@ -319,10 +328,12 @@
 				30B7E9302BB0596700870ABA /* SubSidePanelItemRowView.swift in Sources */,
 				3036F4522B39A0EB00F365E4 /* FileListViewController.swift in Sources */,
 				30ABAA232B3489F70098DC23 /* WebRequest.swift in Sources */,
+				309DDC9C2BD80098008ACB9C /* UploadRowView.swift in Sources */,
 				30BB718E2A9E444200ADBF01 /* LoginViewController.swift in Sources */,
 				30BB71782A9E414B00ADBF01 /* AppDelegate.swift in Sources */,
 				3024970D2AA7889F00E2AD24 /* Utils.swift in Sources */,
 				306954E02ABB39910059901F /* AlertWindow.swift in Sources */,
+				309DDC9A2BD7FF93008ACB9C /* UploadListViewController.swift in Sources */,
 				3065E2D52BA5D1B300A3114F /* SearchView.swift in Sources */,
 				309AFD212AA4273B005F50C9 /* FilePathView.swift in Sources */,
 				306954E32ABB3AC70059901F /* ZigLabel.swift in Sources */,
@@ -338,6 +349,7 @@
 				30C508132AAB55D60076E842 /* ImagePreviewWindowController.swift in Sources */,
 				30BB71912A9E45D300ADBF01 /* CommonDefine.swift in Sources */,
 				30E27CD72BC967B800C07C5C /* ZigMenuItem.swift in Sources */,
+				30AB5E2D2BDABD1100340D79 /* HoverButton.swift in Sources */,
 				3065E3532BA73A8300A3114F /* ZigBookmark.swift in Sources */,
 				30E27CDD2BC9970500C07C5C /* ZigMenu.swift in Sources */,
 				30E27CDB2BC98BD100C07C5C /* ZigTextAlertView.swift in Sources */,

@@ -71,7 +71,7 @@ protocol SpaceInfo: Codable {
 struct AliCreateFolderResp: CreateFolderResp {
     let status: String?
     let parentFolderID: String?
-    enum CodingKeys : String, CodingKey {
+    private enum CodingKeys : String, CodingKey {
         case status
         case parentFolderID = "parent_file_id"
     }
@@ -92,7 +92,7 @@ struct AliSpaceInfo: SpaceInfo {
         return total
     }
     
-    enum CodingKeys : String, CodingKey {
+    private enum CodingKeys : String, CodingKey {
         case used = "used_size"
         case total = "total_size"
     }
@@ -108,7 +108,7 @@ struct AliVideoPlayInfo: VideoPlayInfo {
         return nil
     }
     
-    enum CodingKeys : String, CodingKey {
+    private enum CodingKeys : String, CodingKey {
         case videoList = "live_transcoding_task_list"
     }
 }
@@ -118,7 +118,7 @@ struct AliVideoPlayItem: Codable {
     let width: Int
     let height: Int
     
-    enum CodingKeys : String, CodingKey {
+    private enum CodingKeys : String, CodingKey {
         case url
         case width = "template_width"
         case height = "template_height"
@@ -158,7 +158,7 @@ struct AliFileDetail: FileDetail {
         return id
     }
     
-    enum CodingKeys : String, CodingKey {
+    private enum CodingKeys : String, CodingKey {
         case url
         case id = "file_id"
     }
@@ -213,7 +213,7 @@ struct AliUserData: UserData {
     let backupDriveID: String?
     var avatarURL: URL? { URL(string: avatar) }
     
-    enum CodingKeys : String, CodingKey {
+    private enum CodingKeys : String, CodingKey {
         case avatar, name
         case backupDriveID = "backup_drive_id"
         case defaultDriveID = "default_drive_id"
@@ -225,7 +225,7 @@ struct AliUserData: UserData {
 struct BaiduUserData: UserData {
     let name: String
     let avatar: String
-    enum CodingKeys : String, CodingKey {
+    private enum CodingKeys : String, CodingKey {
         case name = "netdisk_name"
         case avatar = "avatar_url"
     }
@@ -238,7 +238,7 @@ struct AliAccessTokenData: AccessTokenData {
     let refreshToken: String
     let expiresIn: Int
     
-    enum CodingKeys : String, CodingKey {
+    private enum CodingKeys : String, CodingKey {
         case tokenType = "token_type"
         case accessToken = "access_token"
         case refreshToken = "refresh_token"
@@ -251,7 +251,7 @@ struct BaiduAccessTokenData: AccessTokenData {
     let refreshToken: String
     let expiresIn: Int
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
         case refreshToken = "refresh_token"
         case expiresIn = "expires_in"
@@ -288,7 +288,7 @@ struct AliFileCreateResp: FileCreateResp {
     let isRapidUpload: Bool
     let partInfoList: [AliPartInfo]
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case status, available
         case driveID = "drive_id"
         case fileID = "file_id"
@@ -306,7 +306,7 @@ struct AliPartInfo: Codable {
     let uploadUrl: String
     let partSize: Int?
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case partNumber = "part_number"
         case uploadUrl = "upload_url"
         case partSize = "part_size"
@@ -320,7 +320,7 @@ struct AliFileListResp: FileListResp {
     let list: [AliFileData]?
     let nextMarker: String?
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case list = "items"
         case nextMarker = "next_marker"
     }
@@ -354,7 +354,7 @@ struct AliFileData: FileData {
         return .Others
     }
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case size, type
         case fileID = "file_id"
         case parentFileID = "parent_file_id"
@@ -371,7 +371,7 @@ struct BaiduFileListResp: FileListResp {
     }
     let nextMarker: String?
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case list = "list"
         case nextMarker = "next_marker"
     }
@@ -407,7 +407,7 @@ struct BaiduFileData: FileData {
         return nil
     }
     let dirFlag: Int
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case size, thumbs, path
         case fsID = "fs_id"
         case fileName = "server_filename"
@@ -436,7 +436,7 @@ struct BaiduQRCodeData: Codable, QRCodeData {
     var code: String { deviceCode }
     var qrCodeUrl: String { QRCodeUrl }
     
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case deviceCode = "device_code"
         case QRCodeUrl = "qrcode_url"
         case userCode = "user_code"

@@ -1,16 +1,14 @@
 //
-//  DownloadRowView.swift
-//  netdisk
+//  UploadRowView.swift
+//  ABCloud
 //
-//  Created by Zackary on 2023/9/5.
+//  Created by Zackary on 2024/4/23.
 //
 
 import Cocoa
-import SnapKit
-import SwiftUI
-import Tiercel
-class DownloadRowView: NSTableRowView {
-    
+
+class UploadRowView: NSTableRowView {
+
     static let ButtonWidth = 24
     
     let imageView = NSImageView()
@@ -35,12 +33,12 @@ class DownloadRowView: NSTableRowView {
         return label
     }()
     
-    var task: DownloadTask?
+    var task: UploadTask?
     
     let pauseButton = {
         let btn = HoverButton(normalImage: NSImage(named: "btn_pause_trans"), hoveredImage: NSImage(named: "btn_pause_trans_hover"))
         btn.isBordered = false
-        btn.tip = "暂停下载"
+        btn.tip = "暂停上传"
         btn.contentTintColor = .white
         btn.imagePosition = .imageOnly
         btn.isHidden = true
@@ -50,7 +48,7 @@ class DownloadRowView: NSTableRowView {
     let resumeButton = {
         let btn = HoverButton(normalImage: NSImage(named: "btn_resume_trans"), hoveredImage: NSImage(named: "btn_resume_trans_hover"))
         btn.isBordered = false
-        btn.tip = "继续下载"
+        btn.tip = "继续上传"
         btn.contentTintColor = .white
         btn.isHidden = true
         return btn
@@ -59,7 +57,7 @@ class DownloadRowView: NSTableRowView {
     let cancelButton = {
         let btn = HoverButton(normalImage: NSImage(named: "btn_cancel_trans"), hoveredImage: NSImage(named: "btn_cancel_trans_hover"))
         btn.isBordered = false
-        btn.tip = "取消下载"
+        btn.tip = "取消上传"
         btn.contentTintColor = .white
         btn.isHidden = true
         return btn
@@ -182,15 +180,15 @@ class DownloadRowView: NSTableRowView {
         firstColumn.addSubview(showInFinderButton)
         
         cancelButton.target = self
-        cancelButton.action = #selector(cancelDownload)
+        cancelButton.action = #selector(cancelUpload)
         firstColumn.addSubview(cancelButton)
         
         pauseButton.target = self
-        pauseButton.action = #selector(pauseDownload)
+        pauseButton.action = #selector(pauseUpload)
         firstColumn.addSubview(pauseButton)
         
         resumeButton.target = self
-        resumeButton.action = #selector(resumeDownload)
+        resumeButton.action = #selector(resumeUpload)
         firstColumn.addSubview(resumeButton)
         
         deleteButton.target = self
@@ -198,7 +196,7 @@ class DownloadRowView: NSTableRowView {
         firstColumn.addSubview(deleteButton)
         
         retryButton.target = self
-        retryButton.action = #selector(retryDownload)
+        retryButton.action = #selector(retryUpload)
         firstColumn.addSubview(retryButton)
         
         firstColumn.addSubview(imageView)
@@ -236,92 +234,99 @@ class DownloadRowView: NSTableRowView {
         }
     }
     
-    @objc func cancelDownload() {
+    @objc func cancelUpload() {
         if let task = self.task {
             guard let contentView = self.window?.contentView else { return }
-            let alertView = ZigTextAlertView(title: "取消任务", message: "确定要取消此下载任务吗?")
+            let alertView = ZigTextAlertView(title: "取消任务", message: "确定要取消此上传任务吗?")
             alertView.confirmBlock = {
-                ZigDownloadManager.shared.downloadSessionManager.remove(task)
+                UploadManager.shared.removeTask(task: task)
             }
             alertView.showInView(contentView)
         }
     }
     
-    @objc func retryDownload() {
+    @objc func retryUpload() {
         guard let task = task else { return }
-        ZigFileManager.shared.retryDownload(downloadUrl: task.url.absoluteString) { error in
+        ZigFileManager.shared.retryUpload(uploadUrl: task.url, completion: { error in
             guard let e = error else {
-                debugPrint("正在重新下载")
-                ZigDownloadManager.shared.downloadSessionManager.remove(task)
+                debugPrint("正在重新上传")
+                UploadManager.shared.removeTask(task: task)
                 return
             }
-            
             debugPrint(e.localizedDescription)
-        }
+        })
     }
     
     @objc func deleteRecord() {
         guard let task = task else { return }
-        ZigDownloadManager.shared.downloadSessionManager.remove(task)
-        ZigFileManager.shared.deleteDownloadRecord(identifier: task.url.absoluteString.md5)
+        UploadManager.shared.removeTask(task: task)
+        ZigFileManager.shared.deleteUploadRecord(identifier: task.url.md5)
     }
     
-    @objc func pauseDownload() {
+    @objc func pauseUpload() {
         if let task = self.task {
-            ZigDownloadManager.shared.downloadSessionManager.suspend(task)
+            UploadManager.shared.suspendTask(task: task)
             updateRowView(with: task)
         }
     }
     
-    @objc func resumeDownload() {
+    @objc func resumeUpload() {
         if let task = self.task {
-            ZigDownloadManager.shared.downloadSessionManager.start(task)
+            UploadManager.shared.resumeTask(task: task)
             updateRowView(with: task)
         }
     }
     
     @objc func showInFinder() {
-        if let url = self.task?.filePath, let finderURL = URL(string: "file://" + url) {
-            if FileManager.default.fileExists(atPath: url) {
-                NSWorkspace.shared.activateFileViewerSelecting([finderURL])
-            } else {
-                guard let contentView = self.window?.contentView else { return }
-                let alertView = ZigTextAlertView(title: "文件不存在", message: "当前文件已被删除或移动至其他目录，是否删除记录?")
-                alertView.confirmBlock = { [weak self] in
-                    guard let self = self else { return }
-                    ZigDownloadManager.shared.downloadSessionManager.remove(self.task!)
-                }
-                alertView.showInView(contentView)
-            }
-        }
+//        guard let task = self.task, let finderURL = URL(string: "file://" + task.filepa) else { return }
+//
+//        if FileManager.default.fileExists(atPath: url) {
+//            NSWorkspace.shared.activateFileViewerSelecting([finderURL])
+//        } else {
+//            guard let contentView = self.window?.contentView else { return }
+//            let alertView = ZigTextAlertView(title: "文件不存在", message: "当前文件已被删除或移动至其他目录，是否删除记录?")
+//            alertView.confirmBlock = { [weak self] in
+//                guard let self = self else { return }
+//                ZigDownloadManager.shared.downloadSessionManager.remove(self.task!)
+//                UploadManager.shared.removeTask(task: task)
+//            }
+//            alertView.showInView(contentView)
+//        }
     }
     
-    func updateRowView(with task: DownloadTask) {
+    func updateRowView(with task: UploadTask) {
         self.task = task
-        imageView.image = Utils.thumbForFile(fileName: task.fileName)
-        fileNameLabel.stringValue = task.fileName
-        let downloadedSize = task.progress.completedUnitCount
-        let totalSize = task.progress.totalUnitCount
-        fileSizeLabel.stringValue = "\(Double(downloadedSize).binarySizeString) / \(Double(totalSize).binarySizeString)"
+        imageView.image = task.fileName == nil ? nil : Utils.thumbForFile(fileName: task.fileName!)
+        fileNameLabel.stringValue = task.fileName ?? ""
+        let downloadedSize = Double(task.fileSize) * task.progress
+        let totalSize = task.fileSize
+        fileSizeLabel.stringValue = "\(downloadedSize.binarySizeString) / \(Double(totalSize).binarySizeString)"
         
         updateStatus()
         
-        if task.status == .running {
-            task.progress { [weak self] (task) in
+        if task.state == .running {
+//            task.progressHandler { [weak self] progress in
+//                guard let self = self else { return }
+//                let downloadedSize = task.progress.completedUnitCount
+//                let totalSize = task.progress.totalUnitCount
+//                self.downloadStatueLabel.stringValue = task.speedString
+//                self.fileSizeLabel.stringValue = "\(Double(downloadedSize).binarySizeString) / \(Double(totalSize).binarySizeString)"
+//                progressView.doubleValue = task.progress.fractionCompleted
+//            }
+            task.progressHandler = { [weak self] progress in
                 guard let self = self else { return }
-                let downloadedSize = task.progress.completedUnitCount
-                let totalSize = task.progress.totalUnitCount
-                self.downloadStatueLabel.stringValue = task.speedString
-                self.fileSizeLabel.stringValue = "\(Double(downloadedSize).binarySizeString) / \(Double(totalSize).binarySizeString)"
-                progressView.doubleValue = task.progress.fractionCompleted
+                let downloadedSize = progress * Double(totalSize)
+                self.downloadStatueLabel.stringValue = "\(task.speed.binarySizeString) / s"
+                self.fileSizeLabel.stringValue = "\(downloadedSize.binarySizeString) / \(Double(totalSize).binarySizeString)"
+                progressView.doubleValue = progress
             }
         } else {
-            progressView.doubleValue = task.progress.fractionCompleted
+            progressView.doubleValue = task.progress
         }
         
         let colorFilter = CIFilter(name: "CIFalseColor")!
         colorFilter.setDefaults()
-        colorFilter.setValue(CIColor(color: task.status == .running ? NSColor(hex: 0x0F6FE3) : NSColor(hex: 0x6F6F71)), forKey: "inputColor0")
+        colorFilter.setValue(CIColor(color: task.state == .running ? NSColor(hex: 0x0F6FE3) : NSColor(hex: 0x6F6F71)), forKey: "inputColor0")
         colorFilter.setValue(CIColor(color: NSColor(hex: 0x6F6F71)), forKey: "inputColor1")
         progressView.contentFilters = [colorFilter]
     }
@@ -436,29 +441,26 @@ class DownloadRowView: NSTableRowView {
     
     func updateStatus() {
         guard let task = self.task else { return }
-        switch task.status {
+        switch task.state {
         case .suspended:
             downloadStatueLabel.stringValue = "已暂停"
         case .failed:
             downloadStatueLabel.stringValue = "失败"
         case .waiting:
-            downloadStatueLabel.stringValue = "等待下载"
+            downloadStatueLabel.stringValue = "等待上传"
         case .running:
-            downloadStatueLabel.stringValue = task.speedString
+            downloadStatueLabel.stringValue = "\(task.speed.binarySizeString) / s"
         case .succeeded:
             downloadStatueLabel.stringValue = "已完成"
         case .canceled:
             downloadStatueLabel.stringValue = "已取消"
-        default:
-            debugPrint("【Error】错误逻辑")
         }
-        
         updateButtonStatus()
     }
     
     func updateButtonStatus() {
         guard let task = task else { return }
-        switch task.status {
+        switch task.state {
         case .suspended:
             pauseButton.isHidden = true
             resumeButton.isHidden = false
@@ -501,17 +503,7 @@ class DownloadRowView: NSTableRowView {
             showInFinderButton.isHidden = true
             deleteButton.isHidden = false
             retryButton.isHidden = false
-        default:
-            debugPrint("【Error】错误逻辑")
         }
     }
-}
-
-enum DownloadState: Int {
-    case downloading
-    case downloaded
-    case failed
-    case paused
-    case canceled
-    case pending
+    
 }

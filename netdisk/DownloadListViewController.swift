@@ -9,13 +9,20 @@ import Cocoa
 import Tiercel
 
 class DownloadListViewController: NSViewController {
-    
+    static let Identifier = NSUserInterfaceItemIdentifier("DownloadRowView")
     let tableView = {
         let tableView = NSTableView()
+        tableView.style = .fullWidth
         tableView.selectionHighlightStyle = .none
-        let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(rawValue: "FileColumn"))
-        tableView.addTableColumn(column)
         return tableView;
+    }()
+    
+    let titleLabel = {
+        let label = ZigLabel()
+        label.font = NSFont(PingFangSemiBold: 18)
+        label.textColor = .white
+        label.stringValue = "下载"
+        return label
     }()
     
     var tableContainerView: NSScrollView!
@@ -34,6 +41,12 @@ class DownloadListViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(view).offset(41)
+            make.top.equalTo(view).offset(34)
+        }
+        
         tableView.focusRingType = .none
         tableView.backgroundColor = .clear
         tableView.delegate = self
@@ -50,12 +63,12 @@ class DownloadListViewController: NSViewController {
         tableContainerView.autohidesScrollers = true
         tableContainerView.documentView = tableView
         tableContainerView.snp.makeConstraints { make in
-            make.leading.top.trailing.bottom.equalTo(view)
+            make.top.equalTo(titleLabel.snp.bottom).offset(24)
+            make.leading.trailing.bottom.equalTo(view)
         }
         
         self.tableView.reloadData()
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(taskDidStartDownload(_:)), name: DownloadTask.runningNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(reloadData), name: DownloadTask.statusDidChangeNotification, object: nil)
     }
     
@@ -88,7 +101,11 @@ extension DownloadListViewController: NSTableViewDelegate, NSTableViewDataSource
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        var rowView = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DownloadRowView"), owner: self)
+        return nil
+    }
+    
+    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+        var rowView = tableView.makeView(withIdentifier: Self.Identifier, owner: self)
         if rowView == nil {
             rowView = DownloadRowView()
         }
@@ -102,7 +119,7 @@ extension DownloadListViewController: NSTableViewDelegate, NSTableViewDataSource
     }
     
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        return 80
+        return 52
     }
 }
 

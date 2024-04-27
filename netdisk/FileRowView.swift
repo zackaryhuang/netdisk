@@ -285,9 +285,7 @@ class FileRowView: NSTableRowView {
             context.duration = 0.2
             context.allowsImplicitAnimation = true
             contentView.layer?.backgroundColor = NSColor(hex: 0x2C2C2C, alpha: 1).cgColor
-        }) { [weak self] in
-            self?.fadeAnimation()
-        }
+        })
         
         super.rightMouseDown(with: event)
     }
@@ -312,6 +310,10 @@ extension FileRowView: NSMenuDelegate {
             zigMenuItem.zig_isHiglight = true
             lastHighligtItem = zigMenuItem
         }
+    }
+    
+    func menuDidClose(_ menu: NSMenu) {
+        self.fadeAnimation()
     }
     
 }
