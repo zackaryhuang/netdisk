@@ -19,7 +19,7 @@ class UploadManager: NSObject {
     
     static let documentsDirectory =  try! FileManager().url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     
-    let uploadListsURL = ZigFileManager.documentsDirectory.appendingPathComponent("listOfUpload.plist", conformingTo: .url)
+    let uploadListsURL = ZigFileManager.documentsDirectory.appendingPathComponent("upload_tasks_\(ZigClientManager.shared.identifier).plist", conformingTo: .url)
     
     private var timer: DispatchSourceTimer?
     

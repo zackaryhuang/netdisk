@@ -25,9 +25,9 @@ struct ABUploadRecordData: Codable {
 class ZigFileManager {
     static let documentsDirectory =  try! FileManager().url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
-    let downloadRecordsURL = ZigFileManager.documentsDirectory.appendingPathComponent("listOfDownloadRecords.plist", conformingTo: .url)
+    let downloadRecordsURL = ZigFileManager.documentsDirectory.appendingPathComponent("download_record_\(ZigClientManager.shared.identifier).plist", conformingTo: .url)
     
-    let uploadRecordsURL = ZigFileManager.documentsDirectory.appendingPathComponent("listOfUploadRecords.plist", conformingTo: .url)
+    let uploadRecordsURL = ZigFileManager.documentsDirectory.appendingPathComponent("upload_records_\(ZigClientManager.shared.identifier).plist", conformingTo: .url)
 
     var downloadRecords: [ABDownloadRecordData]? {
         get {

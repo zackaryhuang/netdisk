@@ -25,7 +25,7 @@ class ZigDownloadManager {
         if path.starts(with: "file") {
             path.removeFirst(7)
         }
-        let s = SessionManager("download.aliyun", configuration: SessionConfiguration(), cache: Cache("download.aliyun", downloadTmpPath: path, downloadFilePath: path))
+        let s = SessionManager(ZigClientManager.shared.identifier, configuration: SessionConfiguration(), cache: Cache("download.aliyun", downloadTmpPath: path, downloadFilePath: path))
         return s
     }()
 }

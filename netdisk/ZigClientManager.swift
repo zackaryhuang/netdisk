@@ -15,6 +15,14 @@ enum CloudNetdiskType {
 class ZigClientManager {
     static let shared = ZigClientManager()
     
+    lazy var identifier = {
+        var id = UUID().uuidString.md5
+        if let userID = aliUserData?.userID {
+            id = userID.md5
+        }
+        return id
+    }()
+    
     weak var mainWindowController: MainWindowController?
     
     static var backupDriveID: String? {
