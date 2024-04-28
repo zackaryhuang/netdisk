@@ -86,15 +86,12 @@ class SidePanelView: NSView {
 extension SidePanelView: TabItemViewDelegate {
     func didClickTabView(tabView: TabItemView) {
         if tabView.type == .Exit {
-            let alertOption = AlertOption(title: "确认退出吗", subTitle: nil, leftButtonTitle: "确认", rightButtonTitle: "取消") { window in
-                window.orderOut(nil)
-                ZigClientManager.shared.clearAccessData()
-            } rightActionBlock: { window in
-                window.orderOut(nil)
+            guard let contentView = self.window?.contentView else { return }
+            let textAlert = ZigTextAlertView(title: "退出", message: "确认退出吗？")
+            textAlert.confirmBlock = {
+                ZigClientManager.shared.quit()
             }
-            let window = AlertWindow(with: alertOption)
-            window.level = .modalPanel
-            window.showIn(window: self.window!)
+            textAlert.showInView(contentView)
             return
         }
         tabs.forEach { tabItemView in

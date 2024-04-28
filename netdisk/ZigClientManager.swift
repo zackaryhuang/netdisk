@@ -33,7 +33,12 @@ class ZigClientManager {
         self.accessToken = nil
         self.refreshToken = nil
         self.authorization = nil
+    }
+    
+    func quit() {
+        ZigClientManager.shared.clearAccessData()
         ZigDownloadManager.shared.downloadSessionManager.totalSuspend()
+        UploadManager.shared.totalSuspend()
         self.mainWindowController?.exitLogin()
     }
     

@@ -80,6 +80,22 @@ class UploadManager: NSObject {
         storeTasks()
     }
     
+    func totalSuspend() {
+        allUploadTask.forEach { task in
+            if task.state == .running || task.state == .waiting {
+                task.suspend()
+            }
+        }
+    }
+    
+    func totalResume() {
+        allUploadTask.forEach { task in
+            if task.state == .suspended {
+                task.resume()
+            }
+        }
+    }
+    
     private func storeTasks() {
         if let data = try? PropertyListEncoder().encode(allUploadTask) {
             try? data.write(to: uploadListsURL)
