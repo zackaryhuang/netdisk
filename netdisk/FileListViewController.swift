@@ -61,6 +61,7 @@ class FileListViewController: NSViewController, CategoryVC {
         super.viewDidLoad()
         configUI()
         NotificationCenter.default.addObserver(self, selector: #selector(endScroll(_:)), name: NSScrollView.didEndLiveScrollNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didUploadNotification(_:)), name: UploadManager.DidFinishUploadNotificationName, object: nil)
         requestFiles()
     }
     
@@ -218,6 +219,13 @@ class FileListViewController: NSViewController, CategoryVC {
            let documentViewHeight = (notification.object as? NSScrollView)?.documentView?.frame.height,
            offsetY + visibleHeight == documentViewHeight {
             requestMoreFiles()
+        }
+    }
+    
+    @objc func didUploadNotification(_ notification: Notification) {
+        if let parentID = notification.object as? String,
+           parentID == parentFolderID {
+            requestFiles()
         }
     }
 }

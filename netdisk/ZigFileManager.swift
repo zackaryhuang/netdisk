@@ -192,8 +192,9 @@ class ZigFileManager {
                 task.completionHandler = { error in
                     if error == nil {
                         Task {
-                            if let res = try? await WebRequest.uploadFileComplete(driveID: driveID, fileID: createFileResp.fileID, uploadID: uploadID) {
+                            if let _ = try? await WebRequest.uploadFileComplete(driveID: driveID, fileID: createFileResp.fileID, uploadID: uploadID) {
                                 debugPrint("上传成功")
+                                NotificationCenter.default.post(name: UploadManager.DidFinishUploadNotificationName, object: parentFileID)
                             }
                         }
                     }

@@ -11,6 +11,8 @@ class UploadManager: NSObject {
     static let shared = UploadManager()
     static let RunningCountChangeNotificationName = Notification.Name(rawValue: "com.ABCloud.notification.name.uploadTask.statusDidChange")
     
+    static let DidFinishUploadNotificationName = Notification.Name(rawValue: "com.ABCloud.notification.name.uploadTask.didFinishUpload")
+    
     lazy var allUploadTask = fetchTasks()
     
     let multiUploadCount = 3
@@ -57,7 +59,7 @@ class UploadManager: NSObject {
     
     func removeTask(task: UploadTask) {
         if task.state != .succeeded {
-            task.uploadTask?.cancel()
+            task.cancel()
         }
         allUploadTask.removeAll(where: { $0.identifier == task.identifier })
         storeTasks()
@@ -74,6 +76,8 @@ class UploadManager: NSObject {
     
     func cancelTask(task: UploadTask) {
         task.cancel()
+        allUploadTask.removeAll(where: { $0.identifier == task.identifier })
+        storeTasks()
     }
     
     private func storeTasks() {
@@ -118,7 +122,6 @@ extension UploadManager: URLSessionDelegate, URLSessionTaskDelegate, URLSessionD
             }
         }
         storeTasks()
-        NotificationCenter.default.post(name: Self.RunningCountChangeNotificationName, object: nil)
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
