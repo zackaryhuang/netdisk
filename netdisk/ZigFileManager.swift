@@ -164,9 +164,18 @@ class ZigFileManager {
     }
     
     func uploadFile(driveID: String, parentFileID: String, filePath: URL, completion: @escaping ((Error?) -> ())) {
-        guard let data = try? Data(contentsOf: filePath) else { return }
+        guard let att = try? FileManager.default.attributesOfItem(atPath: filePath.path()),
+              let size = att[.size] as? Int else { return }
         
-        debugPrint("正在上传文件\(filePath.lastPathComponent), 文件大小\(Double(data.count).binarySizeString)")
+        if size > 5.D_GB {
+            // 大于 5 G 应该分片，暂未实现
+            guard let contentView = NSApplication.shared.windows.first?.contentView else { return }
+            let alert = ZigTextAlertView(title: "提示", message: "当前文件大小为 \(Double(size).decimalSizeString)，暂不支持上传大于 5G 的文件")
+            alert.showInView(contentView)
+            return
+        }
+        
+        debugPrint("正在上传文件\(filePath.lastPathComponent), 文件大小\(Double(size).decimalSizeString)")
         
         Task {
             

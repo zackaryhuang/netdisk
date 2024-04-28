@@ -138,24 +138,58 @@ extension URL {
     }
 }
 
+extension Int {
+    var B_KB: Int { self * 1024 }
+    var B_MB: Int { self.B_KB * 1024 }
+    var B_GB: Int { self.B_MB * 1024 }
+    var B_TB: Int { self.B_GB * 1024 }
+    
+    var D_KB: Int { self * 1000 }
+    var D_MB: Int { self.D_KB * 1000 }
+    var D_GB: Int { self.D_MB * 1000 }
+    var D_TB: Int { self.D_GB * 1000 }
+}
+
 extension Double {
     var binarySizeString: String {
         get {
-            let KB = pow(Double(1024.0), 1)
-            let MB = pow(Double(1024.0), 2)
-            let GB = pow(Double(1024.0), 3)
-            let TB = pow(Double(1024.0), 4)
-            if self >= TB {
-                return String(format: "%.2f TB", self / TB)
+            let B_KB = Double(1.B_KB)
+            let B_MB = Double(1.B_KB)
+            let B_GB = Double(1.B_GB)
+            let B_TB = Double(1.B_TB)
+            if self >= B_TB {
+                return String(format: "%.2f TB", self / B_TB)
             }
-            if self >= GB {
-                return String(format: "%.2f GB", self / GB)
+            if self >= B_GB {
+                return String(format: "%.2f GB", self / B_GB)
             }
-            if self >= MB {
-                return String(format: "%.2f MB", self / MB)
+            if self >= B_MB {
+                return String(format: "%.2f MB", self / B_MB)
             }
-            if self >= KB {
-                return String(format: "%.2f KB", self / KB)
+            if self >= B_KB {
+                return String(format: "%.2f KB", self / B_KB)
+            }
+            return String(format: "%.2f Byte", self)
+        }
+    }
+    
+    var decimalSizeString: String {
+        get {
+            let D_KB = Double(1.D_KB)
+            let D_MB = Double(1.D_MB)
+            let D_GB = Double(1.D_GB)
+            let D_TB = Double(1.D_TB)
+            if self >= D_TB {
+                return String(format: "%.2f TB", self / D_TB)
+            }
+            if self >= D_GB {
+                return String(format: "%.2f GB", self / D_GB)
+            }
+            if self >= D_MB {
+                return String(format: "%.2f MB", self / D_MB)
+            }
+            if self >= D_KB {
+                return String(format: "%.2f KB", self / D_KB)
             }
             return String(format: "%.2f Byte", self)
         }
