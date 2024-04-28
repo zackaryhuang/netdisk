@@ -490,29 +490,29 @@ class WebRequest {
         static let BaiduFileDetail = BaiduDomain2 + "/rest/2.0/xpan/multimedia"
     }
     
-    static func uploadFile(data: Data,
-                           uploadUrl: String,
-                           progress: @escaping((CGFloat) -> Void),
-                           completion: @escaping((Bool) -> Void)) {
-        
-        guard let urlRequest = try? URLRequest(url: uploadUrl, method: .put, headers: HTTPHeaders(dictionaryLiteral: ("Content-Length", "\(data.count)"))) else { completion(false)
-            return
-        }
-        
-        AF.upload(data,
-                  with: urlRequest)
-        .uploadProgress { p in
-            progress(p.fractionCompleted)
-        }
-        .response(completionHandler: { res in
-            switch res.result {
-            case .success(let content):
-                completion(true)
-            case .failure(let err):
-                completion(false)
-            }
-        })
-    }
+//    static func uploadFile(data: Data,
+//                           uploadUrl: String,
+//                           progress: @escaping((CGFloat) -> Void),
+//                           completion: @escaping((Bool) -> Void)) {
+//        
+//        guard let urlRequest = try? URLRequest(url: uploadUrl, method: .put, headers: HTTPHeaders(dictionaryLiteral: ("Content-Length", "\(data.count)"))) else { completion(false)
+//            return
+//        }
+//        
+//        AF.upload(data,
+//                  with: urlRequest)
+//        .uploadProgress { p in
+//            progress(p.fractionCompleted)
+//        }
+//        .response(completionHandler: { res in
+//            switch res.result {
+//            case .success(let content):
+//                completion(true)
+//            case .failure(let err):
+//                completion(false)
+//            }
+//        })
+//    }
     
     static func uploadFileComplete(driveID: String, fileID: String, uploadID: String) async throws -> Bool {
         let params = [
