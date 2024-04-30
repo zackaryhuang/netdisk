@@ -1031,7 +1031,7 @@ extension WebRequest {
                     if errorCode == "AccessTokenExpired" {
                         Task {
                             if let _ = try? await requestAccessToken(authCode: nil, grantType: .refreshToken) {
-                                requestJSON(method: method, url: url, headers: headers, dataObj: dataObj, complete: complete)
+                                requestJSON(method: method, url: url, parameters: parameters, headers: headers, dataObj: dataObj, complete: complete)
                             } else {
                                 complete?(.failure(.statusFail(code: errorCode, message: message)))
                             }

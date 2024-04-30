@@ -17,48 +17,43 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
         self.init(windowNibName: "")
     }
     
-    override func loadWindow() {
-//        debugPrint(NSFontManager.shared.availableFontFamilies.description)
+    override func windowDidLoad() {
+        super.windowDidLoad()
         ZigClientManager.shared.mainWindowController = self
         ZigUserManager.sharedInstance.delegate = self
         ZigUserManager.sharedInstance.requestUserData { success in
             DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
+                guard let self = self, let window = self.window else { return }
                 if success {
                     // 已登录
-                    let frame: CGRect = CGRect(x: 0, y: 0, width: 1120, height: 640)
-                    let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
-                    let back: NSWindow.BackingStoreType = .buffered
-                    let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
-                    window.titlebarAppearsTransparent = true
-                    window.delegate = self
-                    window.standardWindowButton(.zoomButton)?.isHidden = true
                     self.mainVC = MainViewController()
                     window.contentView = self.mainVC.view;
                     window.contentViewController = self.mainVC
-                    window.center()
-                    window.makeKeyAndOrderFront(nil)
-                    self.window = window
+                    window.animatToSize(CGSize(width: 1120, height: 640))
                     NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
                 } else {
                     // 未登录
-                    let frame: CGRect = CGRect(x: 0, y: 0, width: 280, height: 400)
-                    let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
-                    let back: NSWindow.BackingStoreType = .buffered
-                    let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
-                    window.titlebarAppearsTransparent = true
-                    window.delegate = self
-                    window.standardWindowButton(.zoomButton)?.isHidden = true
                     self.loginVC = LoginViewController()
                     self.loginVC.windowController = self
                     window.contentView = self.loginVC.view;
                     window.contentViewController = self.loginVC
-                    window.center()
-                    window.makeKeyAndOrderFront(nil)
-                    self.window = window
+                    window.animatToSize(CGSize(width: 280, height: 400))
                 }
             }
         }
+    }
+    
+    override func loadWindow() {
+        let frame: CGRect = CGRect(x: 0, y: 0, width: 280, height: 400)
+        let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
+        let back: NSWindow.BackingStoreType = .buffered
+        let window = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
+        window.titlebarAppearsTransparent = true
+        window.delegate = self
+        window.standardWindowButton(.zoomButton)?.isHidden = true
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        self.window = window
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
@@ -74,25 +69,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
                     self.window?.contentView = self.mainVC.view;
                     self.window?.contentViewController = self.mainVC
                     NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
-                    
-                    let oldX = self.window?.frame.origin.x ?? 0.0
-                    let oldY = self.window?.frame.origin.y ?? 0.0
-                    let oldW = self.window?.frame.size.width ?? 0.0
-                    let oldH = self.window?.frame.size.height ?? 0.0
-                    
-                    let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
-                    
-                    let newW = 1120.0
-                    let newH = 640.0
-                    let newX = oldCenter.x - newW / 2.0
-                    
-                    let newY = oldCenter.y - newH / 2.0
-                    
-                    NSAnimationContext.runAnimationGroup({context in
-                      context.duration = 0.25
-                      context.allowsImplicitAnimation = true
-                        self.window?.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
-                    }, completionHandler:nil)
+                    window?.animatToSize(CGSize(width: 1120, height: 640))
                 }
             }
         }
@@ -103,25 +80,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
         self.loginVC.windowController = self
         self.window?.contentView = self.loginVC.view;
         self.window?.contentViewController = self.loginVC
-        
-        let oldX = self.window?.frame.origin.x ?? 0.0
-        let oldY = self.window?.frame.origin.y ?? 0.0
-        let oldW = self.window?.frame.size.width ?? 0.0
-        let oldH = self.window?.frame.size.height ?? 0.0
-        
-        let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
-        
-        let newW = 280.0
-        let newH = 400.0
-        let newX = oldCenter.x - newW / 2.0
-        
-        let newY = oldCenter.y - newH / 2.0
-        
-        NSAnimationContext.runAnimationGroup({context in
-          context.duration = 0.25
-          context.allowsImplicitAnimation = true
-            self.window?.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
-        }, completionHandler:nil)
+        self.window?.animatToSize(CGSize(width: 280, height: 400))
     }
     
     override func mouseDown(with event: NSEvent) {
@@ -136,24 +95,6 @@ extension MainWindowController: ZigUserManagerDelegate {
         window?.contentView = loginVC.view;
         window?.contentViewController = loginVC
         loginVC.windowController = self
-        
-        let oldX = window?.frame.origin.x ?? 0.0
-        let oldY = window?.frame.origin.y ?? 0.0
-        let oldW = window?.frame.size.width ?? 0.0
-        let oldH = window?.frame.size.height ?? 0.0
-        
-        let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
-        
-        let newW = 292.0
-        let newH = 412.0
-        let newX = oldCenter.x - newW / 2.0
-        
-        let newY = oldCenter.y - newH / 2.0
-        
-        NSAnimationContext.runAnimationGroup({context in
-          context.duration = 0.25
-          context.allowsImplicitAnimation = true
-            self.window?.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
-        }, completionHandler:nil)
+        self.window?.animatToSize(CGSize(width: 280, height: 400))
     }
 }
