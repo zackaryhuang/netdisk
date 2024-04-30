@@ -20,6 +20,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
     
     let imageView = {
         let view = ABImageView()
+        view.contentMode = .aspectFit
         return view
     }()
     
@@ -37,7 +38,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         var bottom = Self.padding
-        if detailInfo?.imageMedia?.exifInfo != nil {
+        if (detailInfo?.imageMedia?.exifInfo?.isVaild ?? false) {
             bottom += Self.bottomHeight
         }
         imageView.snp.makeConstraints { make in
@@ -54,13 +55,20 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
             }
         }
         
-        guard let exif = detailInfo?.imageMedia?.exifInfo else { return }
+        guard let exif = detailInfo?.imageMedia?.exifInfo,
+              exif.isVaild,
+              let modelName = exif.Model?.value,
+              let cTime = detailInfo?.imageMedia?.time,
+              let exposureTime = exif.ExposureTime?.value,
+              let fNumber = exif.FNumber?.value,
+              let focalLength = exif.FocalLengthIn35mmFilm?.value,
+              let lensModel = exif.LensModel?.value else { return }
         
         let modelLabel = ZigLabel()
         modelLabel.font = NSFont(PingFangSemiBold: 20)
         contentView.addSubview(modelLabel)
         modelLabel.textColor = .white
-        modelLabel.stringValue = exif.Model?.value ?? ""
+        modelLabel.stringValue = modelName
         modelLabel.snp.makeConstraints { make in
             make.leading.equalTo(imageView).offset(10)
             make.top.equalTo(imageView.snp.bottom).offset((Self.padding + Self.bottomHeight) / 5)
@@ -70,7 +78,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         modelLabel.font = NSFont(PingFang: 18)
         contentView.addSubview(timeLabel)
         timeLabel.textColor = .white
-        timeLabel.stringValue = detailInfo?.imageMedia?.time ?? ""
+        timeLabel.stringValue = cTime
         timeLabel.snp.makeConstraints { make in
             make.leading.equalTo(imageView).offset(10)
             make.bottom.equalTo(contentView).offset(-(Self.padding + Self.bottomHeight) / 5)
@@ -81,7 +89,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         paramsLabel.alignment = .left
         contentView.addSubview(paramsLabel)
         paramsLabel.textColor = .white
-        paramsLabel.stringValue = "\(exif.ExposureTime?.value ?? "") \(exif.FNumber?.value ?? "") \(exif.FocalLengthIn35mmFilm?.value ?? "")"
+        paramsLabel.stringValue = "\(exposureTime) \(fNumber) \(focalLength)"
         paramsLabel.snp.makeConstraints { make in
             make.trailing.equalTo(imageView).offset(-10)
             make.centerY.equalTo(modelLabel)
@@ -92,7 +100,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         lenModelLabel.font = NSFont(PingFang: 18)
         contentView.addSubview(lenModelLabel)
         lenModelLabel.textColor = .white
-        lenModelLabel.stringValue = exif.LensModel?.value ?? ""
+        lenModelLabel.stringValue = lensModel
         lenModelLabel.snp.makeConstraints { make in
             make.trailing.equalTo(paramsLabel)
             make.leading.equalTo(paramsLabel)
@@ -134,10 +142,12 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
                 width = height * w_h_ration
                 minWidth = minHeight * w_h_ration
             }
+            
+            let hasExif = (detailInfo?.imageMedia?.exifInfo?.isVaild ?? false)
             width += 2 * Self.padding
-            height += (2 * Self.padding + (detailInfo?.imageMedia?.exifInfo != nil ? Self.bottomHeight : 0.0))
+            height += (2 * Self.padding + (hasExif ? Self.bottomHeight : 0.0))
             minWidth += 2 * Self.padding
-            minHeight += (2 * Self.padding + (detailInfo?.imageMedia?.exifInfo != nil ? Self.bottomHeight : 0.0))
+            minHeight += (2 * Self.padding + (hasExif ? Self.bottomHeight : 0.0))
         }
         let frame: CGRect = CGRect(x: 0, y: 0, width: width, height: height)
         let style: NSWindow.StyleMask = [.titled, .closable, .resizable, .fullSizeContentView]

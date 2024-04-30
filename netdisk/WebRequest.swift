@@ -231,6 +231,14 @@ struct EXIFInfo: Codable {
             return nil
         }
     }
+    
+    var isVaild: Bool {
+        let params = [ExposureTime, FNumber, FocalLengthIn35mmFilm, LensModel, Model]
+        for p in params {
+            guard let k = p, !k.value.isEmpty else { return false }
+        }
+        return true
+    }
 }
 
 struct EXIFStringValue: Codable {
