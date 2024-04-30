@@ -11,27 +11,21 @@ class ZigTextAlertView: ZigBaseAlertView {
 
     var confirmBlock: (() -> ())?
     
-    var title = "新建文件夹"
-    var message = "新建文件夹"
+    var title: String
+    var message: String
     
     let label = ZigLabel()
     let messageLabel = ZigLabel()
     
     var inputView: ZigTextField!
     
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
+    init(title: String, message: String) {
+        self.title = title
+        self.message = message
+        super.init(frame: NSZeroRect)
         self.wantsLayer = true
         self.layer?.backgroundColor = NSColor(hex: 0x000000, alpha: 0.0).cgColor
         configUI()
-    }
-    
-    convenience init(title: String, message: String) {
-        self.init(frame: NSZeroRect)
-        self.title = title
-        self.message = message
-        self.label.stringValue = title
-        self.messageLabel.stringValue = message
     }
     
     required init?(coder: NSCoder) {
@@ -107,14 +101,14 @@ class ZigTextAlertView: ZigBaseAlertView {
     }
     
     @objc func confirmBtnClick() {
-        NSAnimationContext.runAnimationGroup({context in
-            context.duration = 0.3
-            context.allowsImplicitAnimation = true
+        NSView.animate(withDuration: 0.3) {
             self.layer?.backgroundColor = NSColor(hex: 0x000000, alpha: 0.0).cgColor
             self.contentView.alphaValue = 0
-        }) { [self] in
+        } completion: { [weak self] in
+            guard let self = self else { return }
             confirmBlock?()
             self.removeFromSuperview()
         }
+
     }
 }

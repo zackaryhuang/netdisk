@@ -259,7 +259,7 @@ struct EXIFInfo: Codable {
         }
     }
     
-    var isVaild: Bool {
+    var isValid: Bool {
         let params = [ExposureTime, FNumber, FocalLength, ISOSpeedRatings, LensModel, Model]
         for p in params {
             guard let k = p, !k.value.isEmpty else { return false }

@@ -29,7 +29,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
                     self.mainVC = MainViewController()
                     window.contentView = self.mainVC.view;
                     window.contentViewController = self.mainVC
-                    window.animatToSize(CGSize(width: 1120, height: 640))
+                    window.animateToSize(CGSize(width: 1120, height: 640))
                     NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
                 } else {
                     // 未登录
@@ -37,7 +37,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
                     self.loginVC.windowController = self
                     window.contentView = self.loginVC.view;
                     window.contentViewController = self.loginVC
-                    window.animatToSize(CGSize(width: 280, height: 400))
+                    window.animateToSize(CGSize(width: 280, height: 400))
                 }
             }
         }
@@ -69,7 +69,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
                     self.window?.contentView = self.mainVC.view;
                     self.window?.contentViewController = self.mainVC
                     NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
-                    window?.animatToSize(CGSize(width: 1120, height: 640))
+                    window?.animateToSize(CGSize(width: 1120, height: 640))
                 }
             }
         }
@@ -80,7 +80,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
         self.loginVC.windowController = self
         self.window?.contentView = self.loginVC.view;
         self.window?.contentViewController = self.loginVC
-        self.window?.animatToSize(CGSize(width: 280, height: 400))
+        self.window?.animateToSize(CGSize(width: 280, height: 400))
     }
     
     override func mouseDown(with event: NSEvent) {
@@ -95,6 +95,6 @@ extension MainWindowController: ZigUserManagerDelegate {
         window?.contentView = loginVC.view;
         window?.contentViewController = loginVC
         loginVC.windowController = self
-        self.window?.animatToSize(CGSize(width: 280, height: 400))
+        self.window?.animateToSize(CGSize(width: 280, height: 400))
     }
 }

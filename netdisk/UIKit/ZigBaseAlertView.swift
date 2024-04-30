@@ -25,23 +25,20 @@ class ZigBaseAlertView: NSView {
         
         FileRowView.shouldHandleTracking = false
         
-        NSAnimationContext.runAnimationGroup({context in
-            context.duration = 0.3
-            context.allowsImplicitAnimation = true
+        NSView.animate(withDuration: 0.3) {
             self.layer?.backgroundColor = NSColor(hex: 0x000000, alpha: 0.5).cgColor
             self.contentView.alphaValue = 1
-        })
+        }
     }
     
     func dismiss() {
-        NSAnimationContext.runAnimationGroup({context in
-            context.duration = 0.3
-            context.allowsImplicitAnimation = true
+        NSView.animate(withDuration: 0.3) {
             self.layer?.backgroundColor = NSColor(hex: 0x000000, alpha: 0.0).cgColor
             self.contentView.alphaValue = 0
-        }) {
+        } completion: {
             FileRowView.shouldHandleTracking = true
             self.removeFromSuperview()
         }
+
     }
 }

@@ -197,7 +197,7 @@ extension Double {
 }
 
 extension NSWindow {
-    func animatToSize(_ size: CGSize) {
+    func animateToSize(_ size: CGSize) {
         let oldX = frame.origin.x
         let oldY = frame.origin.y
         let oldW = frame.size.width
@@ -215,5 +215,19 @@ extension NSWindow {
           context.allowsImplicitAnimation = true
             self.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
         }, completionHandler:nil)
+    }
+}
+
+extension NSView {
+    class func animate(withDuration: Double,
+                       animations: @escaping () -> Void,
+                       completion: (() -> Void)? = nil) {
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = withDuration
+            context.allowsImplicitAnimation = true
+            animations()
+        } completionHandler: {
+            completion?()
+        }
     }
 }

@@ -17,7 +17,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
     var detailInfo: AliFileDetail? {
         didSet {
             guard let info = detailInfo else { return }
-            window?.animatToSize(getWindowSize(with: info))
+            window?.animateToSize(getWindowSize(with: info))
             window?.minSize = getMinWindowSize(with: info)
             updateView(info)
         }
@@ -85,7 +85,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
     func updateView(_ detailInfo: AliFileDetail) {
         guard let contentView = self.window?.contentView else { return }
         var bottom = Self.padding
-        if (detailInfo.imageMedia?.exifInfo?.isVaild ?? false) {
+        if (detailInfo.imageMedia?.exifInfo?.isValid ?? false) {
             bottom += Self.bottomHeight
         }
         
@@ -108,7 +108,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
             }
         }
         
-        let shouldShowParams = (detailInfo.imageMedia?.exifInfo?.isVaild ?? false)
+        let shouldShowParams = (detailInfo.imageMedia?.exifInfo?.isValid ?? false)
         [modelLabel, timeLabel, paramsLabel, lenModelLabel, sepLine].forEach { view in
             view.isHidden = !shouldShowParams
         }
@@ -120,6 +120,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
               let exposureTime = exif.ExposureTime?.value,
               let fNumber = exif.FNumber?.value,
               let focalLength = exif.FocalLength?.value,
+              let iso = exif.ISOSpeedRatings?.value,
               let lensModel = exif.LensModel?.value else { return }
         
         if modelLabel.superview == nil {
@@ -143,9 +144,10 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         if paramsLabel.superview == nil {
             contentView.addSubview(paramsLabel)
         }
-        paramsLabel.stringValue = "\(exposureTime)s F\(fNumber) \(focalLength)mm"
+        paramsLabel.stringValue = "F\(fNumber) \(exposureTime)s \(iso)"
         paramsLabel.snp.remakeConstraints { make in
             make.trailing.equalTo(imageView).offset(-10)
+            make.width.greaterThanOrEqualTo(200)
             make.centerY.equalTo(modelLabel)
         }
     
@@ -155,7 +157,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         lenModelLabel.stringValue = lensModel
         lenModelLabel.snp.remakeConstraints { make in
             make.trailing.equalTo(paramsLabel)
-            make.leading.greaterThanOrEqualTo(paramsLabel)
+            make.leading.equalTo(paramsLabel)
             make.centerY.equalTo(timeLabel)
         }
         
@@ -180,7 +182,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
                 minWidth = minHeight * w_h_ration
             }
             
-            let hasExif = (detailInfo.imageMedia?.exifInfo?.isVaild ?? false)
+            let hasExif = (detailInfo.imageMedia?.exifInfo?.isValid ?? false)
             minWidth += 2 * Self.padding
             minHeight += (2 * Self.padding + (hasExif ? Self.bottomHeight : 0.0))
         }
@@ -190,26 +192,20 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
     private func getWindowSize(with detailInfo: AliFileDetail) -> CGSize {
         var width = 280.0, height = 400.0
         let standardHeight = 600.0, standardWidth = 600.0
-        var minHeight = 400.0, minWidth = 400.0
         if let imageWidth = detailInfo.imageMedia?.width, let imageHeight = detailInfo.imageMedia?.height {
             let w_h_ration = Double(imageWidth) / Double(imageHeight)
             if imageWidth > imageHeight {
                 width = standardWidth
                 height = width / w_h_ration
-                minHeight = minWidth / w_h_ration
             } else {
                 height = standardHeight
                 width = height * w_h_ration
-                minWidth = minHeight * w_h_ration
             }
             
-            let hasExif = (detailInfo.imageMedia?.exifInfo?.isVaild ?? false)
+            let hasExif = (detailInfo.imageMedia?.exifInfo?.isValid ?? false)
             width += 2 * Self.padding
             height += (2 * Self.padding + (hasExif ? Self.bottomHeight : 0.0))
-            minWidth += 2 * Self.padding
-            minHeight += (2 * Self.padding + (hasExif ? Self.bottomHeight : 0.0))
         }
-        let frame: CGRect = CGRect(x: 0, y: 0, width: width, height: height)
         return CGSize(width: width, height: height)
     }
     
