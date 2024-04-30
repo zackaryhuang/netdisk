@@ -30,6 +30,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
                     window.contentView = self.mainVC.view;
                     window.contentViewController = self.mainVC
                     window.animateToSize(CGSize(width: 1120, height: 640))
+                    window.minSize = CGSize(width: 998, height: 636)
                     NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
                 } else {
                     // 未登录
@@ -38,6 +39,7 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
                     window.contentView = self.loginVC.view;
                     window.contentViewController = self.loginVC
                     window.animateToSize(CGSize(width: 280, height: 400))
+                    window.minSize = CGSize(width: 280, height: 400)
                 }
             }
         }
@@ -45,12 +47,12 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     
     override func loadWindow() {
         let frame: CGRect = CGRect(x: 0, y: 0, width: 280, height: 400)
-        let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
+        let style: NSWindow.StyleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
         let back: NSWindow.BackingStoreType = .buffered
         let window = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
+        window.minSize = CGSize(width: 280, height: 400)
         window.titlebarAppearsTransparent = true
         window.delegate = self
-        window.standardWindowButton(.zoomButton)?.isHidden = true
         window.center()
         window.makeKeyAndOrderFront(nil)
         self.window = window
