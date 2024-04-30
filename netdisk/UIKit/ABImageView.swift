@@ -7,13 +7,43 @@
 
 import Cocoa
 
+enum ABContentMode {
+    case aspectFill
+    case aspectFit
+    case scaleToFill
+}
+
 class ABImageView: NSImageView {
+    
+    open var contentMode: ABContentMode = .aspectFit {
+        didSet {
+            layer = layer ?? CALayer()
+            switch contentMode {
+            case .aspectFill:
+                layer?.contentsGravity = .resizeAspectFill
+            case .aspectFit:
+                layer?.contentsGravity = .resizeAspect
+            case .scaleToFill:
+                layer?.contentsGravity = .resize
+            }
+            
+            layer?.contents = image
+            self.wantsLayer = true
+        }
+    }
     
     open override var image: NSImage? {
         set {
-            self.layer = CALayer()
-            self.layer?.contentsGravity = .resizeAspectFill
-            self.layer?.contents = newValue
+            layer = layer ?? CALayer()
+            switch contentMode {
+            case .aspectFill:
+                layer?.contentsGravity = .resizeAspectFill
+            case .aspectFit:
+                layer?.contentsGravity = .resizeAspect
+            case .scaleToFill:
+                layer?.contentsGravity = .resize
+            }
+            layer?.contents = newValue
             self.wantsLayer = true
             
             super.image = newValue

@@ -162,8 +162,20 @@ struct AliFileDetail: FileDetail {
 }
 
 struct ImageMediaMetaData: Codable {
-    let width: Int
-    let height: Int
+    var width: Int {
+        get {
+            if let w = exifInfo?.imageWidth { return w }
+            return innerWidth
+        }
+    }
+    var height: Int {
+        get {
+            if let h = exifInfo?.imageHeight { return h }
+            return innerHeight
+        }
+    }
+    private let innerWidth: Int
+    private let innerHeight: Int
     let time: String?
     let exifSting: String?
     var exifInfo: EXIFInfo?  {
@@ -177,8 +189,10 @@ struct ImageMediaMetaData: Codable {
     }
     
     private enum CodingKeys : String, CodingKey {
-        case width, height, time
+        case time
         case exifSting = "exif"
+        case innerWidth = "width"
+        case innerHeight = "height"
     }
 }
 
@@ -193,6 +207,30 @@ struct EXIFInfo: Codable {
     let LensModel: EXIFStringValue?
     // 相机型号
     let Model: EXIFStringValue?
+    // 照片宽
+    let ImageWidth: EXIFStringValue?
+    // 照片高
+    let ImageHeight: EXIFStringValue?
+    
+    let PixelXDimension: EXIFStringValue?
+    
+    let PixelYDimension: EXIFStringValue?
+    
+    var imageWidth: Int? {
+        get {
+            if let imageWidth = ImageWidth?.value { return Int(imageWidth) }
+            if let pixelXDimension = PixelXDimension?.value { return Int(pixelXDimension) }
+            return nil
+        }
+    }
+    
+    var imageHeight: Int? {
+        get {
+            if let imageHeight = ImageHeight?.value { return Int(imageHeight) }
+            if let pixelYDimension = PixelYDimension?.value { return Int(pixelYDimension) }
+            return nil
+        }
+    }
 }
 
 struct EXIFStringValue: Codable {

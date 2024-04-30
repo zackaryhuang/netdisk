@@ -48,7 +48,10 @@ class FileRowView: NSTableRowView {
     }()
     
     let thumbImageView = {
-        let imageView = NSImageView()
+        let imageView = ABImageView()
+        imageView.contentMode = .aspectFill
+        imageView.layer?.cornerRadius = 3.0
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -197,10 +200,17 @@ class FileRowView: NSTableRowView {
             fileSizeLabel.isHidden = true
             fileSizeLabel.stringValue = ""
         }
+        
+        thumbImageView.kf.cancelDownloadTask()
         if fileData.isDir {
             thumbImageView.image = NSImage(named: "icon_folder")
         } else {
-            thumbImageView.image = Utils.thumbForFile(info: fileData)
+            let image = Utils.thumbForFile(info: fileData)
+            if let thumbnail = fileData.thumbnail {
+                thumbImageView.kf.setImage(with: thumbnail, placeholder: image)
+            } else {
+                thumbImageView.image = image
+            }
         }
         self.menu = getMenu()
     }
