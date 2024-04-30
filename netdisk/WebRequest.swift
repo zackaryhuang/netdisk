@@ -200,7 +200,32 @@ struct EXIFInfo: Codable {
     // 快门
     let ExposureTime: EXIFStringValue?
     // 光圈
-    let FNumber: EXIFStringValue?
+    var FNumber: EXIFStringValue? {
+        get {
+            guard let f = self.innerFNumber else { return nil }
+            let c = f.value.split(separator: "/")
+            if  c.count != 2 { return f }
+            guard let a = Double(c[0]),
+                  let b = Double(c[1]) else { return f }
+            return EXIFStringValue(value: String(format: "%.1f", a / b))
+        }
+    }
+    private let innerFNumber: EXIFStringValue?
+    
+    // 焦距
+    var FocalLength: EXIFStringValue? {
+        get {
+            guard let f = self.innerFocalLength else { return nil }
+            let c = f.value.split(separator: "/")
+            if  c.count != 2 { return f }
+            guard let a = Double(c[0]),
+                  let b = Double(c[1]) else { return f }
+            return EXIFStringValue(value: String(format: "%.1f", a / b))
+        }
+    }
+    
+    private let innerFocalLength: EXIFStringValue?
+    
     // 焦距
     let FocalLengthIn35mmFilm: EXIFStringValue?
     // 镜头型号
@@ -215,6 +240,8 @@ struct EXIFInfo: Codable {
     let PixelXDimension: EXIFStringValue?
     
     let PixelYDimension: EXIFStringValue?
+    // ISO 感光度
+    let ISOSpeedRatings: EXIFStringValue?
     
     var imageWidth: Int? {
         get {
@@ -233,11 +260,17 @@ struct EXIFInfo: Codable {
     }
     
     var isVaild: Bool {
-        let params = [ExposureTime, FNumber, FocalLengthIn35mmFilm, LensModel, Model]
+        let params = [ExposureTime, FNumber, FocalLength, ISOSpeedRatings, LensModel, Model]
         for p in params {
             guard let k = p, !k.value.isEmpty else { return false }
         }
         return true
+    }
+    
+    private enum CodingKeys : String, CodingKey {
+        case ExposureTime, FocalLengthIn35mmFilm, LensModel, Model, ImageWidth, ImageHeight, PixelXDimension, PixelYDimension, ISOSpeedRatings
+        case innerFNumber = "FNumber"
+        case innerFocalLength = "FocalLength"
     }
 }
 

@@ -61,7 +61,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
               let cTime = detailInfo?.imageMedia?.time,
               let exposureTime = exif.ExposureTime?.value,
               let fNumber = exif.FNumber?.value,
-              let focalLength = exif.FocalLengthIn35mmFilm?.value,
+              let focalLength = exif.FocalLength?.value,
               let lensModel = exif.LensModel?.value else { return }
         
         let modelLabel = ZigLabel()
@@ -89,7 +89,7 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         paramsLabel.alignment = .left
         contentView.addSubview(paramsLabel)
         paramsLabel.textColor = .white
-        paramsLabel.stringValue = "\(exposureTime) \(fNumber) \(focalLength)"
+        paramsLabel.stringValue = "\(exposureTime)s F\(fNumber) \(focalLength)mm"
         paramsLabel.snp.makeConstraints { make in
             make.trailing.equalTo(imageView).offset(-10)
             make.centerY.equalTo(modelLabel)
@@ -97,13 +97,15 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         
         let lenModelLabel = ZigLabel()
         lenModelLabel.alignment = .left
+        lenModelLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         lenModelLabel.font = NSFont(PingFang: 18)
         contentView.addSubview(lenModelLabel)
         lenModelLabel.textColor = .white
         lenModelLabel.stringValue = lensModel
+        lenModelLabel.lineBreakMode = .byTruncatingTail
         lenModelLabel.snp.makeConstraints { make in
             make.trailing.equalTo(paramsLabel)
-            make.leading.equalTo(paramsLabel)
+            make.leading.greaterThanOrEqualTo(paramsLabel)
             make.centerY.equalTo(timeLabel)
         }
         
@@ -116,14 +118,6 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
             make.top.equalTo(paramsLabel).offset(-2)
             make.bottom.equalTo(lenModelLabel).offset(2)
             make.width.equalTo(2)
-        }
-        
-        for screen in NSScreen.screens {
-            if screen == NSScreen.main {
-                print("\(screen.localizedName) 是当前显示器")
-            } 
-            let bounds = screen.frame
-            print("屏幕 \(screen.localizedName) 的宽度: \(bounds.size.width), 高度: \(bounds.size.height)")
         }
     }
     
