@@ -9,7 +9,8 @@ import Foundation
 import AppKit
 
 class ZigPreviewHelper {
-    
+    static let shared = ZigPreviewHelper()
+    var imagePreviewWindowController: ImagePreviewWindowController?
     public static func preview(fileData: FileData, driveID: String?) {
         switch fileData.category {
         case .Picture:
@@ -41,10 +42,16 @@ class ZigPreviewHelper {
     
     @MainActor
     private static func showImagePreviewController(detailInfo: AliFileDetail) {
-        let previewWindow = ImagePreviewWindowController()
-        previewWindow.detailInfo = detailInfo
-        previewWindow.window?.makeKeyAndOrderFront(nil)
-        previewWindow.window?.center()
+        var previewWindow = ZigPreviewHelper.shared.imagePreviewWindowController
+        if previewWindow == nil {
+            previewWindow = ImagePreviewWindowController()
+            previewWindow!.detailInfo = detailInfo
+            previewWindow!.window?.center()
+        } else {
+            previewWindow!.detailInfo = detailInfo
+        }
+        previewWindow!.window?.makeKeyAndOrderFront(nil)
+        ZigPreviewHelper.shared.imagePreviewWindowController = previewWindow
     }
     
     public static func previewVideoWith(fileID: String, driveID: String?) {

@@ -195,3 +195,25 @@ extension Double {
         }
     }
 }
+
+extension NSWindow {
+    func animatToSize(_ size: CGSize) {
+        let oldX = frame.origin.x
+        let oldY = frame.origin.y
+        let oldW = frame.size.width
+        let oldH = frame.size.height
+        
+        let oldCenter = CGPoint(x: oldX + oldW / 2.0, y: oldY + oldH / 2.0)
+        
+        let newW = size.width
+        let newH = size.height
+        let newX = oldCenter.x - newW / 2.0
+        let newY = oldCenter.y - newH / 2.0
+        
+        NSAnimationContext.runAnimationGroup({context in
+          context.duration = 0.25
+          context.allowsImplicitAnimation = true
+            self.setFrame(NSMakeRect(newX, newY, newW, newH), display: true)
+        }, completionHandler:nil)
+    }
+}

@@ -14,13 +14,60 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
     static let padding = 30.0
     static let bottomHeight = 50.0
     
-    var detailInfo: AliFileDetail?
+    var detailInfo: AliFileDetail? {
+        didSet {
+            guard let info = detailInfo else { return }
+            window?.animatToSize(getWindowSize(with: info))
+            window?.minSize = getMinWindowSize(with: info)
+            updateView(info)
+        }
+    }
     
-    let imagePreviewController = ImagePreviewController()
+    lazy var modelLabel = {
+        let modelLabel = ZigLabel()
+        modelLabel.font = NSFont(PingFangSemiBold: 20)
+        modelLabel.textColor = .white
+        return modelLabel
+    }()
+    
+    lazy var timeLabel = {
+        let timeLabel = ZigLabel()
+        timeLabel.font = NSFont(PingFang: 18)
+        timeLabel.textColor = .white
+        return timeLabel
+    }()
+    
+    lazy var paramsLabel = {
+        let paramsLabel = ZigLabel()
+        paramsLabel.font = NSFont(PingFang: 18)
+        paramsLabel.textColor = .white
+        return paramsLabel
+    }()
+    
+    lazy var lenModelLabel = {
+        let lenModelLabel = ZigLabel()
+        lenModelLabel.alignment = .left
+        lenModelLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        lenModelLabel.font = NSFont(PingFang: 18)
+        lenModelLabel.textColor = .white
+        lenModelLabel.lineBreakMode = .byTruncatingTail
+        return lenModelLabel
+    }()
+    
+    lazy var sepLine = {
+        let sepLine = NSView()
+        sepLine.wantsLayer = true
+        sepLine.layer?.backgroundColor = NSColor.lightGray.cgColor
+        return sepLine
+    }()
     
     let imageView = {
         let view = ABImageView()
         view.contentMode = .aspectFit
+        view.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        view.setContentHuggingPriority(.defaultLow, for: .vertical)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         return view
     }()
     
@@ -31,22 +78,28 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
     override func windowDidLoad() {
         super.windowDidLoad()
         self.window?.backgroundColor = NSColor.black
+        guard let info = detailInfo else { return }
+        updateView(info)
+    }
+    
+    func updateView(_ detailInfo: AliFileDetail) {
         guard let contentView = self.window?.contentView else { return }
-        contentView.addSubview(imageView)
-        imageView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        imageView.setContentHuggingPriority(.defaultLow, for: .vertical)
-        imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         var bottom = Self.padding
-        if (detailInfo?.imageMedia?.exifInfo?.isVaild ?? false) {
+        if (detailInfo.imageMedia?.exifInfo?.isVaild ?? false) {
             bottom += Self.bottomHeight
         }
-        imageView.snp.makeConstraints { make in
+        
+        if imageView.superview == nil {
+            contentView.addSubview(imageView)
+        }
+        imageView.snp.remakeConstraints { make in
             make.edges.equalTo(contentView).inset(NSEdgeInsets(top: Self.padding, left: Self.padding, bottom: bottom, right: Self.padding))
         }
         
-        imageView.kf.setImage(with: detailInfo?.previewURL) { _ in
-            guard let fileID = self.detailInfo?.fileID else { return }
+        imageView.image = nil
+        imageView.kf.cancelDownloadTask()
+        imageView.kf.setImage(with: detailInfo.previewURL) { _ in
+            guard let fileID = detailInfo.fileID else { return }
             
             Task {
                 guard let downloadInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID),
@@ -55,65 +108,61 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
             }
         }
         
-        guard let exif = detailInfo?.imageMedia?.exifInfo,
-              exif.isVaild,
+        let shouldShowParams = (detailInfo.imageMedia?.exifInfo?.isVaild ?? false)
+        [modelLabel, timeLabel, paramsLabel, lenModelLabel, sepLine].forEach { view in
+            view.isHidden = !shouldShowParams
+        }
+        
+        guard shouldShowParams,
+              let exif = detailInfo.imageMedia?.exifInfo,
               let modelName = exif.Model?.value,
-              let cTime = detailInfo?.imageMedia?.time,
+              let cTime = detailInfo.imageMedia?.time,
               let exposureTime = exif.ExposureTime?.value,
               let fNumber = exif.FNumber?.value,
               let focalLength = exif.FocalLength?.value,
               let lensModel = exif.LensModel?.value else { return }
         
-        let modelLabel = ZigLabel()
-        modelLabel.font = NSFont(PingFangSemiBold: 20)
-        contentView.addSubview(modelLabel)
-        modelLabel.textColor = .white
+        if modelLabel.superview == nil {
+            contentView.addSubview(modelLabel)
+        }
         modelLabel.stringValue = modelName
-        modelLabel.snp.makeConstraints { make in
+        modelLabel.snp.remakeConstraints { make in
             make.leading.equalTo(imageView).offset(10)
             make.top.equalTo(imageView.snp.bottom).offset((Self.padding + Self.bottomHeight) / 5)
         }
         
-        let timeLabel = ZigLabel()
-        modelLabel.font = NSFont(PingFang: 18)
-        contentView.addSubview(timeLabel)
-        timeLabel.textColor = .white
+        if timeLabel.superview == nil {
+            contentView.addSubview(timeLabel)
+        }
         timeLabel.stringValue = cTime
-        timeLabel.snp.makeConstraints { make in
+        timeLabel.snp.remakeConstraints { make in
             make.leading.equalTo(imageView).offset(10)
             make.bottom.equalTo(contentView).offset(-(Self.padding + Self.bottomHeight) / 5)
         }
         
-        let paramsLabel = ZigLabel()
-        paramsLabel.font = NSFont(PingFang: 18)
-        paramsLabel.alignment = .left
-        contentView.addSubview(paramsLabel)
-        paramsLabel.textColor = .white
+        if paramsLabel.superview == nil {
+            contentView.addSubview(paramsLabel)
+        }
         paramsLabel.stringValue = "\(exposureTime)s F\(fNumber) \(focalLength)mm"
-        paramsLabel.snp.makeConstraints { make in
+        paramsLabel.snp.remakeConstraints { make in
             make.trailing.equalTo(imageView).offset(-10)
             make.centerY.equalTo(modelLabel)
         }
-        
-        let lenModelLabel = ZigLabel()
-        lenModelLabel.alignment = .left
-        lenModelLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        lenModelLabel.font = NSFont(PingFang: 18)
-        contentView.addSubview(lenModelLabel)
-        lenModelLabel.textColor = .white
+    
+        if lenModelLabel.superview == nil {
+            contentView.addSubview(lenModelLabel)
+        }
         lenModelLabel.stringValue = lensModel
-        lenModelLabel.lineBreakMode = .byTruncatingTail
-        lenModelLabel.snp.makeConstraints { make in
+        lenModelLabel.snp.remakeConstraints { make in
             make.trailing.equalTo(paramsLabel)
             make.leading.greaterThanOrEqualTo(paramsLabel)
             make.centerY.equalTo(timeLabel)
         }
         
-        let sepLine = NSView()
-        sepLine.wantsLayer = true
-        sepLine.layer?.backgroundColor = NSColor.lightGray.cgColor
-        contentView.addSubview(sepLine)
-        sepLine.snp.makeConstraints { make in
+        if sepLine.superview == nil {
+            contentView.addSubview(sepLine)
+        }
+        sepLine.snp.remakeConstraints { make in
             make.trailing.equalTo(paramsLabel.snp.leading).offset(-10)
             make.top.equalTo(paramsLabel).offset(-2)
             make.bottom.equalTo(lenModelLabel).offset(2)
@@ -121,11 +170,28 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         }
     }
     
-    override func loadWindow() {
+    private func getMinWindowSize(with detailInfo: AliFileDetail) -> CGSize {
+        var minHeight = 400.0, minWidth = 400.0
+        if let imageWidth = detailInfo.imageMedia?.width, let imageHeight = detailInfo.imageMedia?.height {
+            let w_h_ration = Double(imageWidth) / Double(imageHeight)
+            if imageWidth > imageHeight {
+                minHeight = minWidth / w_h_ration
+            } else {
+                minWidth = minHeight * w_h_ration
+            }
+            
+            let hasExif = (detailInfo.imageMedia?.exifInfo?.isVaild ?? false)
+            minWidth += 2 * Self.padding
+            minHeight += (2 * Self.padding + (hasExif ? Self.bottomHeight : 0.0))
+        }
+        return CGSize(width: minWidth, height: minHeight)
+    }
+    
+    private func getWindowSize(with detailInfo: AliFileDetail) -> CGSize {
         var width = 280.0, height = 400.0
         let standardHeight = 600.0, standardWidth = 600.0
         var minHeight = 400.0, minWidth = 400.0
-        if let imageWidth = detailInfo?.imageMedia?.width, let imageHeight = detailInfo?.imageMedia?.height {
+        if let imageWidth = detailInfo.imageMedia?.width, let imageHeight = detailInfo.imageMedia?.height {
             let w_h_ration = Double(imageWidth) / Double(imageHeight)
             if imageWidth > imageHeight {
                 width = standardWidth
@@ -137,17 +203,24 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
                 minWidth = minHeight * w_h_ration
             }
             
-            let hasExif = (detailInfo?.imageMedia?.exifInfo?.isVaild ?? false)
+            let hasExif = (detailInfo.imageMedia?.exifInfo?.isVaild ?? false)
             width += 2 * Self.padding
             height += (2 * Self.padding + (hasExif ? Self.bottomHeight : 0.0))
             minWidth += 2 * Self.padding
             minHeight += (2 * Self.padding + (hasExif ? Self.bottomHeight : 0.0))
         }
         let frame: CGRect = CGRect(x: 0, y: 0, width: width, height: height)
+        return CGSize(width: width, height: height)
+    }
+    
+    override func loadWindow() {
+        let windowSize = getWindowSize(with: detailInfo!)
+        let minSize = getMinWindowSize(with: detailInfo!)
+        let frame: CGRect = CGRect(x: 0, y: 0, width: windowSize.width, height: windowSize.height)
         let style: NSWindow.StyleMask = [.titled, .closable, .resizable, .fullSizeContentView]
         let back: NSWindow.BackingStoreType = .buffered
         let window: NSWindow = NSWindow(contentRect: frame, styleMask: style, backing: back, defer: false)
-        window.minSize = CGSize(width: minWidth, height: minHeight)
+        window.minSize = CGSize(width: minSize.width, height: minSize.height)
         window.backgroundColor = NSColor.black
         window.contentView?.wantsLayer = true
         window.contentView?.layer?.backgroundColor = NSColor.black.cgColor
