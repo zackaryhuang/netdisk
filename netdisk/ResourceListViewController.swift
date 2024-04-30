@@ -169,20 +169,7 @@ class ResourceListViewController: NSViewController {
            offsetY + visibleHeight == documentViewHeight {
             requestMoreFiles()
         }
-    }
-    
-    private func previewImageWith(fileID: String) {
-        Task {
-            let fileDetail = try? await WebRequest.requestFileDetail(fileID: fileID)
-            if let detailInfo = fileDetail {
-                let previewWindow = ImagePreviewWindowController()
-                previewWindow.detailInfo = detailInfo
-                previewWindow.window?.makeKeyAndOrderFront(nil)
-                previewWindow.window?.center()
-            }
-        }
-
-    }    
+    }   
 }
 
 extension ResourceListViewController: CategoryVC {

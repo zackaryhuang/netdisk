@@ -302,7 +302,7 @@ class DownloadRowView: NSTableRowView {
         fileNameLabel.stringValue = task.fileName
         let downloadedSize = task.progress.completedUnitCount
         let totalSize = task.progress.totalUnitCount
-        fileSizeLabel.stringValue = "\(Double(downloadedSize).binarySizeString) / \(Double(totalSize).binarySizeString)"
+        fileSizeLabel.stringValue = "\(Double(downloadedSize).decimalSizeString) / \(Double(totalSize).decimalSizeString)"
         
         updateStatus()
         
@@ -312,7 +312,7 @@ class DownloadRowView: NSTableRowView {
                 let downloadedSize = task.progress.completedUnitCount
                 let totalSize = task.progress.totalUnitCount
                 self.downloadStatueLabel.stringValue = task.speedString
-                self.fileSizeLabel.stringValue = "\(Double(downloadedSize).binarySizeString) / \(Double(totalSize).binarySizeString)"
+                self.fileSizeLabel.stringValue = "\(Double(downloadedSize).decimalSizeString) / \(Double(totalSize).decimalSizeString)"
                 progressView.doubleValue = task.progress.fractionCompleted
             }
         } else {

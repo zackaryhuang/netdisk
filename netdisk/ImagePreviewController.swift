@@ -25,14 +25,24 @@ class ImagePreviewController: NSViewController {
         // Do view setup here.
         view.addSubview(imageView)
         imageView.snp.makeConstraints { make in
-            make.edges.equalTo(view).inset(NSEdgeInsets(top: 50, left: 50, bottom: 50, right: 50))
-            make.width.equalTo(720)
-            make.height.equalTo(576)
+            make.edges.equalTo(view)
+//            make.width.equalTo(720)
+//            make.height.equalTo(576)
         }
         
         if let previewURL = detailInfo?.previewURL {
             imageView.kf.setImage(with: previewURL)
         }
+        
+        guard let fileID = detailInfo?.fileID else { return }
+        
+        Task {
+            guard let downloadInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID),
+            let downloadURL = downloadInfo.downloadURL else { return }
+            imageView.kf.cancelDownloadTask()
+            imageView.kf.setImage(with: downloadURL)
+        }
+        
         
 //        if let url = detailInfo?.downloadLink {
 //            AF.download(url, parameters: ["access_token" : UserDefaults.standard.object(forKey: "UserAccessToken") as! String], headers: ["User-Agent" : "pan.baidu.com"] ,to: DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory, options: .removePreviousFile)).response { response in

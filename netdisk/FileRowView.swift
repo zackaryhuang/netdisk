@@ -192,7 +192,7 @@ class FileRowView: NSTableRowView {
         titleLabel.stringValue = fileData.fileName
         if let size = fileData.size, size > 0 {
             fileSizeLabel.isHidden = false
-            fileSizeLabel.stringValue = Double(size).binarySizeString
+            fileSizeLabel.stringValue = Double(size).decimalSizeString
         } else {
             fileSizeLabel.isHidden = true
             fileSizeLabel.stringValue = ""

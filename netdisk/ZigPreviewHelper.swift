@@ -33,16 +33,26 @@ class ZigPreviewHelper {
     
     public static func previewImageWith(fileID: String, driveID: String?) {
         Task {
-            let fileDetail = try? await WebRequest.requestFileDetail(fileID: fileID, driveID: driveID)
-            if let detailInfo = fileDetail {
-                await showImagePreviewController(detailInfo: detailInfo)
-            }
+            guard let fileDetail = try? await WebRequest.requestFileDetail(fileID: fileID, driveID: driveID) else { return }
+            
+            
+//            if let jsonString = fileDetail.imageMedia?.exif,
+//               let jsonData = jsonString.data(using: .utf8) {
+//                do {
+//                    let json = try JSONSerialization.jsonObject(with: jsonData, options: []) as! [String: Any]
+//                    print(json)
+//                } catch {
+//                    print(error.localizedDescription)
+//                }
+//            }
+            
+            await showImagePreviewController(detailInfo: fileDetail)
         }
 
     }
     
     @MainActor
-    private static func showImagePreviewController(detailInfo: FileDetail) {
+    private static func showImagePreviewController(detailInfo: AliFileDetail) {
         let previewWindow = ImagePreviewWindowController()
         previewWindow.detailInfo = detailInfo
         previewWindow.window?.makeKeyAndOrderFront(nil)

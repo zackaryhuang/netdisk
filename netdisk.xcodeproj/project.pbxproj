@@ -24,6 +24,7 @@
 		3065E3532BA73A8300A3114F /* ZigBookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3065E3522BA73A8300A3114F /* ZigBookmark.swift */; };
 		306954E02ABB39910059901F /* AlertWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306954DF2ABB39910059901F /* AlertWindow.swift */; };
 		306954E32ABB3AC70059901F /* ZigLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306954E22ABB3AC70059901F /* ZigLabel.swift */; };
+		306B279C2BDFEC9F00CF681A /* ABImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306B279B2BDFEC9F00CF681A /* ABImageView.swift */; };
 		306EE5AF2AA0E3EB00428E82 /* FileRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EE5AE2AA0E3EB00428E82 /* FileRowView.swift */; };
 		306EE5B12AA0FF2900428E82 /* UsageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306EE5B02AA0FF2900428E82 /* UsageView.swift */; };
 		308429D02AAC7AC70086AB2E /* ImagePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308429CF2AAC7AC70086AB2E /* ImagePreviewController.swift */; };
@@ -80,6 +81,7 @@
 		3065E3522BA73A8300A3114F /* ZigBookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigBookmark.swift; sourceTree = "<group>"; };
 		306954DF2ABB39910059901F /* AlertWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertWindow.swift; sourceTree = "<group>"; };
 		306954E22ABB3AC70059901F /* ZigLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZigLabel.swift; sourceTree = "<group>"; };
+		306B279B2BDFEC9F00CF681A /* ABImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABImageView.swift; sourceTree = "<group>"; };
 		306EE5AE2AA0E3EB00428E82 /* FileRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRowView.swift; sourceTree = "<group>"; };
 		306EE5B02AA0FF2900428E82 /* UsageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageView.swift; sourceTree = "<group>"; };
 		308429CF2AAC7AC70086AB2E /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 			isa = PBXGroup;
 			children = (
 				306954E22ABB3AC70059901F /* ZigLabel.swift */,
+				306B279B2BDFEC9F00CF681A /* ABImageView.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -332,6 +335,7 @@
 				30BB718E2A9E444200ADBF01 /* LoginViewController.swift in Sources */,
 				30BB71782A9E414B00ADBF01 /* AppDelegate.swift in Sources */,
 				3024970D2AA7889F00E2AD24 /* Utils.swift in Sources */,
+				306B279C2BDFEC9F00CF681A /* ABImageView.swift in Sources */,
 				306954E02ABB39910059901F /* AlertWindow.swift in Sources */,
 				309DDC9A2BD7FF93008ACB9C /* UploadListViewController.swift in Sources */,
 				3065E2D52BA5D1B300A3114F /* SearchView.swift in Sources */,

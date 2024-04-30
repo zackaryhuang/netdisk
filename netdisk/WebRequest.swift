@@ -145,23 +145,58 @@ struct BaiduDownloadInfo: DownloadInfo {
 }
 
 struct AliFileDetail: FileDetail {
-    let url: String?
-    let id: String?
-    var previewURL: URL? {
-        if let urlString = url {
-            return URL(string: urlString)
-        }
-        return nil
-    }
+    let thumbnail: String?
+    let fileID: String?
+    let imageMedia: ImageMediaMetaData?
     
-    var fileID: String? {
-        return id
+    var previewURL: URL? {
+        guard let thumbnail = thumbnail else { return nil }
+        return URL(string: thumbnail)
     }
     
     private enum CodingKeys : String, CodingKey {
-        case url
-        case id = "file_id"
+        case thumbnail
+        case fileID = "file_id"
+        case imageMedia = "image_media_metadata"
     }
+}
+
+struct ImageMediaMetaData: Codable {
+    let width: Int
+    let height: Int
+    let time: String?
+    let exifSting: String?
+    var exifInfo: EXIFInfo?  {
+        get {
+            guard let exifSting = self.exifSting,
+                  let jsonData = exifSting.data(using: .utf8),
+                  let data = try? JSON(jsonData).rawData(),
+                  let exif = try? JSONDecoder().decode(EXIFInfo.self, from: data) else {return nil}
+            return exif
+        }
+    }
+    
+    private enum CodingKeys : String, CodingKey {
+        case width, height, time
+        case exifSting = "exif"
+    }
+}
+
+struct EXIFInfo: Codable {
+    // 快门
+    let ExposureTime: EXIFStringValue?
+    // 光圈
+    let FNumber: EXIFStringValue?
+    // 焦距
+    let FocalLengthIn35mmFilm: EXIFStringValue?
+    // 镜头型号
+    let LensModel: EXIFStringValue?
+    // 相机型号
+    let Model: EXIFStringValue?
+}
+
+struct EXIFStringValue: Codable {
+    let value: String
 }
 
 struct BaiduFileDetail: FileDetail {
@@ -594,7 +629,7 @@ class WebRequest {
     ///   - fileID: 文件 ID
     ///   - driveID: 资源盘/备份盘
     /// - Returns: 文件详情
-    static func requestFileDetail(fileID: String, driveID: String? = ZigClientManager.shared.aliUserData?.defaultDriveID) async throws -> FileDetail? {
+    static func requestFileDetail(fileID: String, driveID: String? = ZigClientManager.shared.aliUserData?.defaultDriveID) async throws -> AliFileDetail? {
         if ZigClientManager.shared.currentClient() == .Aliyun {
             guard let id = driveID else {
                 return nil
@@ -608,17 +643,18 @@ class WebRequest {
             return res
         }
         
-        guard let accessToken = ZigClientManager.shared.accessToken else {
-            return nil
-        }
-        
-        let params = [
-            "method": "filemetas",
-            "access_token": accessToken,
-            "fsids": [fileID]
-        ] as [String : Any]
-        let res: BaiduFileDetail? = try? await request(method: .get, url: EndPoint.BaiduFileDetail, parameters: params)
-        return res
+//        guard let accessToken = ZigClientManager.shared.accessToken else {
+//            return nil
+//        }
+//        
+//        let params = [
+//            "method": "filemetas",
+//            "access_token": accessToken,
+//            "fsids": [fileID]
+//        ] as [String : Any]
+//        let res: BaiduFileDetail? = try? await request(method: .get, url: EndPoint.BaiduFileDetail, parameters: params)
+//        return res
+        return nil
     }
     
     /// 获取下载链接

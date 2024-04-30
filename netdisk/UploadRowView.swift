@@ -300,7 +300,7 @@ class UploadRowView: NSTableRowView {
         fileNameLabel.stringValue = task.fileName ?? ""
         let downloadedSize = Double(task.fileSize) * task.progress
         let totalSize = task.fileSize
-        fileSizeLabel.stringValue = "\(downloadedSize.binarySizeString) / \(Double(totalSize).binarySizeString)"
+        fileSizeLabel.stringValue = "\(downloadedSize.decimalSizeString) / \(Double(totalSize).decimalSizeString)"
         
         updateStatus()
         
@@ -316,8 +316,8 @@ class UploadRowView: NSTableRowView {
             task.progressHandler = { [weak self] progress in
                 guard let self = self else { return }
                 let downloadedSize = progress * Double(totalSize)
-                self.downloadStatueLabel.stringValue = "\(task.speed.binarySizeString) / s"
-                self.fileSizeLabel.stringValue = "\(downloadedSize.binarySizeString) / \(Double(totalSize).binarySizeString)"
+                self.downloadStatueLabel.stringValue = "\(task.speed.decimalSizeString) / s"
+                self.fileSizeLabel.stringValue = "\(downloadedSize.decimalSizeString) / \(Double(totalSize).decimalSizeString)"
                 progressView.doubleValue = progress
             }
         } else {
