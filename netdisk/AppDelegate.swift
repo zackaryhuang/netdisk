@@ -8,7 +8,7 @@
 import Cocoa
 import Sparkle
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
 
     let windowController = MainWindowController()
 
@@ -45,5 +45,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
 
+    func updater(_ updater: SPUUpdater, didFinishLoading appcast: SUAppcast) {
+        debugPrint(appcast.items)
+    }
+    
+    func updaterDidNotFindUpdate(_ updater: SPUUpdater) {
+        debugPrint("failed")
+    }
+    
+    func updater(_ updater: SPUUpdater, didFinishUpdateCycleFor updateCheck: SPUUpdateCheck, error: (any Error)?) {
+        debugPrint("\(error?.localizedDescription ?? "succeed")")
+    }
 }
 
