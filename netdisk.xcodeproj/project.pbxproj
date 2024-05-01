@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		30008DFB2B86458800F2BE37 /* DownloadListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30008DFA2B86458800F2BE37 /* DownloadListViewController.swift */; };
 		300108EE2A9E58F5002FBB52 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300108EC2A9E58F5002FBB52 /* MainViewController.swift */; };
-		300108EF2A9E58F5002FBB52 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 300108ED2A9E58F5002FBB52 /* MainViewController.xib */; };
 		3013B9252AB75D3200DD2F63 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3013B9242AB75D3200DD2F63 /* Extensions.swift */; };
 		3024970B2AA77E2600E2AD24 /* DownloadRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3024970A2AA77E2600E2AD24 /* DownloadRowView.swift */; };
 		3024970D2AA7889F00E2AD24 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3024970C2AA7889F00E2AD24 /* Utils.swift */; };
@@ -49,6 +48,8 @@
 		30BB718E2A9E444200ADBF01 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BB718C2A9E444200ADBF01 /* LoginViewController.swift */; };
 		30BB71912A9E45D300ADBF01 /* CommonDefine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BB71902A9E45D300ADBF01 /* CommonDefine.swift */; };
 		30C508132AAB55D60076E842 /* ImagePreviewWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C508122AAB55D60076E842 /* ImagePreviewWindowController.swift */; };
+		30C8CCC52BE1DFEB009AA7B4 /* ABProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C8CCC42BE1DFEB009AA7B4 /* ABProgressHUD.swift */; };
+		30C8CCC82BE1ED0F009AA7B4 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 30C8CCC72BE1ED0F009AA7B4 /* Sparkle */; };
 		30D588792B96043200DCE9CB /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 30D588782B96043200DCE9CB /* SwiftyJSON */; };
 		30D5887C2B96044500DCE9CB /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 30D5887B2B96044500DCE9CB /* Kingfisher */; };
 		30D5887F2B96045500DCE9CB /* FMDB in Frameworks */ = {isa = PBXBuildFile; productRef = 30D5887E2B96045500DCE9CB /* FMDB */; };
@@ -66,7 +67,6 @@
 /* Begin PBXFileReference section */
 		30008DFA2B86458800F2BE37 /* DownloadListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListViewController.swift; sourceTree = "<group>"; };
 		300108EC2A9E58F5002FBB52 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
-		300108ED2A9E58F5002FBB52 /* MainViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
 		300489392AA6398D0099450D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3013B9242AB75D3200DD2F63 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3024970A2AA77E2600E2AD24 /* DownloadRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadRowView.swift; sourceTree = "<group>"; };
@@ -108,6 +108,7 @@
 		30BB718C2A9E444200ADBF01 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		30BB71902A9E45D300ADBF01 /* CommonDefine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonDefine.swift; sourceTree = "<group>"; };
 		30C508122AAB55D60076E842 /* ImagePreviewWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewWindowController.swift; sourceTree = "<group>"; };
+		30C8CCC42BE1DFEB009AA7B4 /* ABProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ABProgressHUD.swift; sourceTree = "<group>"; };
 		30CE8BEF2BA9EDDB007D6052 /* LXGWWenKaiMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LXGWWenKaiMono-Regular.ttf"; sourceTree = "<group>"; };
 		30CE8BF02BA9EDDC007D6052 /* LXGWWenKaiMono-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LXGWWenKaiMono-Bold.ttf"; sourceTree = "<group>"; };
 		30CE8BF12BA9EDDC007D6052 /* LXGWWenKaiMono-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "LXGWWenKaiMono-Light.ttf"; sourceTree = "<group>"; };
@@ -125,6 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				30C8CCC82BE1ED0F009AA7B4 /* Sparkle in Frameworks */,
 				30D588792B96043200DCE9CB /* SwiftyJSON in Frameworks */,
 				30D588822B96067A00DCE9CB /* Alamofire in Frameworks */,
 				30D588852B96069600DCE9CB /* SnapKit in Frameworks */,
@@ -181,6 +183,7 @@
 				309AFD242AA49B6C005F50C9 /* TabItemView.swift */,
 				309DDC9B2BD80098008ACB9C /* UploadRowView.swift */,
 				306954DF2ABB39910059901F /* AlertWindow.swift */,
+				30C8CCC42BE1DFEB009AA7B4 /* ABProgressHUD.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -195,7 +198,6 @@
 				30B7E9312BB06C3A00870ABA /* ResourceListViewController.swift */,
 				30008DFA2B86458800F2BE37 /* DownloadListViewController.swift */,
 				309DDC992BD7FF93008ACB9C /* UploadListViewController.swift */,
-				300108ED2A9E58F5002FBB52 /* MainViewController.xib */,
 				30C508122AAB55D60076E842 /* ImagePreviewWindowController.swift */,
 				308429CF2AAC7AC70086AB2E /* ImagePreviewController.swift */,
 			);
@@ -292,6 +294,7 @@
 				30D588812B96067A00DCE9CB /* Alamofire */,
 				30D588842B96069600DCE9CB /* SnapKit */,
 				3065E34E2BA72BEB00A3114F /* Tiercel */,
+				30C8CCC72BE1ED0F009AA7B4 /* Sparkle */,
 			);
 			productName = netdisk;
 			productReference = 30BB71742A9E414B00ADBF01 /* ABCloud.app */;
@@ -328,6 +331,7 @@
 				30D588802B96067A00DCE9CB /* XCRemoteSwiftPackageReference "Alamofire" */,
 				30D588832B96069600DCE9CB /* XCRemoteSwiftPackageReference "SnapKit" */,
 				3065E34D2BA72BEB00A3114F /* XCLocalSwiftPackageReference "netdisk/Tiercel" */,
+				30C8CCC62BE1ED0F009AA7B4 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			productRefGroup = 30BB71752A9E414B00ADBF01 /* Products */;
 			projectDirPath = "";
@@ -345,7 +349,6 @@
 			files = (
 				3065E34C2BA72B2100A3114F /* Tiercel in Resources */,
 				30BB717C2A9E414C00ADBF01 /* Assets.xcassets in Resources */,
-				300108EF2A9E58F5002FBB52 /* MainViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,6 +404,7 @@
 				30B7E92E2BB0584300870ABA /* SubSidePanelView.swift in Sources */,
 				306EE5AF2AA0E3EB00428E82 /* FileRowView.swift in Sources */,
 				3036F4542B3B1C6900F365E4 /* SidePanelView.swift in Sources */,
+				30C8CCC52BE1DFEB009AA7B4 /* ABProgressHUD.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,7 +446,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -540,7 +544,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = netdisk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Fox Clolud";
+				INFOPLIST_KEY_CFBundleDisplayName = ABCloud;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -549,7 +553,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thatisawesome.netdisk;
 				PRODUCT_NAME = ABCloud;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -571,7 +575,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = netdisk/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Fox Clolud";
+				INFOPLIST_KEY_CFBundleDisplayName = ABCloud;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -580,7 +584,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.thatisawesome.netdisk;
 				PRODUCT_NAME = ABCloud;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -619,6 +623,14 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		30C8CCC62BE1ED0F009AA7B4 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.0;
+			};
+		};
 		30D588772B96043200DCE9CB /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
@@ -665,6 +677,11 @@
 		3065E34E2BA72BEB00A3114F /* Tiercel */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Tiercel;
+		};
+		30C8CCC72BE1ED0F009AA7B4 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 30C8CCC62BE1ED0F009AA7B4 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 		30D588782B96043200DCE9CB /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;

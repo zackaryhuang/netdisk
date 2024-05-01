@@ -98,12 +98,14 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
         
         imageView.image = nil
         imageView.kf.cancelDownloadTask()
-        imageView.kf.setImage(with: detailInfo.previewURL) { _ in
-            guard let fileID = detailInfo.fileID else { return }
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: detailInfo.previewURL) { [weak self] _ in
+            guard let fileID = detailInfo.fileID, let self = self else { return }
             
             Task {
                 guard let downloadInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID),
                 let downloadURL = downloadInfo.downloadURL else { return }
+                self.imageView.kf.indicatorType = .none
                 self.imageView.kf.setImage(with: downloadURL, placeholder: self.imageView.image)
             }
         }
@@ -119,7 +121,6 @@ class ImagePreviewWindowController: NSWindowController, NSWindowDelegate {
               let cTime = detailInfo.imageMedia?.time,
               let exposureTime = exif.ExposureTime?.value,
               let fNumber = exif.FNumber?.value,
-              let focalLength = exif.FocalLength?.value,
               let iso = exif.ISOSpeedRatings?.value,
               let lensModel = exif.LensModel?.value else { return }
         

@@ -2,13 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key>
-	<string>ABCloud</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>SUFeedURL</key>
+	<string>http://127.0.0.1:8000/apps/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>fZYg8GpQ5UJEEc7+eQk5OZwL1sSbuJnWRp0moMR68sM=</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>LXGWWenKaiMono-Regular.ttf</string>

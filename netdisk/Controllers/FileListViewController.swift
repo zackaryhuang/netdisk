@@ -129,7 +129,9 @@ class FileListViewController: NSViewController, CategoryVC {
         startMarker = nil
         Task {
             let currentClient = ZigClientManager.shared.currentClient()
+            view.showHUD()
             if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? parentFolderID : path ?? "/", useResourceDrive: listType == .resource) {
+                view.hideHUD()
                 fileList = fileResp.fileList
                 tableView.reloadData()
                 if ZigClientManager.shared.currentClient() == .Aliyun {

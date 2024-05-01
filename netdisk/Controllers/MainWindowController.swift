@@ -21,8 +21,10 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
         super.windowDidLoad()
         ZigClientManager.shared.mainWindowController = self
         ZigUserManager.sharedInstance.delegate = self
+        ABProgressHUD.showHUD()
         ZigUserManager.sharedInstance.requestUserData { success in
             DispatchQueue.main.async { [weak self] in
+                ABProgressHUD.hideHUD()
                 guard let self = self, let window = self.window else { return }
                 if success {
                     // 已登录
