@@ -30,10 +30,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         submenu.addItem(NSMenuItem(title: "检查更新", action: #selector(checkUpdate), keyEquivalent: ""))
         menu.setSubmenu(submenu, for: menu.items.first!)
         NSApp.mainMenu = menu
+        
+        checkUpdate()
     }
 
     @objc func checkUpdate() {
-        updaterController.checkForUpdates(nil)
+        updaterController.checkForUpdates(self)
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -43,7 +45,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
         return true
     }
-
 
     func updater(_ updater: SPUUpdater, didFinishLoading appcast: SUAppcast) {
         debugPrint(appcast.items)
