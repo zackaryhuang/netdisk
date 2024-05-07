@@ -50,9 +50,7 @@ class FileListViewController: NSViewController, CategoryVC {
     var tableContainerView: NSScrollView!
     
     var fileList: [any FileData]?
-    
-    var path: String?
-    var parentFolderID = "root"
+    lazy var parentFolderID = self.currentFolderPath.last!.folderID
     var startMarker: String?
     var hasMore = true
     var isLoadingMore = false
@@ -119,14 +117,6 @@ class FileListViewController: NSViewController, CategoryVC {
                 }
             }
         }
-        
-//        debugPrint("新建文件夹");
-//        Task {
-//            if let success = try? await WebRequest.createFolder(parentFileID: parentFolderID, folderName: "这是一个新建的文件夹"), success {
-//                debugPrint("创建成功")
-//                requestFiles()
-//            }
-//        }
     }
     
     private func requestFiles() {
@@ -134,7 +124,7 @@ class FileListViewController: NSViewController, CategoryVC {
         Task {
             let currentClient = ZigClientManager.shared.currentClient()
             view.showHUD()
-            if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? parentFolderID : path ?? "/", useResourceDrive: listType == .resource) {
+            if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentFolderPath.last!, listType: listType) {
                 view.hideHUD()
                 fileList = fileResp.fileList
                 tableView.reloadData()
@@ -166,7 +156,7 @@ class FileListViewController: NSViewController, CategoryVC {
         
         Task {
             let currentClient = ZigClientManager.shared.currentClient()
-            if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentClient == .Aliyun ? self.parentFolderID : self.path ?? "/", useResourceDrive: listType == .resource) {
+            if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: self.currentFolderPath.last!, listType: listType) {
                 isLoadingMore = false
                 
                 if let list = fileResp.fileList {
@@ -202,20 +192,42 @@ class FileListViewController: NSViewController, CategoryVC {
         if fileData.isDir {
             if filePathView.inSearchMode {
                 filePathView.endSearch()
+                guard let driveID = listType == .backup ? ZigClientManager.shared.aliUserData?.backupDriveID : ZigClientManager.shared.aliUserData?.resourceDriveID else { return }
+                Task {
+                    if let resp = try? await WebRequest.requestFileDetail(fileID:fileData.fileID, driveID:driveID),
+                       let namePaths = resp.namePath?.split(separator: "/"),
+                       let IDPath = resp.IDPath?.split(separator: "/"),
+                       namePaths.count == IDPath.count {
+                        var newFolderPath = [ABFolderPath]()
+                        for (index, str) in namePaths.enumerated() {
+                            var folderID = String(IDPath[index])
+                            var folderName = String(str)
+                            if folderName == "root:" {
+                                folderName = currentFolderPath.first!.folderName
+                            }
+                            if folderID == "root:" {
+                                folderID = "root"
+                            }
+                            newFolderPath.append(ABFolderPath(folderID: folderID, folderName: folderName))
+                        }
+                        currentFolderPath = newFolderPath
+                        filePathView.folderPaths = currentFolderPath
+                        startMarker = nil
+                        fileList?.removeAll()
+                        tableView.reloadData()
+                        requestFiles()
+                    }
+                }
+            } else {
+                currentFolderPath.append(ABFolderPath(folderID: fileData.fileID, folderName: fileData.fileName))
+                filePathView.folderPaths = currentFolderPath
+                parentFolderID = fileData.fileID
+                startMarker = nil
+                fileList?.removeAll()
+                tableView.reloadData()
+                requestFiles()
             }
             
-            currentFolderPath.append(ABFolderPath(folderID: fileData.fileID, folderName: fileData.fileName))
-            filePathView.folderPaths = currentFolderPath
-            parentFolderID = fileData.fileID
-            startMarker = nil
-            if path == nil {
-                path = "/\(fileData.fileName)"
-            } else {
-                path? += "/\(fileData.fileName)"
-            }
-            fileList?.removeAll()
-            tableView.reloadData()
-            requestFiles()
             return
         }
         

@@ -149,6 +149,9 @@ struct AliFileDetail: FileDetail {
     let fileID: String?
     let imageMedia: ImageMediaMetaData?
     
+    let IDPath: String?
+    let namePath: String?
+    
     var previewURL: URL? {
         guard let thumbnail = thumbnail else { return nil }
         return URL(string: thumbnail)
@@ -158,6 +161,8 @@ struct AliFileDetail: FileDetail {
         case thumbnail
         case fileID = "file_id"
         case imageMedia = "image_media_metadata"
+        case IDPath = "id_path"
+        case namePath = "name_path"
     }
 }
 
@@ -716,6 +721,7 @@ class WebRequest {
             let params = [
                 "drive_id" : id,
                 "file_id" : fileID,
+                "fields" : "id_path,name_path"
             ] as [String:Any]
             
             let res: AliFileDetail? = try? await request(method: .post, url: EndPoint.AliFileDetail, parameters: params)
@@ -755,14 +761,14 @@ class WebRequest {
         return res
     }
     
-    static func requestFileList(startMark: String?, limit: Int, parentFolder: String, useResourceDrive: Bool = false) async throws -> FileListResp? {
+    static func requestFileList(startMark: String?, limit: Int, parentFolder: ABFolderPath, listType: FileListType) async throws -> FileListResp? {
         if ZigClientManager.shared.currentClient() == .Aliyun {
             var params = [
                 "limit" : limit,
-                "parent_file_id": parentFolder
+                "parent_file_id": parentFolder.folderID
             ] as [String:Any]
             
-            if useResourceDrive {
+            if listType == .resource {
                 guard let driveID = ZigClientManager.shared.aliUserData?.resourceDriveID else {
                     return nil
                 }
@@ -790,7 +796,7 @@ class WebRequest {
             "method": "list",
             "access_token": accessToken,
             "start": Int(startMark ?? "0") ?? 0,
-            "dir": parentFolder,
+            "dir": parentFolder.folderID,
             "limit": limit
         ] as [String : Any]
         let res: BaiduFileListResp? = try? await request(method: .get, url: EndPoint.BaiduFileList, parameters: params)
