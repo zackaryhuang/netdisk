@@ -19,8 +19,14 @@ class ResourceListViewController: NSViewController {
         return tableView;
     }()
     
-    let filePathView = {
-        let view = FilePathView(rootName: "资源库")
+    let listType: FileListType = .resource
+    
+    lazy var currentFolderPath = {
+        [ABFolderPath(folderID: "root", folderName: listType == .backup ? "备份盘" : "资源库")]
+    }()
+    
+    lazy var filePathView = {
+        let view = FilePathView(folderPaths: currentFolderPath)
         return view
     }()
     
@@ -142,9 +148,12 @@ class ResourceListViewController: NSViewController {
             return
         }
         if fileData.isDir {
-            var currentFilePath = filePathView.filePaths
-            currentFilePath.append((path: fileData.fileName, folderID: fileData.fileID))
-            filePathView.filePaths = currentFilePath
+            if filePathView.inSearchMode {
+                filePathView.endSearch()
+            }
+            
+            currentFolderPath.append(ABFolderPath(folderID: fileData.fileID, folderName: fileData.fileName))
+            filePathView.folderPaths = currentFolderPath
             parentFolderID = fileData.fileID
             startMarker = nil
             if path == nil {
@@ -201,13 +210,10 @@ extension ResourceListViewController: NSTableViewDelegate, NSTableViewDataSource
         return 54
     }
     
-    func filePathViewPathDidChange(path: String, folderID: String?) {
-        if path != self.path {
-            self.path = path
-            if let id = folderID {
-                self.parentFolderID = id
-            }
-            startMarker = nil
+    func filePathViewPathDidChange(currentPaths: [ABFolderPath]) {
+        if currentPaths.last != currentFolderPath.last {
+            currentFolderPath = currentPaths
+            parentFolderID = currentPaths.last!.folderID
             fileList?.removeAll()
             tableView.reloadData()
             requestFiles()

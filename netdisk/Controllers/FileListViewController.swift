@@ -21,6 +21,10 @@ class FileListViewController: NSViewController, CategoryVC {
 
     var listType = FileListType.backup
     
+    lazy var currentFolderPath = {
+        [ABFolderPath(folderID: "root", folderName: listType == .backup ? "备份盘" : "资源库")]
+    }()
+    
     init(listType: FileListType) {
         super.init(nibName: nil, bundle: nil)
         self.listType = listType
@@ -38,8 +42,8 @@ class FileListViewController: NSViewController, CategoryVC {
         return tableView;
     }()
     
-    let filePathView = {
-        let view = FilePathView(rootName: "备份盘")
+    lazy var filePathView = {
+        let view = FilePathView(folderPaths: self.currentFolderPath)
         return view
     }()
     
@@ -199,9 +203,9 @@ class FileListViewController: NSViewController, CategoryVC {
             if filePathView.inSearchMode {
                 filePathView.endSearch()
             }
-            var currentFilePath = filePathView.filePaths
-            currentFilePath.append((path: fileData.fileName, folderID: fileData.fileID))
-            filePathView.filePaths = currentFilePath
+            
+            currentFolderPath.append(ABFolderPath(folderID: fileData.fileID, folderName: fileData.fileName))
+            filePathView.folderPaths = currentFolderPath
             parentFolderID = fileData.fileID
             startMarker = nil
             if path == nil {
@@ -259,12 +263,10 @@ extension FileListViewController: NSTableViewDelegate, NSTableViewDataSource, Fi
         return 54
     }
     
-    func filePathViewPathDidChange(path: String, folderID: String?) {
-        if path != self.path {
-            self.path = path
-            if let id = folderID {
-                self.parentFolderID = id
-            }
+    func filePathViewPathDidChange(currentPaths: [ABFolderPath]) {
+        if currentPaths.last != currentFolderPath.last {
+            currentFolderPath = currentPaths
+            parentFolderID = currentPaths.last!.folderID
             fileList?.removeAll()
             tableView.reloadData()
             requestFiles()

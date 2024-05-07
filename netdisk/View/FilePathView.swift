@@ -8,9 +8,14 @@
 import Cocoa
 
 protocol FilePathViewDelegate: NSObjectProtocol {
-    func filePathViewPathDidChange(path: String, folderID: String?)
+    func filePathViewPathDidChange(currentPaths: [ABFolderPath])
     func searchViewStartSearch(keywords: String)
     func searchViewDidEndSearch()
+}
+
+struct ABFolderPath: Equatable {
+    let folderID: String
+    let folderName: String
 }
 
 class FilePathView: NSView {
@@ -18,25 +23,23 @@ class FilePathView: NSView {
     static let SearchViewWidth = 140.0
     var searchView: SearchView!
     
-    var rootName: String
+    var folderPaths: [ABFolderPath]! {
+        didSet {
+            updateUI()
+        }
+    }
     
     var inSearchMode = false
     var isSearchViewAnimating = false
     
     weak var delegate: FilePathViewDelegate?
     
-    lazy var filePaths:[(String, String?)] = [(self.rootName, "root")] {
-        didSet {
-            updateUI()
-        }
-    }
-    
     var paths = [PathItem]()
     
-    init(rootName: String) {
-        self.rootName = rootName
+    init(folderPaths: [ABFolderPath]) {
         super.init(frame: NSZeroRect)
         setupUI()
+        self.folderPaths = folderPaths
     }
     
     required init?(coder: NSCoder) {
@@ -109,8 +112,11 @@ class FilePathView: NSView {
         }
         
         var pathItems = [PathItem]()
-        filePaths.forEach { (path: String, folderID: String?) in
-            pathItems.append(PathItem(pathUnit: path, shouldIgnore: false, folderID: folderID))
+        folderPaths.forEach { folderPath in
+            let pathItem = PathItem(pathUnit: folderPath.folderName,
+                                    shouldIgnore: false,
+                                    folderID: folderPath.folderID)
+            pathItems.append(pathItem)
         }
 
         getFixedPaths(items: &pathItems)
@@ -170,21 +176,17 @@ class FilePathView: NSView {
     @objc private func buttonClick(_ sender: AnyObject) {
         if let button = sender as? NSButton {
             if button.tag == 0 {
-                self.delegate?.filePathViewPathDidChange(path: "/", folderID: "root")
-                filePaths = [(self.rootName, "root")]
+                folderPaths = [folderPaths.first!]
+                self.delegate?.filePathViewPathDidChange(currentPaths: folderPaths)
             } else {
                 let path = paths[1..<(button.tag+1)]
-                var originPath = [String]()
-                var newFilePaths = [(String, String?)]()
+                var newFolderPaths = [folderPaths.first!]
                 path.forEach { item in
-                    originPath.append(item.pathUnit)
-                    newFilePaths.append((item.pathUnit, item.folderID))
+                    let folderPath = ABFolderPath(folderID: item.folderID!, folderName: item.pathUnit)
+                    newFolderPaths.append(folderPath)
                 }
-                newFilePaths.insert((self.rootName, "root"), at: 0)
-                debugPrint("/" + originPath.joined(separator: "/"))
-                let fullPath = "/" + originPath.joined(separator: "/")
-                self.delegate?.filePathViewPathDidChange(path: fullPath, folderID: path.last?.folderID)
-                filePaths = newFilePaths
+                folderPaths = newFolderPaths
+                self.delegate?.filePathViewPathDidChange(currentPaths: folderPaths)
             }
         }
     }
