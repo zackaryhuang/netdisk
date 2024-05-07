@@ -15,7 +15,7 @@ protocol FilePathViewDelegate: NSObjectProtocol {
 
 class FilePathView: NSView {
     static let SearchViewHeight = 30.0
-    static let SearchViewWidth = 120.0
+    static let SearchViewWidth = 140.0
     var searchView: SearchView!
     
     var rootName: String
@@ -43,7 +43,7 @@ class FilePathView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupUI() {
+    private func setupUI() {
         searchView = SearchView()
         searchView.delegate = self
         searchView.wantsLayer = true
@@ -62,7 +62,7 @@ class FilePathView: NSView {
         }
     }
     
-    func getFixedPaths( items: inout [PathItem]) {
+    private func getFixedPaths( items: inout [PathItem]) {
         var totalWidth = 0.0
         var hasIgnoredItem = false
         for (index,value) in items.enumerated() {
@@ -167,7 +167,7 @@ class FilePathView: NSView {
         }
     }
     
-    @objc func buttonClick(_ sender: AnyObject) {
+    @objc private func buttonClick(_ sender: AnyObject) {
         if let button = sender as? NSButton {
             if button.tag == 0 {
                 self.delegate?.filePathViewPathDidChange(path: "/", folderID: "root")
@@ -189,7 +189,7 @@ class FilePathView: NSView {
         }
     }
     
-    @objc func searchClick() {
+    @objc private func searchClick() {
         if isSearchViewAnimating || inSearchMode {
             return
         }
@@ -197,7 +197,7 @@ class FilePathView: NSView {
         startSearchAnimation()
     }
     
-    func startSearchAnimation() {
+    private func startSearchAnimation() {
         isSearchViewAnimating = true
         searchView.searchTextField.isEditable = inSearchMode
         NSAnimationContext.runAnimationGroup({[weak self] context in
@@ -234,17 +234,22 @@ class FilePathView: NSView {
             }
         }
     }
-}
-extension FilePathView: SearchViewDelegate {
-    func searchViewDidEndEditing() {
+    
+    func endSearch() {
         inSearchMode = false
         searchView.searchTextField.stringValue = ""
         startSearchAnimation()
-        self.delegate?.searchViewDidEndSearch()
+        delegate?.searchViewDidEndSearch()
+    }
+}
+extension FilePathView: SearchViewDelegate {
+    func searchViewDidCancel() {
+        delegate?.searchViewDidEndSearch()
+        endSearch()
     }
     
     func searchViewStartSearch(keywords: String) {
-        self.delegate?.searchViewStartSearch(keywords: keywords)
+        delegate?.searchViewStartSearch(keywords: keywords)
     }
 }
 

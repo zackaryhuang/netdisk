@@ -196,6 +196,9 @@ class FileListViewController: NSViewController, CategoryVC {
             return
         }
         if fileData.isDir {
+            if filePathView.inSearchMode {
+                filePathView.endSearch()
+            }
             var currentFilePath = filePathView.filePaths
             currentFilePath.append((path: fileData.fileName, folderID: fileData.fileID))
             filePathView.filePaths = currentFilePath

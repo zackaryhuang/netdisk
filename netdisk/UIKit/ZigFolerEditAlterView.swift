@@ -75,7 +75,7 @@ class ZigFolerEditAlterView: ZigBaseAlertView {
         inputTextfield.cell?.isEditable = true
         inputTextfield.focusRingType = .none
         inputTextfield.currentEditor()?.selectAll(nil)
-        inputTextfield.stringValue = placeHolder
+        (inputTextfield.cell as? NSTextFieldCell)?.placeholderString = placeHolder
         inputTextfield.cell?.font = NSFont(PingFang: 17)
         inputTextfield.wantsLayer = true
         inputTextfield.layer?.cornerRadius = 9
