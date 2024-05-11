@@ -61,7 +61,8 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        exit(0)
+        self.window?.miniaturize(nil)
+        return false
     }
     
     func loginSuccess() {

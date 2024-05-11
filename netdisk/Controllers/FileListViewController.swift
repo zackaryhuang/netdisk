@@ -122,7 +122,6 @@ class FileListViewController: NSViewController, CategoryVC {
     private func requestFiles() {
         startMarker = nil
         Task {
-            let currentClient = ZigClientManager.shared.currentClient()
             view.showHUD()
             if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: currentFolderPath.last!, listType: listType) {
                 view.hideHUD()
@@ -155,7 +154,6 @@ class FileListViewController: NSViewController, CategoryVC {
         isLoadingMore = true
         
         Task {
-            let currentClient = ZigClientManager.shared.currentClient()
             if let fileResp = try? await WebRequest.requestFileList(startMark: startMarker, limit: 50, parentFolder: self.currentFolderPath.last!, listType: listType) {
                 isLoadingMore = false
                 

@@ -28,12 +28,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         guard let menu = NSApp.mainMenu else { return }
         let submenu = NSMenu()
         submenu.addItem(NSMenuItem(title: "检查更新", action: #selector(checkUpdate), keyEquivalent: ""))
+        submenu.addItem(NSMenuItem(title: "退出 ABCloud", action: #selector(exit), keyEquivalent: ""))
         menu.setSubmenu(submenu, for: menu.items.first!)
         NSApp.mainMenu = menu
         
         checkUpdate()
     }
 
+    @objc func exit() {
+        guard let contentView = NSApplication.shared.windows.first?.contentView else { return }
+        let alert = ZigTextAlertView(title: "退出", message: "确认退出吗？")
+        alert.confirmBlock = {
+            _SwiftConcurrencyShims.exit(0)
+        }
+        alert.showInView(contentView)
+    }
+    
     @objc func checkUpdate() {
         updaterController.checkForUpdates(self)
     }
