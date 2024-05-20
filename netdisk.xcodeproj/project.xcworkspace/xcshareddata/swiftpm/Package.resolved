@@ -29,6 +29,15 @@
         }
       },
       {
+        "package": "QRCode",
+        "repositoryURL": "https://github.com/dagronf/qrcode.git",
+        "state": {
+          "branch": null,
+          "revision": "8b7a546a2e92be6b05e75bc287abdb1d11ac564e",
+          "version": "19.2.0"
+        }
+      },
+      {
         "package": "SnapKit",
         "repositoryURL": "https://github.com/SnapKit/SnapKit",
         "state": {
@@ -44,6 +53,24 @@
           "branch": null,
           "revision": "b328c499a333ebbd871ee61a041b89afecf4fca6",
           "version": "2.6.1"
+        }
+      },
+      {
+        "package": "swift-qrcode-generator",
+        "repositoryURL": "https://github.com/dagronf/swift-qrcode-generator",
+        "state": {
+          "branch": null,
+          "revision": "2b1980b825f08a81ccc762b0c4d17fcde9d5e953",
+          "version": "2.0.2"
+        }
+      },
+      {
+        "package": "SwiftImageReadWrite",
+        "repositoryURL": "https://github.com/dagronf/SwiftImageReadWrite",
+        "state": {
+          "branch": null,
+          "revision": "016a9cb842038e4078a91e506e35cef4f4ff76ff",
+          "version": "1.7.2"
         }
       },
       {

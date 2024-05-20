@@ -15,6 +15,7 @@
 		302830D92ADBDAEA00A3A549 /* ZigUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 302830D82ADBDAEA00A3A549 /* ZigUserManager.swift */; };
 		3036F4522B39A0EB00F365E4 /* FileListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3036F4512B39A0EB00F365E4 /* FileListViewController.swift */; };
 		3036F4542B3B1C6900F365E4 /* SidePanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3036F4532B3B1C6900F365E4 /* SidePanelView.swift */; };
+		303EBAF92BFB9F0800991BDE /* QRCode in Frameworks */ = {isa = PBXBuildFile; productRef = 303EBAF82BFB9F0800991BDE /* QRCode */; };
 		305EA5D42BCA6D22007D70FE /* ZigBaseAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305EA5D32BCA6D22007D70FE /* ZigBaseAlertView.swift */; };
 		3065E2D52BA5D1B300A3114F /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3065E2D42BA5D1B300A3114F /* SearchView.swift */; };
 		3065E34C2BA72B2100A3114F /* Tiercel in Resources */ = {isa = PBXBuildFile; fileRef = 3065E34B2BA72B2100A3114F /* Tiercel */; };
@@ -128,6 +129,7 @@
 				30D588792B96043200DCE9CB /* SwiftyJSON in Frameworks */,
 				30D588822B96067A00DCE9CB /* Alamofire in Frameworks */,
 				30D588852B96069600DCE9CB /* SnapKit in Frameworks */,
+				303EBAF92BFB9F0800991BDE /* QRCode in Frameworks */,
 				3065E34F2BA72BEB00A3114F /* Tiercel in Frameworks */,
 				30D5887C2B96044500DCE9CB /* Kingfisher in Frameworks */,
 				30D5887F2B96045500DCE9CB /* FMDB in Frameworks */,
@@ -292,6 +294,7 @@
 				30D588842B96069600DCE9CB /* SnapKit */,
 				3065E34E2BA72BEB00A3114F /* Tiercel */,
 				30C8CCC72BE1ED0F009AA7B4 /* Sparkle */,
+				303EBAF82BFB9F0800991BDE /* QRCode */,
 			);
 			productName = netdisk;
 			productReference = 30BB71742A9E414B00ADBF01 /* ABCloud.app */;
@@ -329,6 +332,7 @@
 				30D588832B96069600DCE9CB /* XCRemoteSwiftPackageReference "SnapKit" */,
 				3065E34D2BA72BEB00A3114F /* XCLocalSwiftPackageReference "netdisk/Tiercel" */,
 				30C8CCC62BE1ED0F009AA7B4 /* XCRemoteSwiftPackageReference "Sparkle" */,
+				303EBAF72BFB9F0800991BDE /* XCRemoteSwiftPackageReference "qrcode" */,
 			);
 			productRefGroup = 30BB71752A9E414B00ADBF01 /* Products */;
 			projectDirPath = "";
@@ -619,6 +623,14 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		303EBAF72BFB9F0800991BDE /* XCRemoteSwiftPackageReference "qrcode" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dagronf/qrcode.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 19.2.0;
+			};
+		};
 		30C8CCC62BE1ED0F009AA7B4 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
@@ -670,6 +682,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		303EBAF82BFB9F0800991BDE /* QRCode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 303EBAF72BFB9F0800991BDE /* XCRemoteSwiftPackageReference "qrcode" */;
+			productName = QRCode;
+		};
 		3065E34E2BA72BEB00A3114F /* Tiercel */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Tiercel;

@@ -18,7 +18,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
     
     override init() {
         super.init()
-        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
+        var checkUpdateNow = true
+#if DEBUG
+        checkUpdateNow = false
+#endif
+        updaterController = SPUStandardUpdaterController(startingUpdater: checkUpdateNow, updaterDelegate: self, userDriverDelegate: nil)
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {

@@ -87,12 +87,12 @@ extension SidePanelView: TabItemViewDelegate {
     func didClickTabView(tabView: TabItemView) {
         if tabView.type == .Exit {
             guard let contentView = self.window?.contentView else { return }
-//            #if DEBUG
+            #if DEBUG
             let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "未获取到版本号"
             let textAlert = ZigTextAlertView(title: "退出\(version)", message: "确认退出吗？")
-//            #else
-//            let textAlert = ZigTextAlertView(title: "退出", message: "确认退出吗？")
-//            #endif
+            #else
+            let textAlert = ZigTextAlertView(title: "退出", message: "确认退出吗？")
+            #endif
             textAlert.confirmBlock = {
                 ZigClientManager.shared.quit()
             }
