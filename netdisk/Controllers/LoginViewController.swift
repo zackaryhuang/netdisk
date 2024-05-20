@@ -88,16 +88,11 @@ class LoginViewController: NSViewController {
                 if let doc = QRCode.Document("https://www.aliyundrive.com/o/oauth/authorize?sid=\(data.code)") {
                     doc.design.backgroundColor(NSColor.white.cgColor)
                     doc.design.shape.eye = QRCode.EyeShape.RoundedOuter()
-                    doc.design.shape.onPixels = QRCode.PixelShape.Circle()
+                    doc.design.shape.onPixels = QRCode.PixelShape.CurvePixel()
                     doc.design.style.onPixels = QRCode.FillStyle.Solid(NSColor(hex: 0x8DE6FA).cgColor)
-                    doc.design.shape.offPixels = QRCode.PixelShape.Horizontal(insetFraction: 4, cornerRadiusFraction: 2)
                     doc.design.foregroundColor(NSColor(hex: 0x0642C7).cgColor)
-                    doc.design.style.offPixels = QRCode.FillStyle.Solid(NSColor(hex: 0x19BAFB).cgColor)
-                    
-                    // Set a custom pupil shape. If this isn't set, the default pixel shape for the eye is used
-                    doc.design.shape.pupil = QRCode.PupilShape.BarsHorizontal()
+                    doc.design.shape.pupil = QRCode.PupilShape.Squircle()
                     doc.logoTemplate = .SquareCenter(image: NSImage(named: "image_qrcode")!.cgImage!)
-                    
                     let qrCodeWithLogo = doc.nsImage(dimension: 340)
                     self.imageView.image = qrCodeWithLogo
                     self.expiredView.removeFromSuperview()
