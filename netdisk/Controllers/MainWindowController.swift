@@ -66,26 +66,28 @@ class MainWindowController: NSWindowController, NSWindowDelegate {
     }
     
     func loginSuccess() {
+        ABProgressHUD.showHUD()
         ZigUserManager.sharedInstance.requestUserData { success in
-            if success {
-                DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async { [weak self] in
+                ABProgressHUD.hideHUD()
+                if success {
                     guard let self = self else { return }
+                    window?.animateToSize(CGSize(width: 1120, height: 640))
                     self.mainVC = MainViewController()
                     self.window?.contentView = self.mainVC.view;
                     self.window?.contentViewController = self.mainVC
                     NotificationCenter.default.post(name: NSNotification.Name(Const.DidLoginNotificationName), object: nil)
-                    window?.animateToSize(CGSize(width: 1120, height: 640))
                 }
             }
         }
     }
     
     func exitLogin() {
+        self.window?.animateToSize(CGSize(width: 280, height: 400))
         self.loginVC = LoginViewController()
         self.loginVC.windowController = self
         self.window?.contentView = self.loginVC.view;
         self.window?.contentViewController = self.loginVC
-        self.window?.animateToSize(CGSize(width: 280, height: 400))
     }
     
     override func mouseDown(with event: NSEvent) {
