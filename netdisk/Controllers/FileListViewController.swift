@@ -395,12 +395,14 @@ extension FileListViewController: FileRowViewDelegate {
         openPanel.canChooseDirectories = false
         openPanel.allowsMultipleSelection = false
         openPanel.begin { [weak self] result in
-            guard let filePath = openPanel.urls.first, let self = self else { return }
-            ZigFileManager.shared.uploadFile(driveID: driveID, 
-                                             parentFileID: self.parentFolderID,
-                                             filePath: filePath) { error in
-                guard let err = error else { return }
-                debugPrint(err.localizedDescription)
+            if result == .OK {
+                guard let filePath = openPanel.urls.first, let self = self else { return }
+                ZigFileManager.shared.uploadFile(driveID: driveID, 
+                                                 parentFileID: self.parentFolderID,
+                                                 filePath: filePath) { error in
+                    guard let err = error else { return }
+                    debugPrint(err.localizedDescription)
+                }
             }
         }
     }
