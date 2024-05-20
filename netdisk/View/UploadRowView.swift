@@ -495,7 +495,7 @@ class UploadRowView: NSTableRowView {
             cancelButton.isHidden = true
             deleteButton.isHidden = false
             retryButton.isHidden = true
-            showInFinderButton.isHidden = false
+            showInFinderButton.isHidden = true
         case .canceled:
             pauseButton.isHidden = true
             resumeButton.isHidden = true
