@@ -34,6 +34,7 @@ class ABMultiPartUploadOperation: ABAsyncOperation {
         ab_isExecuting = true
         do {
             let handle = try FileHandle(forReadingFrom: fileURL)
+            defer { try? handle.close() }
             try handle.seek(toOffset: UInt64(offset))
             guard let data = try handle.read(upToCount: length) else {
                 finish()
