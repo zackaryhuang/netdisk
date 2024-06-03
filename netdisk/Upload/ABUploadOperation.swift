@@ -26,6 +26,7 @@ class ABUploadOperation: ABAsyncOperation {
     let fileSize: Int
     var progressHandler: ((Progress) -> ())?
     var completionHandler: ((Error?) -> ())?
+    weak var finishUploadOperation: ABFinishUploadOperation?
     weak var task: ABUploadTask?
     
     init?(fileURL: URL, parentID: String, driveID: String, fileName: String? = nil) {
@@ -52,6 +53,21 @@ class ABUploadOperation: ABAsyncOperation {
             self.createFileResp = createFileResp
             
             multiPartUpload()
+            
+            let finishUploadOperation = ABFinishUploadOperation(driveID: driveID, fileID: createFileResp.fileID, uploadID: createFileResp.uploadID)
+            finishUploadOperation.completionBlock = { [weak finishUploadOperation, weak self] in
+                guard let aliFileData = finishUploadOperation?.fileData, let self = self else {
+                    let error = NSError(code: -1, description: "调用文件上传完成接口失败")
+                    self?.completionHandler?(error)
+                    return
+                }
+                self.completionHandler?(nil)
+                OperationQueue.main.addOperation {
+                    NotificationCenter.default.post(name: UploadManager.DidFinishUploadNotificationName, object: aliFileData)
+                }
+            }
+            partUploadQueue.addOperation(finishUploadOperation)
+            self.finishUploadOperation = finishUploadOperation
         }
     }
     
@@ -64,7 +80,7 @@ class ABUploadOperation: ABAsyncOperation {
             let length = isLastSegment ? fileSize - offset : segmentInfo.size
             let multiUploadOperation = ABMultiPartUploadOperation(fileURL: fileURL, uploadUrl: partInfo.uploadUrl, offset: offset, length: length, partNumber: partInfo.partNumber)
             multiUploadOperation.delegate = self
-//            partUploadOperations.append(multiUploadOperation)
+            partUploadOperations.append(multiUploadOperation)
             partUploadQueue.addOperation(multiUploadOperation)
             lastOperation = multiUploadOperation
         }
@@ -138,12 +154,15 @@ class ABUploadOperation: ABAsyncOperation {
         self.partUploadOperations.forEach { operation in
             operation.cancel()
         }
+        self.finishUploadOperation?.cancel()
         super.cancel()
+        self.ab_isCanceled = true
     }
 }
 
 extension ABUploadOperation: MultiPartUploadDelegate {
     func uploadOperation(operation: ABMultiPartUploadOperation, failedWith error: any Error) {
+        ABLog.Upload.log(level: .error, "分片\(operation.partNumber) 上传失败\(error.localizedDescription)")
         self.partUploadOperations.forEach{ operation in
             operation.cancel()
         }

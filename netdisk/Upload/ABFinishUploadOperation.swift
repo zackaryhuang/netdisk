@@ -12,6 +12,8 @@ class ABFinishUploadOperation: ABAsyncOperation {
     let fileID: String
     let uploadID: String
     
+    var fileData: AliFileData?
+    
     init(driveID: String, fileID: String, uploadID: String) {
         self.driveID = driveID
         self.fileID = fileID
@@ -22,13 +24,8 @@ class ABFinishUploadOperation: ABAsyncOperation {
         ab_isExecuting = true
         debugPrint("调用文件上传完成接口...")
         Task {
-            if let createFileResp = try? await WebRequest.uploadFileComplete(driveID: driveID, fileID: fileID, uploadID: uploadID) {
-                debugPrint("文件上传完成接口调用成功")
-            } else {
-                debugPrint("文件上传完成接口调用失败")
-            }
-            ab_isExecuting = false
-            ab_isFinished = true
+            self.fileData = try? await WebRequest.uploadFileComplete(driveID: driveID, fileID: fileID, uploadID: uploadID)
+            finish()
         }
     }
 }

@@ -97,7 +97,6 @@ class ABUploadTask: NSObject, Codable {
                 self.speedCalculator.delegate = self
                 self.speedCalculator.start()
             }
-            self.progress = progress
             self.progressHandler?(progress)
             self.speedCalculator.updateCurrentCompletedUnitCount(count: progress.completedUnitCount)
         }
@@ -120,7 +119,6 @@ class ABUploadTask: NSObject, Codable {
 extension ABUploadTask: SpeedCalculatorDelegate {
     func speedCalculator(speedDidUpdate speed: Int) {
         self.speed = speed
-        self.progressHandler?(self.progress)
         ABLog.Upload.log(level: .info, "上传速度:\(speed.decimalSizeString) / s")
     }
 }

@@ -26,24 +26,13 @@ class ABCreateFileOperation: ABAsyncOperation {
     
     override func main() {
         ab_isExecuting = true
-        debugPrint("调用创建文件接口\(driveID) - \(parentFileID) - \(fileName) - \(preHash ?? "null") - \(multiPartNumber)")
         Task {
-            if let createFileResp = try? await WebRequest.requestCreateFile(driveID: driveID,
-                                                                            parentFileID: parentFileID,
-                                                                            name: fileName,
-                                                                            preHash: preHash,
-                                                                            multiPartNumber: multiPartNumber) {
-                // Do Something
-                debugPrint("文件创建成功:\n")
-                createFileResp.partInfoList.forEach { partInfo in
-                    debugPrint("\(partInfo.partNumber) - \(partInfo.uploadUrl)")
-                }
-                fileCreateResp = createFileResp
-            } else {
-                debugPrint("文件创建失败")
-            }
-            ab_isExecuting = false
-            ab_isFinished = true
+            self.fileCreateResp = try? await WebRequest.requestCreateFile(driveID: driveID,
+                                                                          parentFileID: parentFileID,
+                                                                          name: fileName,
+                                                                          preHash: preHash,
+                                                                          multiPartNumber: multiPartNumber)
+            finish()
         }
     }
     

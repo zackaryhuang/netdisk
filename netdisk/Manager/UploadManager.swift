@@ -39,6 +39,7 @@ class UploadManager: NSObject {
         allUploadTask.append(newTask)
         newTask.start()
         storeTasks()
+        NotificationCenter.default.post(name: Self.RunningCountChangeNotificationName, object: nil)
         return newTask
     }
     
