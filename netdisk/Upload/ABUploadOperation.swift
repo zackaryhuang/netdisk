@@ -152,7 +152,7 @@ extension ABUploadOperation: MultiPartUploadDelegate {
     }
     
     func uploadOperation(operation: ABMultiPartUploadOperation, progress: Progress) {
-        debugPrint("[Upload] - 分片\(operation.partNumber) 上传进度:\(progress.fractionCompleted)")
+        ABLog.Upload.log(level: .info, "分片\(operation.partNumber) 上传进度:\(progress.fractionCompleted)")
         var completedUnitCount: Int64 = 0
         for uploadOperation in self.partUploadOperations {
             if uploadOperation.partNumber < operation.partNumber {
@@ -163,7 +163,6 @@ extension ABUploadOperation: MultiPartUploadDelegate {
         let taskProgress = task?.progress ?? Progress(totalUnitCount: Int64(self.fileSize))
         taskProgress.completedUnitCount = Int64(completedUnitCount)
         self.progressHandler?(taskProgress)
-        debugPrint("[Upload] - 总体上传进度:\(taskProgress.fractionCompleted)")
         
     }
 }

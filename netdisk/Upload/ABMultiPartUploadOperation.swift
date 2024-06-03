@@ -51,14 +51,14 @@ class ABMultiPartUploadOperation: ABAsyncOperation {
                 guard let self = self else { return }
                 switch response.result {
                 case .success:
-                    debugPrint("[Upload] - 分片\(self.partNumber)上传成功")
+                    ABLog.Upload.log(level: .info, "分片\(self.partNumber)上传成功")
                 case .failure(let error):
                     self.delegate?.uploadOperation(operation: self, failedWith: error)
                 }
                 self.finish()
             }
         } catch let error {
-            debugPrint("[Upload] - \(error.localizedDescription)")
+            ABLog.Upload.log(level: .error, "\(error.localizedDescription)")
             finish()
         }
     }

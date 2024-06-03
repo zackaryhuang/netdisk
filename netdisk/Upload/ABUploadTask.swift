@@ -84,7 +84,7 @@ class ABUploadTask: NSObject, Codable {
     
     func start() {
         guard let uploadOperation = ABUploadOperation(fileURL: filePath, parentID: parentFileID, driveID: driveID) else {
-            debugPrint("[Upload] - ABUploadOperation 创建失败")
+            ABLog.Upload.log(level: .error, "ABUploadOperation 创建失败")
             state = .failed
             return
         }
@@ -121,6 +121,6 @@ extension ABUploadTask: SpeedCalculatorDelegate {
     func speedCalculator(speedDidUpdate speed: Int) {
         self.speed = speed
         self.progressHandler?(self.progress)
-        debugPrint("[Upload] - 上传速度:\(speed.decimalSizeString) / s")
+        ABLog.Upload.log(level: .info, "上传速度:\(speed.decimalSizeString) / s")
     }
 }
