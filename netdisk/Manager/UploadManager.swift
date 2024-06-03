@@ -21,13 +21,6 @@ class UploadManager: NSObject {
     
     let uploadListsURL = ZigFileManager.documentsDirectory.appendingPathComponent("upload_tasks_\(ZigClientManager.shared.identifier).plist", conformingTo: .url)
     
-    private var timer: DispatchSourceTimer?
-    
-    lazy var session = {
-        var session = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
-        return session
-    }()
-    
     var uploadingCount: Int {
         get {
             var count = 0
@@ -41,23 +34,15 @@ class UploadManager: NSObject {
     }
     
     @discardableResult
-    func upload(url: String, pathURL: URL, progress: ((Double) -> ())? = nil, completion: ((Error?) -> ())? = nil) -> UploadTask? {
-        let newTask = UploadTask(url: url, pathURL: pathURL, progressHandler: progress, completionHandler: completion)
-        if allUploadTask.contains(where: { $0 == newTask }) {
-            completion?(NSError(code: -6, description: "文件已在上传队列"))
-            return nil
-        }
+    func upload(filePath: URL, driveID: String, parentFileID: String) -> ABUploadTask {
+        let newTask = ABUploadTask(filePath: filePath, driveID: driveID, parentFileID: parentFileID)
         allUploadTask.append(newTask)
-        if (uploadingCount < multiUploadCount) {
-            createTimer()
-            newTask.startUpload()
-        }
+        newTask.start()
         storeTasks()
-        completion?(nil)
         return newTask
     }
     
-    func removeTask(task: UploadTask) {
+    func removeTask(task: ABUploadTask) {
         if task.state != .succeeded {
             task.cancel()
         }
@@ -66,122 +51,29 @@ class UploadManager: NSObject {
         NotificationCenter.default.post(name: Self.RunningCountChangeNotificationName, object: nil)
     }
     
-    func suspendTask(task: UploadTask) {
-        task.suspend()
-    }
-    
-    func resumeTask(task: UploadTask) {
-        task.resume()
-    }
-    
-    func cancelTask(task: UploadTask) {
+    func cancelTask(task: ABUploadTask) {
         task.cancel()
         allUploadTask.removeAll(where: { $0.identifier == task.identifier })
         storeTasks()
     }
     
-    func totalSuspend() {
-        allUploadTask.forEach { task in
-            if task.state == .running || task.state == .waiting {
-                task.suspend()
-            }
-        }
-    }
-    
-    func totalResume() {
-        allUploadTask.forEach { task in
-            if task.state == .suspended {
-                task.resume()
-            }
-        }
-    }
-    
-    private func storeTasks() {
+    func storeTasks() {
         if let data = try? PropertyListEncoder().encode(allUploadTask) {
             try? data.write(to: uploadListsURL)
         }
     }
     
-    private func fetchTasks() -> [UploadTask] {
+    private func fetchTasks() -> [ABUploadTask] {
         if let data = try? Data(contentsOf: uploadListsURL) {
-            let tasks = (try? PropertyListDecoder().decode([UploadTask].self, from: data)) ?? [UploadTask]()
+            let tasks = (try? PropertyListDecoder().decode([ABUploadTask].self, from: data)) ?? [ABUploadTask]()
             tasks.forEach { task in
                 if task.state == .running {
-                    task.state = .failed
+                    task.state = .waiting
                 }
             }
             return tasks
         }
-        return [UploadTask]()
+        return [ABUploadTask]()
     }
     
-}
-
-extension UploadManager: URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate {
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
-        guard let uploadUrl = task.originalRequest?.url?.absoluteString else { return }
-        guard let task = allUploadTask.first(where: { $0.url == uploadUrl }) else { return }
-        task.state = error == nil ? .succeeded : .failed
-        if error == nil {
-            task.progress = 1.0
-            task.completionHandler?(nil)
-            debugPrint("上传完成")
-        } else {
-            debugPrint("上传失败")
-            task.completionHandler?(error)
-        }
-        if uploadingCount < multiUploadCount {
-            if let task = allUploadTask.first(where: { $0.state == .waiting }) {
-                task.startUpload()
-            } else {
-                invalidateTimer()
-            }
-        }
-        storeTasks()
-    }
-    
-    func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        guard let uploadUrl = task.originalRequest?.url?.absoluteString else { return }
-        guard let task = allUploadTask.first(where: { $0.url == uploadUrl }) else { return }
-        task.state = .running
-        let progress = Double(totalBytesSent) / Double(totalBytesExpectedToSend)
-        task.progress = progress
-        debugPrint("上传进度 \(progress)")
-    }
-    
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        debugPrint("data: \(String(describing: NSString(data: data, encoding: NSUTF8StringEncoding)))")
-    }
-}
-
-extension UploadManager {
-    static let refreshInterval: Double = 1
-    
-    private func createTimer() {
-        if timer == nil {
-            timer = DispatchSource.makeTimerSource(flags: .strict, queue: DispatchQueue(label: "com.ABCloud.UploadManager.TimerQueue",
-                                                                                        autoreleaseFrequency: .workItem))
-            timer?.schedule(deadline: .now(), repeating: Self.refreshInterval)
-            timer?.setEventHandler(handler: { [weak self] in
-                guard let self = self else { return }
-                self.updateSpeed()
-            })
-            timer?.resume()
-        }
-    }
-    
-    private func invalidateTimer() {
-        timer?.cancel()
-        timer = nil
-    }
-    
-    internal func updateSpeed() {
-        allUploadTask.forEach { task in
-            if (task.state == .running) {
-                let currentCount = Double(task.fileSize) * task.progress
-                task.speed = currentCount - task.lastFinishedCount
-                task.lastFinishedCount = currentCount
-            }
-        }
-    }
 }

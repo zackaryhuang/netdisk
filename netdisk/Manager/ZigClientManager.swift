@@ -46,7 +46,7 @@ class ZigClientManager {
     func quit() {
         ZigClientManager.shared.clearAccessData()
         ZigDownloadManager.shared.downloadSessionManager.totalSuspend()
-        UploadManager.shared.totalSuspend()
+        UploadManager.shared.storeTasks()
         self.mainWindowController?.exitLogin()
     }
     

@@ -196,6 +196,30 @@ extension Double {
     }
 }
 
+extension Int {
+    var decimalSizeString: String {
+        get {
+            let D_KB = 1.D_KB
+            let D_MB = 1.D_MB
+            let D_GB = 1.D_GB
+            let D_TB = 1.D_TB
+            if self >= D_TB {
+                return String(format: "%.2f TB", Double(self) / Double(D_TB))
+            }
+            if self >= D_GB {
+                return String(format: "%.2f GB", Double(self) / Double(D_GB))
+            }
+            if self >= D_MB {
+                return String(format: "%.2f MB", Double(self) / Double(D_MB))
+            }
+            if self >= D_KB {
+                return String(format: "%.2f KB", Double(self) / Double(D_KB))
+            }
+            return String(format: "%.2f Byte", Double(self))
+        }
+    }
+}
+
 extension NSWindow {
     func animateToSize(_ size: CGSize) {
         let oldX = frame.origin.x

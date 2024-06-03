@@ -400,7 +400,7 @@ struct AliFileCreateResp: FileCreateResp {
     let fileID: String
     let status: Int?
     let parentFileID: String
-    let uploadID: String?
+    let uploadID: String
     let fileName: String
     let available: Bool?
     let isExist: Bool?
@@ -633,19 +633,19 @@ class WebRequest {
 //        })
 //    }
     
-    static func uploadFileComplete(driveID: String, fileID: String, uploadID: String) async throws -> Bool {
+    static func uploadFileComplete(driveID: String, fileID: String, uploadID: String) async throws -> AliFileData? {
         let params = [
             "drive_id" : driveID,
             "file_id" : fileID,
             "upload_id" : uploadID
         ]
         
-        let res: JSON? = try? await request(method: .post, url: EndPoint.AliFileUploadComplete, parameters: params)
-        return res == nil
+        let alifile: AliFileData = try await request(method: .post, url: EndPoint.AliFileUploadComplete, parameters: params)
+        return alifile
     }
     
-    static func requestCreateFile(driveID: String, parentFileID: String, name: String, preHash: String?) async throws -> AliFileCreateResp? {
-        var params = [
+    static func requestCreateFile(driveID: String, parentFileID: String, name: String, preHash: String?, multiPartNumber: Int = 1) async throws -> AliFileCreateResp? {
+        var params: [String: Any] = [
             "drive_id" : driveID,
             "parent_file_id" : parentFileID,
             "name" : name,
@@ -655,6 +655,14 @@ class WebRequest {
         
         if let hash = preHash {
             params["pre_hash"] = hash
+        }
+        
+        if multiPartNumber > 1 {
+            var partInfoList = [[String : Int]]()
+            for partNumber in 1...multiPartNumber {
+                partInfoList.append(["part_number": partNumber])
+            }
+            params["part_info_list"] = partInfoList
         }
         
         let res: AliFileCreateResp? = try? await request(method: .post, url: EndPoint.AliFileCreate, parameters: params)

@@ -23,6 +23,9 @@ struct ABUploadRecordData: Codable {
 }
 
 class ZigFileManager {
+    
+    var uploadTask: ABUploadTask?
+    
     static let documentsDirectory =  try! FileManager().url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
     let downloadRecordsURL = ZigFileManager.documentsDirectory.appendingPathComponent("download_record_\(ZigClientManager.shared.identifier).plist", conformingTo: .url)
@@ -164,52 +167,7 @@ class ZigFileManager {
     }
     
     func uploadFile(driveID: String, parentFileID: String, filePath: URL, completion: @escaping ((Error?) -> ())) {
-        guard let att = try? FileManager.default.attributesOfItem(atPath: filePath.path()),
-              let size = att[.size] as? Int else { return }
-        
-        if size > 5.D_GB {
-            // 大于 5G 应该分片，暂未实现
-            guard let contentView = NSApplication.shared.windows.first?.contentView else { return }
-            let alert = ZigTextAlertView(title: "提示", message: "当前文件大小为 \(Double(size).decimalSizeString)，暂不支持上传大于 5G 的文件")
-            alert.showInView(contentView)
-            return
-        }
-        
-        debugPrint("正在上传文件\(filePath.lastPathComponent), 文件大小\(Double(size).decimalSizeString)")
-        
-        Task {
-            
-            guard let createFileResp = try? await WebRequest.requestCreateFile(driveID: driveID, 
-                                                                               parentFileID: parentFileID,
-                                                                               name: filePath.lastPathComponent,
-                                                                               preHash: nil),
-                  let uploadUrl = createFileResp.partInfoList.first?.uploadUrl,
-                  let uploadID = createFileResp.uploadID else {
-                completion(NSError(code: -4, description: "创建文件失败"))
-                return
-            }
-            
-            if let task = UploadManager.shared.upload(url: uploadUrl, pathURL: filePath, completion: { err in
-                guard let error = err else {
-                    self.insertUploadRecord(ABUploadRecordData(identifier: uploadUrl.md5, parentFileID: parentFileID, driveID: driveID, fielPath: filePath))
-                    completion(err)
-                    return
-                }
-                debugPrint(error.localizedDescription)
-                completion(error)
-            }) {
-                task.completionHandler = { error in
-                    if error == nil {
-                        Task {
-                            if let _ = try? await WebRequest.uploadFileComplete(driveID: driveID, fileID: createFileResp.fileID, uploadID: uploadID) {
-                                debugPrint("上传成功")
-                                NotificationCenter.default.post(name: UploadManager.DidFinishUploadNotificationName, object: parentFileID)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        UploadManager.shared.upload(filePath: filePath, driveID: driveID, parentFileID: parentFileID)
     }
     
     /// 更新本地记录的 downloadUrl 对应的 fileID、driveID

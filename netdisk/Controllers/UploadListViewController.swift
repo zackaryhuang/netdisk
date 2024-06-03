@@ -97,7 +97,7 @@ extension UploadListViewController: NSTableViewDelegate, NSTableViewDataSource {
         }
         
         if let cell = rowView as? UploadRowView {
-            let tasks: [UploadTask] = uploadTasks.reversed()
+            let tasks: [ABUploadTask] = uploadTasks.reversed()
             cell.updateRowView(with: tasks[row])
         }
         

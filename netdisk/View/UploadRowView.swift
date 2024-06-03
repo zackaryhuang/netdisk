@@ -33,22 +33,12 @@ class UploadRowView: NSTableRowView {
         return label
     }()
     
-    var task: UploadTask?
+    var task: ABUploadTask?
     
-    let pauseButton = {
-        let btn = HoverButton(normalImage: NSImage(named: "btn_pause_trans"), hoveredImage: NSImage(named: "btn_pause_trans_hover"))
-        btn.isBordered = false
-        btn.tip = "暂停上传"
-        btn.contentTintColor = .white
-        btn.imagePosition = .imageOnly
-        btn.isHidden = true
-        return btn
-    }()
-    
-    let resumeButton = {
+    let startButton = {
         let btn = HoverButton(normalImage: NSImage(named: "btn_resume_trans"), hoveredImage: NSImage(named: "btn_resume_trans_hover"))
         btn.isBordered = false
-        btn.tip = "继续上传"
+        btn.tip = " 开始上传"
         btn.contentTintColor = .white
         btn.isHidden = true
         return btn
@@ -183,21 +173,13 @@ class UploadRowView: NSTableRowView {
         cancelButton.action = #selector(cancelUpload)
         firstColumn.addSubview(cancelButton)
         
-        pauseButton.target = self
-        pauseButton.action = #selector(pauseUpload)
-        firstColumn.addSubview(pauseButton)
-        
-        resumeButton.target = self
-        resumeButton.action = #selector(resumeUpload)
-        firstColumn.addSubview(resumeButton)
+        startButton.target = self
+        startButton.action = #selector(startUpload)
+        firstColumn.addSubview(startButton)
         
         deleteButton.target = self
         deleteButton.action = #selector(deleteRecord)
         firstColumn.addSubview(deleteButton)
-        
-        retryButton.target = self
-        retryButton.action = #selector(retryUpload)
-        firstColumn.addSubview(retryButton)
         
         firstColumn.addSubview(imageView)
         imageView.snp.makeConstraints { make in
@@ -245,36 +227,20 @@ class UploadRowView: NSTableRowView {
         }
     }
     
+    @objc func startUpload() {
+        if let task = self.task {
+            task.start()
+        }
+    }
+    
     @objc func retryUpload() {
         guard let task = task else { return }
-        ZigFileManager.shared.retryUpload(uploadUrl: task.url, completion: { error in
-            guard let e = error else {
-                debugPrint("正在重新上传")
-                UploadManager.shared.removeTask(task: task)
-                return
-            }
-            debugPrint(e.localizedDescription)
-        })
+        task.start()
     }
     
     @objc func deleteRecord() {
         guard let task = task else { return }
         UploadManager.shared.removeTask(task: task)
-        ZigFileManager.shared.deleteUploadRecord(identifier: task.url.md5)
-    }
-    
-    @objc func pauseUpload() {
-        if let task = self.task {
-            UploadManager.shared.suspendTask(task: task)
-            updateRowView(with: task)
-        }
-    }
-    
-    @objc func resumeUpload() {
-        if let task = self.task {
-            UploadManager.shared.resumeTask(task: task)
-            updateRowView(with: task)
-        }
     }
     
     @objc func showInFinder() {
@@ -294,11 +260,11 @@ class UploadRowView: NSTableRowView {
 //        }
     }
     
-    func updateRowView(with task: UploadTask) {
+    func updateRowView(with task: ABUploadTask) {
         self.task = task
-        imageView.image = task.fileName == nil ? nil : Utils.thumbForFile(fileName: task.fileName!)
-        fileNameLabel.stringValue = task.fileName ?? ""
-        let downloadedSize = Double(task.fileSize) * task.progress
+        imageView.image = Utils.thumbForFile(fileName: task.filePath.lastPathComponent)
+        fileNameLabel.stringValue = task.filePath.lastPathComponent
+        let downloadedSize = Double(task.fileSize) * task.progress.fractionCompleted
         let totalSize = task.fileSize
         fileSizeLabel.stringValue = "\(downloadedSize.decimalSizeString) / \(Double(totalSize).decimalSizeString)"
         
@@ -315,13 +281,13 @@ class UploadRowView: NSTableRowView {
 //            }
             task.progressHandler = { [weak self] progress in
                 guard let self = self else { return }
-                let downloadedSize = progress * Double(totalSize)
-                self.downloadStatueLabel.stringValue = "\(task.speed.decimalSizeString) / s"
+                let downloadedSize = progress.fractionCompleted * Double(totalSize)
+                self.downloadStatueLabel.stringValue = "\((task.speed).decimalSizeString) / s"
                 self.fileSizeLabel.stringValue = "\(downloadedSize.decimalSizeString) / \(Double(totalSize).decimalSizeString)"
-                progressView.doubleValue = progress
+                progressView.doubleValue = progress.fractionCompleted
             }
         } else {
-            progressView.doubleValue = task.progress
+            progressView.doubleValue = task.progress.fractionCompleted
         }
         
         let colorFilter = CIFilter(name: "CIFalseColor")!
@@ -364,6 +330,16 @@ class UploadRowView: NSTableRowView {
             attribute = showInFinderButton.snp.leading
         }
         
+        if !startButton.isHidden {
+            startButton.snp.remakeConstraints { make in
+                make.width.height.equalTo(24)
+                make.centerY.equalTo(firstColumn)
+                make.trailing.equalTo(attribute).offset(offset)
+            }
+            
+            attribute = startButton.snp.leading
+        }
+        
         if !cancelButton.isHidden {
             cancelButton.snp.remakeConstraints { make in
                 make.width.height.equalTo(24)
@@ -372,27 +348,6 @@ class UploadRowView: NSTableRowView {
             }
             
             attribute = cancelButton.snp.leading
-        }
-        
-        if !pauseButton.isHidden {
-            pauseButton.snp.remakeConstraints { make in
-                make.width.height.equalTo(24)
-                make.centerY.equalTo(firstColumn)
-                make.trailing.equalTo(attribute).offset(offset)
-            }
-            
-            attribute = pauseButton.snp.leading
-        }
-        
-        if !resumeButton.isHidden {
-            resumeButton.snp.remakeConstraints { make in
-                make.width.height.equalTo(24)
-                make.centerY.equalTo(firstColumn)
-                make.trailing.equalTo(attribute).offset(offset)
-            }
-            
-            attribute = resumeButton.snp.leading
-            offset = -16
         }
         
         if !deleteButton.isHidden {
@@ -431,8 +386,6 @@ class UploadRowView: NSTableRowView {
             make.trailing.lessThanOrEqualTo(firstColumn).offset(-20)
         }
         
-        pauseButton.isHidden = true
-        resumeButton.isHidden = true
         cancelButton.isHidden = true
         showInFinderButton.isHidden = true
         retryButton.isHidden = true
@@ -442,14 +395,12 @@ class UploadRowView: NSTableRowView {
     func updateStatus() {
         guard let task = self.task else { return }
         switch task.state {
-        case .suspended:
-            downloadStatueLabel.stringValue = "已暂停"
         case .failed:
             downloadStatueLabel.stringValue = "失败"
         case .waiting:
             downloadStatueLabel.stringValue = "等待上传"
         case .running:
-            downloadStatueLabel.stringValue = "\(task.speed.binarySizeString) / s"
+            downloadStatueLabel.stringValue = "\((task.speed).decimalSizeString) / s"
         case .succeeded:
             downloadStatueLabel.stringValue = "已完成"
         case .canceled:
@@ -461,48 +412,36 @@ class UploadRowView: NSTableRowView {
     func updateButtonStatus() {
         guard let task = task else { return }
         switch task.state {
-        case .suspended:
-            pauseButton.isHidden = true
-            resumeButton.isHidden = false
-            cancelButton.isHidden = false
-            retryButton.isHidden = true
-            deleteButton.isHidden = true
-            showInFinderButton.isHidden = true
         case .failed:
-            pauseButton.isHidden = true
-            resumeButton.isHidden = true
             cancelButton.isHidden = true
             deleteButton.isHidden = false
             retryButton.isHidden = false
             showInFinderButton.isHidden = true
+            startButton.isHidden = false
         case .waiting:
-            pauseButton.isHidden = true
-            resumeButton.isHidden = true
             cancelButton.isHidden = false
             deleteButton.isHidden = true
             retryButton.isHidden = true
             showInFinderButton.isHidden = true
+            startButton.isHidden = false
         case .running:
-            pauseButton.isHidden = false
-            resumeButton.isHidden = true
             cancelButton.isHidden = false
             deleteButton.isHidden = true
             retryButton.isHidden = true
             showInFinderButton.isHidden = true
+            startButton.isHidden = true
         case .succeeded:
-            pauseButton.isHidden = true
-            resumeButton.isHidden = true
             cancelButton.isHidden = true
             deleteButton.isHidden = false
             retryButton.isHidden = true
             showInFinderButton.isHidden = true
+            startButton.isHidden = true
         case .canceled:
-            pauseButton.isHidden = true
-            resumeButton.isHidden = true
             cancelButton.isHidden = true
             showInFinderButton.isHidden = true
             deleteButton.isHidden = false
             retryButton.isHidden = false
+            startButton.isHidden = false
         }
     }
     
