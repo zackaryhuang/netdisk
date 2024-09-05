@@ -132,23 +132,8 @@ class FileRowView: NSTableRowView {
     }
 
     @objc func copyDownloadLink() {
-        if let fileID = data?.fileID {
-            Task {
-                if let downloadInfo = try? await WebRequest.requestDownloadUrl(fileID: fileID) {
-                    if let downloadURL = downloadInfo.downloadURL {
-                        NSPasteboard.general.clearContents()
-                        NSPasteboard.general.setString(downloadURL.absoluteString, forType: .string)
-                        let alert = NSAlert()
-                        alert.messageText = "已拷贝下载链接"
-                        alert.runModal()
-                    }
-                } else {
-                    let alert = NSAlert()
-                    alert.messageText = "获取下载链接失败"
-                    alert.runModal()
-                }
-            }
-        }
+        guard let fileID = data?.fileID else { return }
+        self.delegate?.fileRowViewDidClickCopyDownloadLink(fileID: fileID)
     }
     
     @objc func createFolder() {
