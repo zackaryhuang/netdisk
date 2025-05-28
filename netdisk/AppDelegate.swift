@@ -43,7 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, SPUUpdaterDelegate {
         guard let contentView = NSApplication.shared.windows.first?.contentView else { return }
         let alert = ZigTextAlertView(title: "退出", message: "确认退出吗？")
         alert.confirmBlock = {
-            _SwiftConcurrencyShims.exit(0)
+            NSApplication.shared.terminate(nil)
         }
         alert.showInView(contentView)
     }

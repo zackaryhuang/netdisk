@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -362,9 +362,9 @@
 				30D5887D2B96045500DCE9CB /* XCRemoteSwiftPackageReference "fmdb" */,
 				30D588802B96067A00DCE9CB /* XCRemoteSwiftPackageReference "Alamofire" */,
 				30D588832B96069600DCE9CB /* XCRemoteSwiftPackageReference "SnapKit" */,
-				3065E34D2BA72BEB00A3114F /* XCLocalSwiftPackageReference "netdisk/Tiercel" */,
 				30C8CCC62BE1ED0F009AA7B4 /* XCRemoteSwiftPackageReference "Sparkle" */,
 				303EBAF72BFB9F0800991BDE /* XCRemoteSwiftPackageReference "qrcode" */,
+				3056B2D02DE6BD1B0022B8AC /* XCRemoteSwiftPackageReference "Tiercel" */,
 			);
 			productRefGroup = 30BB71752A9E414B00ADBF01 /* Products */;
 			projectDirPath = "";
@@ -655,13 +655,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		3065E34D2BA72BEB00A3114F /* XCLocalSwiftPackageReference "netdisk/Tiercel" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = netdisk/Tiercel;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		303EBAF72BFB9F0800991BDE /* XCRemoteSwiftPackageReference "qrcode" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -669,6 +662,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 19.2.0;
+			};
+		};
+		3056B2D02DE6BD1B0022B8AC /* XCRemoteSwiftPackageReference "Tiercel" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/zackaryhuang/Tiercel";
+			requirement = {
+				branch = master;
+				kind = branch;
 			};
 		};
 		30C8CCC62BE1ED0F009AA7B4 /* XCRemoteSwiftPackageReference "Sparkle" */ = {

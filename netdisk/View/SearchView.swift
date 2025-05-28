@@ -81,6 +81,7 @@ class SearchView: NSView, NSSearchFieldDelegate {
     @objc private func clear() {
         searchTextField.cell?.stringValue = ""
         searchTextField.window?.makeFirstResponder(nil)
+        self.clearButton.isHidden = true
         self.delegate?.searchViewDidCancel()
     }
 }
